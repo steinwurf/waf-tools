@@ -93,7 +93,7 @@ def configure(conf):
     # Which mkspec should we use, by default, use the cxx_default
     # that simply fallbacks to use waf auto detect of compiler etc.
     mkspec = "cxx_default"
-
+    
     if conf.has_tool_option('cxx_mkspec'):
         mkspec = conf.get_tool_option('cxx_mkspec')
 
