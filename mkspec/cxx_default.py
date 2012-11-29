@@ -3,7 +3,7 @@
 
 from waflib import Utils
 from waflib.Configure import conf
-from waflib.Tools import compiler_cxx
+from waflib.Tools.compiler_cxx import cxx_compiler
 from os.path import abspath, expanduser
 
 """
@@ -14,20 +14,28 @@ def configure(conf):
     # Here we simply try to find a compiler on the current host
     # this code is mostly taken from the "compiler_cxx" tool
     build_platform = Utils.unversioned_sys_platform()
-    possible_compiler_list = compiler_cxx.cxx_compiler[build_platform in cxx_compiler and build_platform or 'default']
+    platform = build_platform if build_platform in cxx_compiler else 'default'
+    possible_compiler_list = cxx_compiler[platform]
 
-    """
-    Sometimes CXX is a list, and sometimes it is a string.
-    This depends tool used to initialize the compiler.
-    It is ugly but we deal with it here
-    """
-
-    CXX = ""
-    if isinstance(conf.env['CXX'], list):
-        assert(len(conf.env['CXX']) == 1)
-        CXX = conf.env['CXX'][0]
+    for compiler in possible_compiler_list:
+       	conf.env.stash()
+	conf.start_msg('Checking for %r (c++ compiler)' % compiler)
+	try:
+		conf.load(compiler)
+	except conf.errors.ConfigurationError as e:
+		conf.env.revert()
+		conf.end_msg(False)
+		debug('compiler_cxx: %r' % e)
+        else:
+            if conf.env['CXX']:
+		conf.end_msg(conf.env.get_flat('CXX'))
+		conf.env['COMPILER_CXX'] = compiler
+		break
+            conf.end_msg(False)
     else:
-        CXX = conf.env['CXX']
+	conf.fatal('could not configure a c++ compiler!')
+
+    CXX = conf.env.get_flat('CXX')
 
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in CXX:
@@ -117,7 +125,7 @@ def android_find_binaries(conf, version, path_list):
         temp_path_list.append(abspath(expanduser(p)))
 
     path_list = temp_path_list
-    
+
     # Setup compiler and linker
     conf.find_program('arm-linux-androideabi-g++', path_list=path_list, var='CXX')
     conf.env['LINK_CXX'] = conf.env['CXX']

@@ -69,7 +69,7 @@ def get_mkspec_platform(conf):
         elif platform == 'darwin':
             platform = 'mac'
         conf.set_mkspec_platform(platform)
-    
+
     return conf.env['MKSPEC_PLATFORM']
 
 @conf
@@ -89,28 +89,7 @@ def set_mkspec_platform(conf, platform):
 def is_mkspec_platform(conf, platform):
     return conf.get_mkspec_platform() == platform
 
-@conf
-def get_mkspec_option(conf, option):
-    if not option in conf.env['cxx_mkspec_options']:
-        conf.fatal('No mkspec option %s, you specify mkspec options as: '
-                   './waf configure --cxx-mkspec-option=KEY=VALUE')
-    else:
-        return conf.env['cxx_mkspec_options'][option]
-
-def read_mkspec_options(conf):
-    conf.env["cxx_mkspec_options"] = {}
-    if conf.options.cxx_mkspec_options:
-        for option in conf.options.cxx_mkspec_options:
-            try:
-                key, value = option.split('=')
-            except Exception, e:
-                conf.fatal("cxx-mkspec-options has to have the format"
-                           "'KEY=VALUE', you specified %r, which resulted in"
-                           "Error:'%s'" % (option, e))
-            conf.env["cxx_mkspec_options"][key] = value
-
 def configure(conf):
-    
     # Which mkspec should we use, by default, use the cxx_default
     # that simply fallbacks to use waf auto detect of compiler etc.
     mkspec = "cxx_default"
@@ -118,7 +97,8 @@ def configure(conf):
     if conf.has_tool_option('cxx_mkspec'):
         mkspec = conf.get_tool_option('cxx_mkspec')
 
-    conf.load_external_tool('mkspec', mkspec)
     conf.msg('Using the mkspec:', mkspec)
+    conf.load_external_tool('mkspec', mkspec)
+
 
 
