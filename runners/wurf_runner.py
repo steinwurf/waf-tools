@@ -33,7 +33,7 @@ def build(bld):
     bld.add_post_fun(waf_unit_test.summary)
 """
 
-import os, sys
+import os, sys, re
 from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
 testlock = Utils.threading.Lock()
@@ -111,46 +111,125 @@ class BasicRunner(Task.Task):
 
                 return fu
 
+    def format_command(self):
+        executable = self.inputs[0].abspath()
+        
+        cmd = getattr(Options.options, 'testcmd', False)
+        if cmd:
+            cmd = cmd % executable
+        else:
+            cmd  = executable
 
-        def run(self):
-            fu = self.setup_path()
-            executable = self.inputs[0].abspath()
-            cwd = self.inputs[0].parent.abspath()
+        return cmd
 
-            cmd = getattr(Options.options, 'testcmd', False)
-            if cmd:
-                cmd = cmd % executable
-            else:
-                cmd  = executable
+    def run(self):
+        fu = self.setup_path()
+        cwd = self.inputs[0].parent.abspath()        
+        cmd = self.format_command()
+
+        Logs.debug("wr: running %r", cmd)
+
+        proc = Utils.subprocess.Popen(
+            cmd,
+            cwd=cwd,
+            env=fu,
+            stderr=Utils.subprocess.PIPE,
+            stdout=Utils.subprocess.PIPE)
+
+        (stdout, stderr) = proc.communicate()
+
+        result = (executable, proc.return_code, stdout, stderr)
+        self.save_result(result)
+
+    def save_result(self, result):
+        testlock.acquire()
+        try:
+            bld = self.generator.bld
+            Logs.debug("wr: %r", result)
+            try:
+                bld.runner_results.append(result)
+            except AttributeError:
+                bld.runner_results = [result]
+        finally:
+            testlock.release()
+
+class AndroidRunner(BasicRunner):
+
+    def save_result(self, results):
+        pass
+    
+    def run(self):
+
+        bld = self.generator.bld
+        
+        print "running on android ", bld.env['ADB']
+
+        adb = bld.env['ADB']
+        cmd = self.format_command()
+
+        results = []
+        
+        def run_cmd(cmd):
 
             Logs.debug("wr: running %r", cmd)
-
+            
             proc = Utils.subprocess.Popen(
                 cmd,
-                cwd=cwd,
-                env=fu,
                 stderr=Utils.subprocess.PIPE,
                 stdout=Utils.subprocess.PIPE)
             (stdout, stderr) = proc.communicate()
 
-            result = (executable, proc.return_code, stdout, stderr)
-            self.save_result(result)
+            result =  {'cmd': cmd, 'return_code': proc.returncode,
+                       'stdout': stdout, 'stderr':stderr}
 
-        def save_result(self, result):
-            testlock.acquire()
-            try:
-                bld = self.generator.bld
-                Logs.debug("wr: %r", result)
-                try:
-                    bld.runner_results.append(result)
-                except AttributeError:
-                    bld.runner_results = [result]
-            finally:
-                testlock.release()
+            return result
 
-class AndroidRunner(BasicRunner):
-    def run(self):
-        print "running on android"
+
+        # Run the two adb commands
+        adb_push = [adb, 'push', str(self.inputs[0].abspath()),
+                    '/data/local/tmp/' + str(self.inputs[0])] 
+
+        result = run_cmd(adb_push)
+        results.append(result)
+
+        if not result['return_code']:
+            self.save_result(results)
+            return
+
+        # Echo the exit code after the shell command
+        adb_shell = [adb, 'shell', '/data/local/tmp/' + str(self.inputs[0]) + ';echo shellexit:$?']
+
+        result = run_cmd(adb_shell)
+        results.append(result)
+
+        if not result['result_code']:
+            self.save_result(results)
+            return
+
+        # Look for the exit code in the output and fail if non-zero
+        match
+        
+
+        shell_result = results[-1]['stdout']
+        shell_stdout = shell_result.split('\r\n')
+
+        return_code = 0
+
+        for stdout in shell_stdout:
+            print stdout
+            if 'shellexit' in stdout:
+                token,value = stdout.split(':')
+                return_code = int(value)
+                break
+        else:
+            bld.fatal("In Android runner could not find the shell exit code")
+                
+        
+
+        
+
+        #     self.save_result(result)
+
 
 def summary(bld):
     """

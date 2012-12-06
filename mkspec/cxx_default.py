@@ -5,7 +5,7 @@ from waflib import Utils
 from waflib.Configure import conf
 from waflib.Tools.compiler_cxx import cxx_compiler
 from os.path import abspath, expanduser
-
+import os
 """
 Detect and setup the default compiler for the platform
 """
@@ -103,6 +103,23 @@ def clang_find_binaries(conf, version):
     conf.link_add_flags()
 
     conf.env['LINK_CXX'] = conf.env['CXX']
+
+@conf
+def default_android_configure(conf, cxx_version):
+    conf.set_mkspec_platform('android')
+
+    ndk = conf.get_tool_option('NDK_DIR')
+    sdk = conf.get_tool_option('SDK_DIR')
+
+    ndk_path = [ndk, os.path.join(ndk,'bin')]
+    sdk_path = [sdk, os.path.join(sdk,'platform-tools')]
+    
+    conf.android_find_binaries(cxx_version, ndk_path)
+    conf.find_program('adb', path_list = sdk_path, var='ADB')
+
+    # Set the android define - some libraries rely on this define being present
+    conf.env.DEFINES += ['ANDROID']
+    conf.add_android_default_cxxflags()
 
 @conf
 def add_android_default_cxxflags(conf):
