@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+1.0.1
+-----
+* Android runner supports device_id=DEVICE option, which make it
+  possible to run code on a specific device (when multiple are
+  connected).
+
 1.0.0
 -----
 * Initial release
