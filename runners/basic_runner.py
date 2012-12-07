@@ -60,14 +60,14 @@ class BasicRunner(Task.Task):
     def format_command(self, executable):
         """
         We allow the user to 'modify' the command to be executed.
-        E.g. by specifying --option=runcmd='valgrind %s' this will
+        E.g. by specifying --option=run_cmd='valgrind %s' this will
         replace %s with the executable name and thus run the executable
         under valgrind
         """
         bld = self.generator.bld
         
-        if bld.has_tool_option('runcmd'):
-            testcmd = bld.get_tool_option('runcmd') 
+        if bld.has_tool_option('run_cmd'):
+            testcmd = bld.get_tool_option('run_cmd') 
             cmd = testcmd % executable
         else:
             cmd  = executable
