@@ -49,8 +49,20 @@ class AndroidRunner(BasicRunner):
 
         dest_bin = '/data/local/tmp/' + str(self.inputs[0])
 
+        device_id = None
+        if bld.has_tool_option('device_id'):
+            device_id = bld.get_tool_option('device_id')
+
+
         # Run the two adb commands
-        adb_push = [adb, 'push', str(self.inputs[0].abspath()), dest_bin] 
+        adb_push = []
+        
+        if device_id:
+            adb_push += [adb, '-s', device_id, 'push']
+        else:
+            adb_push += [adb, 'push']
+
+        adb_push += [str(self.inputs[0].abspath()), dest_bin] 
 
         result = run_cmd(adb_push)
         results.append(result)
@@ -62,7 +74,14 @@ class AndroidRunner(BasicRunner):
         cmd = self.format_command(dest_bin)
 
         # Echo the exit code after the shell command
-        adb_shell = [adb, 'shell', cmd + ';echo shellexit:$?']
+        adb_shell = []
+
+        if device_id:
+            adb_shell += [adb, '-s', device_id, 'shell']
+        else:
+            adb_shell += [adb, 'shell']
+
+        adb_shell += [cmd + ';echo shellexit:$?']
 
         result = run_cmd(adb_shell)
         results.append(result)
