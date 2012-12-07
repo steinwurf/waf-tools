@@ -111,9 +111,12 @@ def default_android_configure(conf, cxx_version):
     ndk = conf.get_tool_option('NDK_DIR')
     sdk = conf.get_tool_option('SDK_DIR')
 
+    ndk = abspath(expanduser(ndk))
+    sdk = abspath(expanduser(sdk))
+
     ndk_path = [ndk, os.path.join(ndk,'bin')]
     sdk_path = [sdk, os.path.join(sdk,'platform-tools')]
-    
+
     conf.android_find_binaries(cxx_version, ndk_path)
     conf.find_program('adb', path_list = sdk_path, var='ADB')
 

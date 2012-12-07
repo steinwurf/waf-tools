@@ -60,6 +60,19 @@ def make_run(taskgen, run_type):
             task = taskgen.create_task('BasicRunner', taskgen.link_task.outputs)
             task.run_type = run_type
 
+
+    post_funs = getattr(taskgen.bld, 'post_funs', None)
+    if post_funs:
+        if not summary in post_funs:
+            taskgen.bld.add_post_fun(summary)
+        if not set_exit_code in post_funs:
+            taskgen.bld.add_post_fun(set_exit_code)
+    else:
+        taskgen.bld.add_post_fun(summary)
+        taskgen.bld.add_post_fun(set_exit_code)
+    
+        
+
 class BasicRunner(Task.Task):
     """
     Execute a unit test
@@ -156,14 +169,25 @@ class BasicRunner(Task.Task):
 class AndroidRunner(BasicRunner):
 
     def save_result(self, results):
-        pass
+
+        combined_stdout = ""
+        combined_stderr = ""
+        combined_return_code = 0
+
+        for result in results:
+            combined_stdout += 'Running %(cmd)s %(stdout)s' % result
+            combined_stderr += 'Running %(cmd)s %(stderr)s' % result
+            if result['return_code'] != 0: combined_return_code = -1
+
+        result = (self.format_command(), combined_return_code,
+                  combined_stdout, combined_stderr)
+        
+        super(AndroidRunner, self).save_result(result)
     
     def run(self):
 
         bld = self.generator.bld
         
-        print "running on android ", bld.env['ADB']
-
         adb = bld.env['ADB']
         cmd = self.format_command()
 
@@ -192,43 +216,43 @@ class AndroidRunner(BasicRunner):
         result = run_cmd(adb_push)
         results.append(result)
 
-        if not result['return_code']:
+        if result['return_code'] != 0:
             self.save_result(results)
             return
 
         # Echo the exit code after the shell command
-        adb_shell = [adb, 'shell', '/data/local/tmp/' + str(self.inputs[0]) + ';echo shellexit:$?']
+        adb_shell = [adb, 'shell',
+                     '/data/local/tmp/' + str(self.inputs[0]) + ';echo shellexit:$?']
 
         result = run_cmd(adb_shell)
         results.append(result)
 
-        if not result['result_code']:
+        if result['return_code'] != 0:
             self.save_result(results)
             return
 
         # Look for the exit code in the output and fail if non-zero
-        match
-        
+        match = re.search('shellexit:(\d+)', result['stdout'])
 
-        shell_result = results[-1]['stdout']
-        shell_stdout = shell_result.split('\r\n')
+        if not match:
+            result =  {'cmd': 'Looking for shell exit', 'return_code': -1,
+                       'stdout': '', 'stderr': 'Failed to find exitcode'}
 
-        return_code = 0
+            results.append(result)
+            self.save_result(results)
+            return
 
-        for stdout in shell_stdout:
-            print stdout
-            if 'shellexit' in stdout:
-                token,value = stdout.split(':')
-                return_code = int(value)
-                break
-        else:
-            bld.fatal("In Android runner could not find the shell exit code")
-                
-        
+        if match.group(1) != "0":
+            result =  {'cmd': 'Shell exit indicate error',
+                       'return_code': match.group(1),
+                       'stdout': '',
+                       'stderr': 'Exit code was %s' % match.group(1)}
 
-        
+            results.append(result)
+            self.save_result(results)
+            return
 
-        #     self.save_result(result)
+        self.save_result(results)
 
 
 def summary(bld):
