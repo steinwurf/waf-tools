@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+1.0.2
+-----
+* Updating runner tool option from 'runcmd' to 'run_cmd', for more
+  consistency in the options.
+
 1.0.1
 -----
 * Android runner supports device_id=DEVICE option, which make it
