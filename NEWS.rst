@@ -4,8 +4,12 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
-Latest (major)
---------------
+Latest
+------
+* tbd
+
+1.0.0
+-----
 * Initial release
 
 
