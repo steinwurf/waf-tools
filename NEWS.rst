@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+1.0.3
+-----
+* Simplified cxx_mkspecs which allows more re-use of existing
+  functionality. 
+
 1.0.2
 -----
 * Updating runner tool option from 'runcmd' to 'run_cmd', for more
