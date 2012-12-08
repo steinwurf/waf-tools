@@ -175,8 +175,14 @@ def mkspec_gxx_configure(conf, major, minor):
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] = ['-O2','-g','-ftree-vectorize',
-                            '-Wextra','-Wall','-std=c++0x']
+    conf.env['CXXFLAGS'] += ['-O2','-g','-ftree-vectorize',
+                             '-Wextra','-Wall']
+
+    if conf.is_mkspec_platform('android'):
+        # http://stackoverflow.com/questions/9247151
+        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
+    else:
+        conf.env['CXXFLAGS'] += ['-std=c++0x']
 
 # @conf
 # def gcc_check_version(conf, version):
