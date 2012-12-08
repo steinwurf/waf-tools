@@ -4,6 +4,7 @@
 from waflib import Utils
 from waflib.Configure import conf
 from waflib.Tools.compiler_cxx import cxx_compiler
+import waflib.Tools.gxx as gxx
 from os.path import abspath, expanduser
 import os
 """
@@ -39,133 +40,232 @@ def configure(conf):
 
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in CXX:
-        conf.add_clang_default_flags()
+        conf.mkspec_set_clang_cxxflags()
     elif 'g++' in CXX:
-        conf.add_gcc_default_flags()
+        conf.mkspec_set_gxx_cxxflags()
     elif 'CL.exe' in CXX or 'cl.exe' in CXX:
         conf.add_msvc_default_cxxflags()
     else:
         raise Errors.WafError('toolchain_cxx flag for unknown compiler %s'
                               % conf.env.CXX)
 
+# @conf
+# def get_mkspec_option(conf, option, required=True, error_msg = None):
+#     try:
+#         option = conf.env["cxx_mkspec_options"][option]
+#     except Exception, e:
+#         if required:
+#             if error_msg:
+#                 conf.fatal(error_msg)
+#             else:
+#                 conf.fatal("Missing mkspec-option %s."%e)
+#         option = None
+#     return option
+
 @conf
-def gcc_check_version(conf, version):
+def mkspec_get_toolchain_paths(conf):
     """
-    :param version : The version number as a tuple.
+    :return: the common paths where we may find the g++ binary
     """
-    conf.get_cc_version([conf.env['CXX']], gcc=True)
+    # The default path to search
+    path_list = os.environ.get('PATH', '').split(os.pathsep)
+    
+    if conf.is_mkspec_platform('mac'):
 
-    if conf.env['CC_VERSION'] != version:
-        conf.fatal("Wrong version number, wanted '%r', but got '%r'."
-                   % (version, conf.env['CC_VERSION']))
+        # If the compiler is installed using macports
+        path_list += ['/opt/local/bin']
 
-@conf
-def get_mkspec_option(conf, option, required=True, error_msg = None):
-    try:
-        option = conf.env["cxx_mkspec_options"][option]
-    except Exception, e:
-        if required:
-            if error_msg:
-                conf.fatal(error_msg)
-            else:
-                conf.fatal("Missing mkspec-option %s."%e)
-        option = None
-    return option
+    if conf.is_mkspec_platform('android'):
+        ndk = conf.get_tool_option('android_ndk_dir')
+        ndk = abspath(expanduser(ndk))
+        ndk_path = [ndk, os.path.join(ndk,'bin')]
+
+        return ndk_path
+
+    return path_list
 
 @conf
-def add_gcc_default_flags(conf):
-    conf.env['CXXFLAGS'] += ['-O2','-g','-ftree-vectorize',
-                             '-Wextra','-Wall','-std=c++0x']
-
-@conf
-def clang_check_version(conf, version):
+def mkspec_get_gxx_binary_name(conf, major, minor):
     """
-    Clang is compatible with the gcc way of checking the version.
+    :param major: The major version number of the g++ binary e.g. 4
+    :param minor: The minor version number of the g++ binary e.g. 6
+    :return: A list with names of the g++ binary we are looking for
+             e.g. ['g++-4.6', 'g++-mp-4.6'] for g++ version 4.6 on
+             mac/darwin
     """
-    conf.gcc_check_version(version)
+
+    # First the default case
+    binary = ['g++-{0}.{1}'.format(major, minor)]
+
+    if conf.is_mkspec_platform('mac'):
+        
+        # If the compiler is installed using macports
+        return binary + ['g++-mp-{0}.{1}'.format(major, minor)]
+
+    if conf.is_mkspec_platform('android'):
+
+        # Here all binaries are named the same for all NDK standalone
+        # toolchains that we are aware of
+        return ['arm-linux-androideabi-g++']
+        
+    return binary
+
 
 @conf
-def add_clang_default_cxxflags(conf):
-    conf.env['CXXFLAGS'] += ['-O2', '-g', '-Wextra', '-Wall', '-std=c++0x']
+def mkspec_check_gxx_version(conf, major, minor):
+    """
+    :param major: The major version number of the g++ binary e.g. 4
+    :param minor: The minor version number of the g++ binary e.g. 6
+    """
+    conf.get_cc_version(conf.env['CXX'], gcc = True)
+
+    if (int(conf.env['CC_VERSION'][0]) != int(major) or
+        int(conf.env['CC_VERSION'][1]) != int(minor)):
+        conf.fatal("Wrong version number, wanted version={0}, "
+                   "but got major={1} and minor={2}."
+                   .format(conf.env['CC_VERSION'], major, minor)) 
+
 
 @conf
-def clang_find_binaries(conf, version):
-    conf.find_program('clang++', var='CXX')
+def mkspec_get_ar_binary_name(conf):
+    """
+    :return: The name of the ar binary we are looking for
+             e.g. 'arm-linux-androideabi-ar' for the archiver on android
+    """
 
-    conf.clang_check_version(version)
+    if conf.is_mkspec_platform('android'):
+        return 'arm-linux-androideabi-ar'
+    else:
+        return 'ar'
 
-    conf.find_ar()
+
+@conf
+def mkspec_gxx_configure(conf, major, minor):
+
+    # Where to look
+    paths = conf.mkspec_get_toolchain_paths()
+    
+    # Find the compiler
+    gxx_names = conf.mkspec_get_gxx_binary_name(major, minor)
+    
+    cxx = conf.find_program(gxx_names, path_list = paths, var = 'CXX')
+    cxx = conf.cmd_to_list(cxx)
+    conf.env.CXX = cxx
+    conf.env.CXX_NAME = os.path.basename(conf.env.get_flat('CXX'))
+
+    conf.mkspec_check_gxx_version(major, minor)
+
+    # Find the archiver
+    ar = conf.mkspec_get_ar_binary_name()
+
+    conf.find_program(ar, path_list = paths, var = 'AR')
+    conf.env.ARFLAGS = 'rcs'
+    
     conf.gxx_common_flags()
     conf.gxx_modifier_platform()
-
     conf.cxx_load_tools()
     conf.cxx_add_flags()
     conf.link_add_flags()
 
-    conf.env['LINK_CXX'] = conf.env['CXX']
+    # Add our own cxx flags
+    conf.mkspec_set_gxx_cxxflags()
+
+
 
 @conf
-def default_android_configure(conf, cxx_version):
+def mkspec_set_gxx_cxxflags(conf):
+
+    conf.env['CXXFLAGS'] = ['-O2','-g','-ftree-vectorize',
+                            '-Wextra','-Wall','-std=c++0x']
+
+# @conf
+# def gcc_check_version(conf, version):
+#     """
+#     :param version : The version number as a tuple.
+#     """
+#     conf.get_cc_version([conf.env['CXX']], gcc=True)
+
+#     if conf.env['CC_VERSION'] != version:
+#         conf.fatal("Wrong version number, wanted '%r', but got '%r'."
+#                    % (version, conf.env['CC_VERSION']))
+
+@conf
+def mkspec_get_clang_binary_name(conf, major, minor):
+    """
+    :param major: The major version number of the clang binary e.g. 3
+    :param minor: The minor version number of the clang binary e.g. 1
+    :return: A list with names of the g++ binary we are looking for
+             e.g. ['clang31++'] for clang++ version 4.6 on
+             android
+    """
+
+    return ['clang{0}{1}++'.format(major, minor), 'clang++']
+
+
+
+@conf
+def mkspec_clang_configure(conf, major, minor):
+
+    # Where to look
+    paths = conf.mkspec_get_toolchain_paths()
+    
+    # Find the compiler
+    clang_names = conf.mkspec_get_clang_binary_name(major, minor)
+    
+    cxx = conf.find_program(clang_names, path_list = paths, var = 'CXX')
+    cxx = conf.cmd_to_list(cxx)
+    conf.env.CXX = cxx
+    conf.env.CXX_NAME = os.path.basename(conf.env.get_flat('CXX'))
+
+    # waf's gxx tool for checking version number also works for clang
+    # so we just use it
+    conf.mkspec_check_gxx_version(major, minor)
+
+    # Find the archiver
+    ar = conf.mkspec_get_ar_binary_name()
+
+    conf.find_program(ar, path_list = paths, var = 'AR')
+    conf.env.ARFLAGS = 'rcs'
+    
+    conf.gxx_common_flags()
+    conf.gxx_modifier_platform()
+    conf.cxx_load_tools()
+    conf.cxx_add_flags()
+    conf.link_add_flags()
+
+    # Add our own cxx flags
+    conf.mkspec_set_clang_cxxflags()
+
+
+@conf
+def mkspec_set_clang_cxxflags(conf):
+    conf.env['CXXFLAGS'] += ['-O2', '-g', '-Wextra', '-Wall', '-std=c++0x']
+
+
+@conf
+def mkspec_clang_android_configure(conf, major, minor):
     conf.set_mkspec_platform('android')
+    conf.mkspec_clang_configure(major,minor)
+    conf.mkspec_set_android_common()
+    
 
-    ndk = conf.get_tool_option('NDK_DIR')
-    sdk = conf.get_tool_option('SDK_DIR')
+@conf
+def mkspec_gxx_android_configure(conf, major, minor):
+    conf.set_mkspec_platform('android')
+    conf.mkspec_gxx_configure(major,minor)
+    conf.mkspec_set_android_common()
 
-    ndk = abspath(expanduser(ndk))
+@conf
+def mkspec_set_android_common(conf):
+    sdk = conf.get_tool_option('android_sdk_dir')
     sdk = abspath(expanduser(sdk))
-
-    ndk_path = [ndk, os.path.join(ndk,'bin')]
     sdk_path = [sdk, os.path.join(sdk,'platform-tools')]
 
-    conf.android_find_binaries(cxx_version, ndk_path)
     conf.find_program('adb', path_list = sdk_path, var='ADB')
 
     # Set the android define - some libraries rely on this define being present
-    conf.env.DEFINES += ['ANDROID']
-    conf.add_android_default_cxxflags()
+    conf.env.DEFINES += ['ANDOID']
 
-@conf
-def add_android_default_cxxflags(conf):
-    conf.env['CXXFLAGS'] += ['-O2','-g','-ftree-vectorize','-Wextra',
-                             '-Wall','-std=gnu++0x']
-
-@conf
-def android_default_arflags(conf):
-    return ['rcs']
-
-
-@conf
-def android_find_binaries(conf, version, path_list):
-    conf.gxx_common_flags()
-    conf.cxx_load_tools()
-
-    temp_path_list = []
-
-    for p in path_list:
-        temp_path_list.append(abspath(expanduser(p)))
-
-    path_list = temp_path_list
-
-    # Setup compiler and linker
-    conf.find_program('arm-linux-androideabi-g++', path_list=path_list, var='CXX')
-    conf.env['LINK_CXX'] = conf.env['CXX']
-
-    conf.gcc_check_version(version)
-
-    conf.find_program('arm-linux-androideabi-gcc', path_list=path_list, var='CC')
-
-    #Setup archiver and archiver flags
-    conf.find_program('arm-linux-androideabi-ar', path_list=path_list, var='AR')
-    conf.env['ARFLAGS'] = conf.android_default_arflags()
-
-    #Setup android asm
-    conf.find_program('arm-linux-androideabi-as', path_list=path_list, var='AS')
-
-    #Setup android nm
-    conf.find_program('arm-linux-androideabi-nm', path_list=path_list, var='NM')
-
-    #Setup android ld
-    conf.find_program('arm-linux-androideabi-ld', path_list=path_list, var='LD')
 
 @conf
 def add_msvc_default_cxxflags(conf):
