@@ -8,10 +8,14 @@ Latest
 ------
 * tbd
 
+1.0.4
+-----
+* Fixed bug in android runner
+
 1.0.3
 -----
 * Simplified cxx_mkspecs which allows more re-use of existing
-  functionality. 
+  functionality.
 
 1.0.2
 -----
