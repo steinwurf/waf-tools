@@ -7,11 +7,9 @@ import platform, os
 from waflib.TaskGen import extension
 from waflib.Configure import conf
 
-def options(opt):
-    opt.load('wurf_protoc')
 
 def configure(conf):
-    conf.load('wurf_protoc')
+    conf.load_external_tool('protobuf', 'wurf_protoc')
 
 @conf
 def protobuf_disable_warnings(conf):
