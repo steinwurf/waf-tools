@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+1.0.5
+-----
+* Fixed protobuf tools to use new waf load_external_tool(..) function
+
 1.0.4
 -----
 * Fixed bug in android runner
