@@ -49,7 +49,8 @@ class AndroidRunner(BasicRunner):
 
             return result
 
-        dest_bin = dest_dir + str(self.inputs[0])
+        binary = str(self.inputs[0])
+        dest_bin = dest_dir + binary
 
         device_id = None
         if bld.has_tool_option('device_id'):
@@ -84,7 +85,7 @@ class AndroidRunner(BasicRunner):
             adb_shell += [adb, 'shell']
 
         # We have to cd to the dir
-        adb_shell += ["cd %s;%s;echo shellexit:$?" % (dest_dir, cmd)]
+        adb_shell += ["cd %s;./%s;echo shellexit:$?" % (dest_dir, binary)]
 
         result = run_cmd(adb_shell)
         results.append(result)
