@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+1.0.6 
+-----
+* In Android runner change folder before running binary. This ensures
+  that the binary is executed from a writable folder.
+
 1.0.5
 -----
 * Fixed protobuf tools to use new waf load_external_tool(..) function
