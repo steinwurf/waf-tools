@@ -8,7 +8,12 @@ Latest
 ------
 * tbd
 
-1.0.6 
+1.1.0
+-----
+* Adding new install_path tool, which allows the install path of binaries
+  to be controlled. 
+
+1.0.6
 -----
 * In Android runner change folder before running binary. This ensures
   that the binary is executed from a writable folder.
