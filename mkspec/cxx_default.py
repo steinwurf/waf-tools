@@ -19,22 +19,22 @@ def configure(conf):
     possible_compiler_list = cxx_compiler[platform]
 
     for compiler in possible_compiler_list:
-       	conf.env.stash()
-	conf.start_msg('Checking for %r (c++ compiler)' % compiler)
-	try:
-		conf.load(compiler)
-	except conf.errors.ConfigurationError as e:
-		conf.env.revert()
-		conf.end_msg(False)
-		debug('compiler_cxx: %r' % e)
+        conf.env.stash()
+        conf.start_msg('Checking for %r (c++ compiler)' % compiler)
+        try:
+            conf.load(compiler)
+        except conf.errors.ConfigurationError as e:
+            conf.env.revert()
+            conf.end_msg(False)
+            debug('compiler_cxx: %r' % e)
         else:
             if conf.env['CXX']:
-		conf.end_msg(conf.env.get_flat('CXX'))
-		conf.env['COMPILER_CXX'] = compiler
-		break
+                conf.end_msg(conf.env.get_flat('CXX'))
+                conf.env['COMPILER_CXX'] = compiler
+                break
             conf.end_msg(False)
     else:
-	conf.fatal('could not configure a c++ compiler!')
+        conf.fatal('could not configure a c++ compiler!')
 
     CXX = conf.env.get_flat('CXX')
 
@@ -69,7 +69,7 @@ def mkspec_get_toolchain_paths(conf):
     """
     # The default path to search
     path_list = os.environ.get('PATH', '').split(os.pathsep)
-    
+
     if conf.is_mkspec_platform('mac'):
 
         # If the compiler is installed using macports
@@ -98,7 +98,7 @@ def mkspec_get_gxx_binary_name(conf, major, minor):
     binary = ['g++-{0}.{1}'.format(major, minor)]
 
     if conf.is_mkspec_platform('mac'):
-        
+
         # If the compiler is installed using macports
         return binary + ['g++-mp-{0}.{1}'.format(major, minor)]
 
@@ -107,7 +107,7 @@ def mkspec_get_gxx_binary_name(conf, major, minor):
         # Here all binaries are named the same for all NDK standalone
         # toolchains that we are aware of
         return ['arm-linux-androideabi-g++']
-        
+
     return binary
 
 
@@ -144,10 +144,10 @@ def mkspec_gxx_configure(conf, major, minor):
 
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
-    
+
     # Find the compiler
     gxx_names = conf.mkspec_get_gxx_binary_name(major, minor)
-    
+
     cxx = conf.find_program(gxx_names, path_list = paths, var = 'CXX')
     cxx = conf.cmd_to_list(cxx)
     conf.env.CXX = cxx
@@ -160,7 +160,7 @@ def mkspec_gxx_configure(conf, major, minor):
 
     conf.find_program(ar, path_list = paths, var = 'AR')
     conf.env.ARFLAGS = 'rcs'
-    
+
     conf.gxx_common_flags()
     conf.gxx_modifier_platform()
     conf.cxx_load_tools()
@@ -214,10 +214,10 @@ def mkspec_clang_configure(conf, major, minor):
 
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
-    
+
     # Find the compiler
     clang_names = conf.mkspec_get_clang_binary_name(major, minor)
-    
+
     cxx = conf.find_program(clang_names, path_list = paths, var = 'CXX')
     cxx = conf.cmd_to_list(cxx)
     conf.env.CXX = cxx
@@ -232,7 +232,7 @@ def mkspec_clang_configure(conf, major, minor):
 
     conf.find_program(ar, path_list = paths, var = 'AR')
     conf.env.ARFLAGS = 'rcs'
-    
+
     conf.gxx_common_flags()
     conf.gxx_modifier_platform()
     conf.cxx_load_tools()
@@ -253,7 +253,7 @@ def mkspec_clang_android_configure(conf, major, minor):
     conf.set_mkspec_platform('android')
     conf.mkspec_clang_configure(major,minor)
     conf.mkspec_set_android_common()
-    
+
 
 @conf
 def mkspec_gxx_android_configure(conf, major, minor):
