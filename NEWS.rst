@@ -6,12 +6,14 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Updated the install_path tool to allow the relative_trick variable to be
+  updated. This allows the folder structure to be preserved when installing
+  files.
 
 1.1.0
 -----
 * Adding new install_path tool, which allows the install path of binaries
-  to be controlled. 
+  to be controlled.
 
 1.0.6
 -----
