@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+1.2.1
+-----
+* Fix indentation error for python3
+
 1.2.0
 -----
 * Updated the install_path tool to allow the relative_trick variable to be
