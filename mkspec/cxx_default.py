@@ -123,7 +123,7 @@ def mkspec_check_gxx_version(conf, major, minor):
         int(conf.env['CC_VERSION'][1]) != int(minor)):
         conf.fatal("Wrong version number, wanted version={0}, "
                    "but got major={1} and minor={2}."
-                   .format(conf.env['CC_VERSION'], major, minor)) 
+                   .format(conf.env['CC_VERSION'], major, minor))
 
 
 @conf
@@ -270,7 +270,7 @@ def mkspec_set_android_common(conf):
     conf.find_program('adb', path_list = sdk_path, var='ADB')
 
     # Set the android define - some libraries rely on this define being present
-    conf.env.DEFINES += ['ANDOID']
+    conf.env.DEFINES += ['ANDROID']
 
 
 @conf
