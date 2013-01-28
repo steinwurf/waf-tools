@@ -81,9 +81,35 @@ class BasicRunner(Task.Task):
         results are stored on ``self.generator.bld.runner_results`` for
         post processing.
         """
+        
         fu = self.setup_path()
         cwd = self.inputs[0].parent.abspath()        
         cmd = self.format_command(self.inputs[0].abspath()).split(' ')
+
+        # First check whether we require any test files
+        test_files = getattr(self.generator, 'test_files', None)
+
+        if test_files:
+            for t in test_files:
+
+                filename = os.path.basename(t)
+
+                print self.inputs[0].parent.abspath()
+                print self.inputs[0].parent.make_node(filename).abspath()
+
+                test_file_in = self.generator.bld.path.find_node(t)
+                test_file_out = self.inputs[0].parent.find_or_declare(filename)
+                    
+                Logs.debug("wr: test file {0} -> {1}".format(
+                        test_file_in.abspath(), test_file_out.abspath()))
+
+                # Write the input file to the output
+                if test_file_in.get_bld_sig() != test_file_out.get_bld_sig():
+                    print "MISMATCH SIG DO THE COPY"
+                    test_file_out.write(test_file_in.read('rb'), 'wb')
+                    if getattr(self.generator, 'chmod', None):
+                        os.chmod(test_file_out.abspath(), self.generator.chmod)
+
 
         Logs.debug("wr: running %r in %s" % (cmd, str(cwd)))
 

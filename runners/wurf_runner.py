@@ -60,6 +60,7 @@ def make_benchmark(self):
     if self.bld.has_tool_option('run_benchmarks'):
         make_run(self, "benchmark")
 
+
 def make_run(taskgen, run_type):
     """Create the run task. There can be only one unit test task by task generator."""
     task = None
@@ -71,8 +72,24 @@ def make_run(taskgen, run_type):
             task = taskgen.create_task('AndroidRunner', taskgen.link_task.outputs)
         else:
             task = taskgen.create_task('BasicRunner', taskgen.link_task.outputs)
-            task.run_type = run_type
 
+        task.run_type = run_type
+        task.test_files = [] 
+
+        # Check if the executable requires any test files
+        test_files = getattr(taskgen, 'test_files', None)
+        if test_files:
+
+            test_input = []
+            test_output = []
+
+            test_input = [taskgen.bld.path.find_node(t) for t in test_files]
+
+            print test_input
+            print taskgen.link_task.outputs[0].abspath()
+            
+            print test_files
+            
 
     # We are creating a new task which should run a executable after
     # a build finishes. Here we add two functions to the BuildContext
