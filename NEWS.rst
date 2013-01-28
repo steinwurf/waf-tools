@@ -8,6 +8,10 @@ Latest
 ------
 * tbd 
 
+1.3.1
+-----
+* Fix problem handling paths to test_files nodes.
+
 1.3.0
 -----
 * Adding support for the test_files attribute in tests and benchmarks. Using
