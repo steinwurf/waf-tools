@@ -49,15 +49,11 @@ class AndroidRunner(BasicRunner):
 
             return result
 
-        binary = str(self.inputs[0])
-        dest_bin = dest_dir + binary
-
         device_id = None
         if bld.has_tool_option('device_id'):
             device_id = bld.get_tool_option('device_id')
 
-
-        # Run the two adb commands
+        # Run the adb commands
         adb_push = []
 
         if device_id:
@@ -65,9 +61,29 @@ class AndroidRunner(BasicRunner):
         else:
             adb_push += [adb, 'push']
 
-        adb_push += [str(self.inputs[0].abspath()), dest_bin]
+        # Push the test files
+        for t in self.tst_inputs:
 
-        result = run_cmd(adb_push)
+            filename = os.path.basename(t.abspath())
+            dest_file = os.path.join(dest_dir, filename)
+
+            adb_push_file = adb_push + [t.abspath(), dest_file]
+
+            result = run_cmd(adb_push_file)
+            results.append(result)
+
+            if result['return_code'] != 0:
+                self.save_result(results)
+                return
+
+
+        # Push the binary
+        binary = str(self.inputs[0])
+        dest_bin = dest_dir + binary
+
+        adb_push_bin = adb_push + [self.inputs[0].abspath(), dest_bin]
+
+        result = run_cmd(adb_push_bin)
         results.append(result)
 
         if result['return_code'] != 0:

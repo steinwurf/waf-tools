@@ -39,7 +39,21 @@ Finally in the build step, we add 'test' as a feature:
 def build(bld):
     bld.program(features = 'cxx test',
                 source   = ['main.cpp'],
-                target   = 'hello')    
+                target   = 'hello')
+
+This tool also support providing test files. This is useful when writing
+tests that require some input data file in order to run. The test files
+will be copied to the directory where the test binary will be executed.
+
+Test files are added by specifying them using the test_files attribute
+of the build. E.g.:
+
+def build(bld):
+    bld.program(features   = 'cxx test',
+                source     = ['main.cpp'],
+                target     = 'hello',
+                test_files = ['test_input.txt'])
+
 """
 
 import os, sys, re
@@ -73,23 +87,11 @@ def make_run(taskgen, run_type):
         else:
             task = taskgen.create_task('BasicRunner', taskgen.link_task.outputs)
 
-        task.run_type = run_type
-        task.test_files = [] 
-
         # Check if the executable requires any test files
-        test_files = getattr(taskgen, 'test_files', None)
-        if test_files:
+        test_files = getattr(taskgen, 'test_files', [])
+        task.tst_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
 
-            test_input = []
-            test_output = []
 
-            test_input = [taskgen.bld.path.find_node(t) for t in test_files]
-
-            print test_input
-            print taskgen.link_task.outputs[0].abspath()
-            
-            print test_files
-            
 
     # We are creating a new task which should run a executable after
     # a build finishes. Here we add two functions to the BuildContext

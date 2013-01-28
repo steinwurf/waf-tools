@@ -16,6 +16,24 @@ class BasicRunner(Task.Task):
     run_type = ''
     vars = []
 
+    def __str__(self):
+        "string to display to the user"
+
+        env = self.env
+        src_str = ' '.join([a.nice_path() for a in self.inputs])
+        tgt_str = ' '.join([a.nice_path() for a in self.outputs])
+        tst_str = ' '.join([a.nice_path() for a in self.tst_inputs])
+
+        if self.outputs: sep = ' -> '
+        else: sep = ''
+
+        if self.tst_inputs: tst_str = ' {test input: %s} ' % tst_str
+
+        return '%s: %s%s%s%s\n' % (
+            self.__class__.__name__.replace('_task', ''),
+            src_str, sep, tgt_str, tst_str)
+
+
     def runnable_status(self):
         """
         Always execute the task if `waf --options=run_always` was used
@@ -65,9 +83,9 @@ class BasicRunner(Task.Task):
         under valgrind
         """
         bld = self.generator.bld
-        
+
         if bld.has_tool_option('run_cmd'):
-            testcmd = bld.get_tool_option('run_cmd') 
+            testcmd = bld.get_tool_option('run_cmd')
             cmd = testcmd % executable
         else:
             cmd  = executable
@@ -81,34 +99,24 @@ class BasicRunner(Task.Task):
         results are stored on ``self.generator.bld.runner_results`` for
         post processing.
         """
-        
+
         fu = self.setup_path()
-        cwd = self.inputs[0].parent.abspath()        
+        cwd = self.inputs[0].parent.abspath()
         cmd = self.format_command(self.inputs[0].abspath()).split(' ')
 
         # First check whether we require any test files
-        test_files = getattr(self.generator, 'test_files', None)
+        for t in self.tst_inputs:
 
-        if test_files:
-            for t in test_files:
+            filename = os.path.basename(t.abspath())
 
-                filename = os.path.basename(t)
+            test_file_out = self.inputs[0].parent.find_or_declare(filename)
 
-                print self.inputs[0].parent.abspath()
-                print self.inputs[0].parent.make_node(filename).abspath()
+            Logs.debug("wr: test file {0} -> {1}".format(
+                t.abspath(), test_file_out.abspath()))
 
-                test_file_in = self.generator.bld.path.find_node(t)
-                test_file_out = self.inputs[0].parent.find_or_declare(filename)
-                    
-                Logs.debug("wr: test file {0} -> {1}".format(
-                        test_file_in.abspath(), test_file_out.abspath()))
-
-                # Write the input file to the output
-                if test_file_in.get_bld_sig() != test_file_out.get_bld_sig():
-                    print "MISMATCH SIG DO THE COPY"
-                    test_file_out.write(test_file_in.read('rb'), 'wb')
-                    if getattr(self.generator, 'chmod', None):
-                        os.chmod(test_file_out.abspath(), self.generator.chmod)
+            test_file_out.write(t.read('rb'), 'wb')
+            if getattr(self.generator, 'chmod', None):
+                os.chmod(test_file_out.abspath(), self.generator.chmod)
 
 
         Logs.debug("wr: running %r in %s" % (cmd, str(cwd)))
