@@ -89,7 +89,8 @@ def make_run(taskgen, run_type):
 
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
-        task.tst_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
+        task.tst_inputs = taskgen.to_nodes(test_files)
+        #task.tst_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
 
 
 
