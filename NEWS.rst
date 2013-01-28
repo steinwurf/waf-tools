@@ -8,6 +8,13 @@ Latest
 ------
 * tbd
 
+1.3.0
+-----
+* Adding support for the test_files attribute in tests and benchmarks. Using
+  this attribute one may supply the test or benchmark with test files e.g.
+  containing test data or similar. Test files are copied by the runners to
+  the location where the test binary is executed.
+
 1.2.1
 -----
 * Fix indentation error for python3
