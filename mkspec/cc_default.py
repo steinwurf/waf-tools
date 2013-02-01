@@ -202,64 +202,64 @@ def gcc_check_version(conf, version):
         conf.fatal("Wrong version number, wanted '%r', but got '%r'."
                    % (version, conf.env['CC_VERSION']))
 
-@conf
-def mkspec_get_clang_binary_name(conf, major, minor):
-    """
-    :param major: The major version number of the clang binary e.g. 3
-    :param minor: The minor version number of the clang binary e.g. 1
-    :return: A list with names of the gcc binary we are looking for
-             e.g. ['clang31'] for clang version 4.6 on
-             android
-    """
+# @conf
+# def mkspec_get_clang_binary_name(conf, major, minor):
+#     """
+#     :param major: The major version number of the clang binary e.g. 3
+#     :param minor: The minor version number of the clang binary e.g. 1
+#     :return: A list with names of the gcc binary we are looking for
+#              e.g. ['clang31'] for clang version 4.6 on
+#              android
+#     """
 
-    return ['clang{0}{1}'.format(major, minor), 'clang']
-
-
-
-@conf
-def mkspec_clang_configure(conf, major, minor):
-
-    # Where to look
-    paths = conf.mkspec_get_toolchain_paths()
-
-    # Find the compiler
-    clang_names = conf.mkspec_get_clang_binary_name(major, minor)
-
-    cc = conf.find_program(clang_names, path_list = paths, var = 'CC')
-    cxx = conf.cmd_to_list(cc)
-    conf.env.CC = cc
-    conf.env.CC_NAME = os.path.basename(conf.env.get_flat('CC'))
-
-    # waf's gxx tool for checking version number also works for clang
-    # so we just use it
-    conf.mkspec_check_gcc_version(major, minor)
-
-    # Find the archiver
-    ar = conf.mkspec_get_ar_binary_name()
-
-    conf.find_program(ar, path_list = paths, var = 'AR')
-    conf.env.ARFLAGS = 'rcs'
-
-    conf.gcc_common_flags()
-    conf.gcc_modifier_platform()
-    conf.cc_load_tools()
-    conf.cc_add_flags()
-    conf.link_add_flags()
-
-    # Add our own cxx flags
-    conf.mkspec_set_clang_ccflags()
+#     return ['clang{0}{1}'.format(major, minor), 'clang']
 
 
-@conf
-def mkspec_set_clang_ccflags(conf):
-    conf.env['CCFLAGS'] += ['-O2', '-g', '-Wextra', '-Wall']
+
+# @conf
+# def mkspec_clang_configure(conf, major, minor):
+
+#     # Where to look
+#     paths = conf.mkspec_get_toolchain_paths()
+
+#     # Find the compiler
+#     clang_names = conf.mkspec_get_clang_binary_name(major, minor)
+
+#     cc = conf.find_program(clang_names, path_list = paths, var = 'CC')
+#     cxx = conf.cmd_to_list(cc)
+#     conf.env.CC = cc
+#     conf.env.CC_NAME = os.path.basename(conf.env.get_flat('CC'))
+
+#     # waf's gxx tool for checking version number also works for clang
+#     # so we just use it
+#     conf.mkspec_check_gcc_version(major, minor)
+
+#     # Find the archiver
+#     ar = conf.mkspec_get_ar_binary_name()
+
+#     conf.find_program(ar, path_list = paths, var = 'AR')
+#     conf.env.ARFLAGS = 'rcs'
+
+#     conf.gcc_common_flags()
+#     conf.gcc_modifier_platform()
+#     conf.cc_load_tools()
+#     conf.cc_add_flags()
+#     conf.link_add_flags()
+
+#     # Add our own cxx flags
+#     conf.mkspec_set_clang_ccflags()
 
 
-@conf
-def mkspec_clang_android_configure(conf, major, minor):
-    conf.set_mkspec_platform('android')
-    conf.mkspec_clang_configure(major,minor)
-    conf.mkspec_set_android_common()
+# @conf
+# def mkspec_set_clang_ccflags(conf):
+#     conf.env['CCFLAGS'] += ['-O2', '-g', '-Wextra', '-Wall']
+
+
+# @conf
+# def mkspec_clang_android_configure(conf, major, minor):
+#     conf.set_mkspec_platform('android')
+#     conf.mkspec_clang_configure(major,minor)
+#     conf.mkspec_set_android_common()
 
 
 @conf
