@@ -11,6 +11,6 @@ def configure(conf):
         conf.env.MSVC_VERSIONS = ['msvc 10.0']
         conf.env.MSVC_TARGETS  = ['x86']
         conf.load('msvc')
-        conf.add_msvc_default_cxxflags()
+        conf.mkspec_set_msvc_cxxflags()
     else:
         conf.fatal('%s is unsupported for this mkspec.' % conf.get_mkspec_platform())
