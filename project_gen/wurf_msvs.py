@@ -497,7 +497,8 @@ class vsnode_project(vsnode):
         self.path = node
         self.uuid = make_uuid(node.abspath())
         self.name = node.name
-        self.title = self.path.abspath()
+        self.title = self.path.relpath()
+        self.srcnode = ctx.srcnode
         self.source = [] # list of node objects
         self.build_properties = [] # list of properties (nmake commands, output dir, etc)
 
@@ -576,7 +577,7 @@ class vsnode_project(vsnode):
 
     def get_filter_name(self, node):
         # Create project tree relative to the project file
-        lst = diff(node, self.path.parent)
+        lst = diff(node, self.srcnode)
         return '\\'.join(lst) or '.'
         return self.name
 
@@ -657,6 +658,7 @@ class vsnode_target(vsnode_project):
         node = base.make_node(quote(name) + ctx.project_extension) # the project file as a Node
         vsnode_project.__init__(self, ctx, node)
         self.name = quote(name)
+##        self.include_dirs = []
 
 ##    def __init__(self, ctx, tg):
 ##        """
@@ -679,10 +681,22 @@ class vsnode_target(vsnode_project):
 ##        return (self.get_waf(), opt)
         return self.get_waf()
 
+    def set_includes_search_path(self, include_dirs):
+        lst = [dir.abspath() for dir in include_dirs]
+        for x in self.build_properties:
+            x.includes_search_path = ';'.join(lst)
+
+
+    def collect_headers(self, ctx):
+        # remove duplicates
+        self.source.extend(list(set(ctx.path.ant_glob(HEADERS_GLOB, flat=False))))
+        self.source.sort(key=lambda x: x.abspath())
+
+
     def collect_source(self, tg):
         source_files = tg.to_nodes(getattr(tg, 'source', []))
         include_dirs = Utils.to_list(getattr(tg, 'msvs_includes', []))
-        print(tg.path.abspath()+' Include dirs: '+str(include_dirs))
+##        print(tg.path.abspath()+' Include dirs: '+str(include_dirs))
         include_files = []
 ##        for x in include_dirs:
 ##            if isinstance(x, str):
@@ -713,7 +727,7 @@ class vsnode_target(vsnode_project):
                 print('OUTPUT PATH: '+tsk.outputs[0].abspath())
                 x.output_file = tsk.outputs[0].abspath()
                 x.preprocessor_definitions = ';'.join(tsk.env.DEFINES)
-                x.includes_search_path = ';'.join(tg.env.INCPATHS)
+##                x.includes_search_path = ';'.join(tg.env.INCPATHS)
 
 class msvs_generator(BuildContext):
     '''generates a Visual Studio 2010 solution'''
@@ -736,10 +750,11 @@ class msvs_generator(BuildContext):
             self.solution_name = getattr(Context.g_module, Context.APPNAME, 'project') + '_2010.sln'
         if not getattr(self, 'projects_dir', None):
 ##            self.projects_dir = self.srcnode
-            self.projects_dir = self.srcnode.make_node('.depproj')
+            self.projects_dir = self.srcnode.make_node('VSProjects')
             self.projects_dir.mkdir()
         if not getattr(self, 'main_project', None):
             self.main_project = self.vsnode_target(self, getattr(Context.g_module, Context.APPNAME, 'project'))
+        self.include_dirs = set() # set of dirs for includes search path
 
         # bind the classes to the object, so that subclass can provide custom generators
         if not getattr(self, 'vsnode_vsdir', None):
@@ -779,6 +794,11 @@ class msvs_generator(BuildContext):
         """
 
         self.collect_targets()
+        self.main_project.collect_headers(self)
+        print("Includes search path:")
+        from pprint import pprint
+        pprint(self.include_dirs, indent=2)
+        self.main_project.set_includes_search_path(self.include_dirs)
         self.all_projects.append(self.main_project)
         # self.add_aliases()
         # self.collect_dirs()
@@ -848,16 +868,25 @@ class msvs_generator(BuildContext):
 
                 if not hasattr(tg, 'msvs_includes'):
                     tg.msvs_includes = tg.to_list(getattr(tg, 'includes', [])) + tg.to_list(getattr(tg, 'export_includes', []))
+                    for x in tg.msvs_includes:
+                        if isinstance(x, str):
+                            x = tg.path.find_node(x)
+                        if x and not x.is_child_of(self.bldnode):
+                            self.include_dirs.add(x)
+
                 tg.post()
+##                from pprint import pprint
+##                pprint(tg.__dict__, indent=2)
                 if not getattr(tg, 'link_task', None):
                     continue
                 # Skip any projects that are outside the project directory
                 if not tg.path.is_child_of(self.srcnode):
                     continue
-                if tg.name.endswith('_tests'):
-                    print(str.format("Collecting sources: {}", tg))
+##                if tg.name.endswith('_tests'):
+##                print(str.format("Collecting sources: {}", tg))
 ##                    p = self.vsnode_target(self, tg)
-                    self.main_project.collect_source(tg) # delegate this processing
+                self.main_project.collect_source(tg) # delegate this processing
+                if hasattr(tg, '_type') and tg._type == 'program':
                     print(str.format("Properties: {}", tg))
                     self.main_project.collect_properties(tg)
 ##                    self.all_projects.append(p)
