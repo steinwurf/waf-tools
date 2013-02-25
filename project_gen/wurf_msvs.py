@@ -76,6 +76,7 @@ ASSUMPTIONS:
 
 import os, re, sys
 import uuid # requires python 2.5
+from pprint import pprint
 from waflib.Build import BuildContext
 from waflib import Utils, TaskGen, Logs, Task, Context, Node, Options
 
@@ -94,6 +95,12 @@ PROJECT_TEMPLATE = r'''<?xml version="1.0" encoding="UTF-8"?>
         ${endfor}
     </ItemGroup>
 
+    <ItemDefinitionGroup>
+        <Link>
+            <SubSystem>Console</SubSystem>
+        </Link>
+    </ItemDefinitionGroup>
+
     <PropertyGroup Label="Globals">
         <ProjectGuid>{${project.uuid}}</ProjectGuid>
         <Keyword>MakeFileProj</Keyword>
@@ -105,6 +112,7 @@ PROJECT_TEMPLATE = r'''<?xml version="1.0" encoding="UTF-8"?>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='${b.configuration}|${b.platform}'" Label="Configuration">
         <ConfigurationType>Makefile</ConfigurationType>
         <OutDir>${b.outdir}</OutDir>
+        <PlatformToolset>${project.platformver}</PlatformToolset>
     </PropertyGroup>
     ${endfor}
 
@@ -125,8 +133,6 @@ PROJECT_TEMPLATE = r'''<?xml version="1.0" encoding="UTF-8"?>
         <NMakeCleanCommandLine>${xml:project.get_clean_command(b)}</NMakeCleanCommandLine>
         <NMakeIncludeSearchPath>${xml:b.includes_search_path}</NMakeIncludeSearchPath>
         <NMakePreprocessorDefinitions>${xml:b.preprocessor_definitions};$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-        <IncludePath>${xml:b.includes_search_path}</IncludePath>
-        <ExecutablePath>$(ExecutablePath)</ExecutablePath>
 
         ${if getattr(b, 'output_file', None)}
         <NMakeOutput>${xml:b.output_file}</NMakeOutput>
@@ -258,13 +264,6 @@ Global
     EndGlobalSection
     GlobalSection(SolutionProperties) = preSolution
         HideSolutionNode = FALSE
-    EndGlobalSection
-    GlobalSection(NestedProjects) = preSolution
-    ${for p in project.all_projects}
-        ${if p.parent}
-        {${p.uuid}} = {${p.parent.uuid}}
-        ${endif}
-    ${endfor}
     EndGlobalSection
 EndGlobal
 '''
@@ -497,6 +496,7 @@ class vsnode_project(vsnode):
         self.path = node
         self.uuid = make_uuid(node.abspath())
         self.name = node.name
+        self.platformver = ctx.platformver
         self.title = self.path.relpath()
         self.srcnode = ctx.srcnode
         self.source = [] # list of node objects
@@ -509,9 +509,9 @@ class vsnode_project(vsnode):
         """
         lst = []
         def add(x):
-            if x.height() > self.tg.path.height() and x not in lst:
+            if x.height() > self.srcnode.height() and x not in lst:
                 lst.append(x)
-                add(x.parent)
+                if x.parent: add(x.parent)
         for x in self.source:
             add(x.parent)
         return lst
@@ -658,6 +658,7 @@ class vsnode_target(vsnode_project):
         node = base.make_node(quote(name) + ctx.project_extension) # the project file as a Node
         vsnode_project.__init__(self, ctx, node)
         self.name = quote(name)
+        self.include_dirs = set() # set of dirs for includes search path
 ##        self.include_dirs = []
 
 ##    def __init__(self, ctx, tg):
@@ -681,10 +682,22 @@ class vsnode_target(vsnode_project):
 ##        return (self.get_waf(), opt)
         return self.get_waf()
 
-    def set_includes_search_path(self, include_dirs):
-        lst = [dir.abspath() for dir in include_dirs]
+    def set_includes_search_path(self, bldpath):
+        lst = [d for d in self.include_dirs if not d.startswith(bldpath)]
+        # Add path to all dirs containing header files in the project
+        # Otherwise VS2010 Intellisense will not find includes in current dir
+        for x in self.source:
+            d = x.parent.abspath()
+            if d not in lst:
+                lst.append(d)
+
+        lst.sort()
+##        lst = list(self.include_dirs)
+        print("Includes search path:")
+        pprint(lst, indent=2)
+        inc_str = ';'.join(lst)
         for x in self.build_properties:
-            x.includes_search_path = ';'.join(lst)
+            x.includes_search_path = inc_str
 
 
     def collect_headers(self, ctx):
@@ -695,7 +708,7 @@ class vsnode_target(vsnode_project):
 
     def collect_source(self, tg):
         source_files = tg.to_nodes(getattr(tg, 'source', []))
-        include_dirs = Utils.to_list(getattr(tg, 'msvs_includes', []))
+##        include_dirs = Utils.to_list(getattr(tg, 'msvs_includes', []))
 ##        print(tg.path.abspath()+' Include dirs: '+str(include_dirs))
         include_files = []
 ##        for x in include_dirs:
@@ -727,6 +740,9 @@ class vsnode_target(vsnode_project):
                 print('OUTPUT PATH: '+tsk.outputs[0].abspath())
                 x.output_file = tsk.outputs[0].abspath()
                 x.preprocessor_definitions = ';'.join(tsk.env.DEFINES)
+                print('TARGET INCPATH: ')
+                pprint(tg.env.INCPATHS, indent=2)
+                self.include_dirs = set(tg.env.INCPATHS)
 ##                x.includes_search_path = ';'.join(tg.env.INCPATHS)
 
 class msvs_generator(BuildContext):
@@ -738,6 +754,13 @@ class msvs_generator(BuildContext):
         """
         Some data that needs to be present
         """
+        if not getattr(self, 'numver', None):
+            self.numver = '11.00'
+        if not getattr(self, 'vsver', None):
+            self.vsver  = '2010'
+        if not getattr(self, 'platformver', None):
+            self.platformver = 'v100'
+
         if not getattr(self, 'configurations', None):
             self.configurations = ['Release'] # LocalRelease, RemoteDebug, etc
         if not getattr(self, 'platforms', None):
@@ -752,9 +775,6 @@ class msvs_generator(BuildContext):
 ##            self.projects_dir = self.srcnode
             self.projects_dir = self.srcnode.make_node('VSProjects')
             self.projects_dir.mkdir()
-        if not getattr(self, 'main_project', None):
-            self.main_project = self.vsnode_target(self, getattr(Context.g_module, Context.APPNAME, 'project'))
-        self.include_dirs = set() # set of dirs for includes search path
 
         # bind the classes to the object, so that subclass can provide custom generators
         if not getattr(self, 'vsnode_vsdir', None):
@@ -768,8 +788,10 @@ class msvs_generator(BuildContext):
         if not getattr(self, 'vsnode_project_view', None):
             self.vsnode_project_view = vsnode_project_view
 
-        self.numver = '11.00'
-        self.vsver  = '2010'
+        if not getattr(self, 'main_project', None):
+            self.main_project = self.vsnode_target(self, getattr(Context.g_module, Context.APPNAME, 'project'))
+
+
 
     def execute(self):
         """
@@ -795,10 +817,7 @@ class msvs_generator(BuildContext):
 
         self.collect_targets()
         self.main_project.collect_headers(self)
-        print("Includes search path:")
-        from pprint import pprint
-        pprint(self.include_dirs, indent=2)
-        self.main_project.set_includes_search_path(self.include_dirs)
+        self.main_project.set_includes_search_path(self.bldnode.abspath())
         self.all_projects.append(self.main_project)
         # self.add_aliases()
         # self.collect_dirs()
@@ -868,11 +887,12 @@ class msvs_generator(BuildContext):
 
                 if not hasattr(tg, 'msvs_includes'):
                     tg.msvs_includes = tg.to_list(getattr(tg, 'includes', [])) + tg.to_list(getattr(tg, 'export_includes', []))
-                    for x in tg.msvs_includes:
-                        if isinstance(x, str):
-                            x = tg.path.find_node(x)
-                        if x and not x.is_child_of(self.bldnode):
-                            self.include_dirs.add(x)
+##                    for x in tg.msvs_includes:
+##                        if isinstance(x, str):
+##                            x = tg.path.find_node(x)
+##                        # Skip include dirs in the 'build' directory
+##                        if x and not x.is_child_of(self.bldnode):
+##                            self.include_dirs.add(x)
 
                 tg.post()
 ##                from pprint import pprint
@@ -887,7 +907,7 @@ class msvs_generator(BuildContext):
 ##                    p = self.vsnode_target(self, tg)
                 self.main_project.collect_source(tg) # delegate this processing
                 if hasattr(tg, '_type') and tg._type == 'program':
-                    print(str.format("Properties: {}", tg))
+                    print(str.format("MAIN PROGRAM FOUND: {}", tg))
                     self.main_project.collect_properties(tg)
 ##                    self.all_projects.append(p)
 
@@ -1029,6 +1049,10 @@ class msvs_2008_generator(msvs_generator):
     fun = msvs_generator.fun
 
     def init(self):
+        self.numver = '10.00'
+        self.vsver  = '2008'
+        self.platformver = 'v90'
+
         if not getattr(self, 'project_extension', None):
             self.project_extension = '_2008.vcproj'
         if not getattr(self, 'solution_name', None):
@@ -1044,8 +1068,25 @@ class msvs_2008_generator(msvs_generator):
             self.vsnode_project_view = wrap_2008(vsnode_project_view)
 
         msvs_generator.init(self)
-        self.numver = '10.00'
-        self.vsver  = '2008'
+
+
+class msvs_2012_generator(msvs_generator):
+    '''generates a Visual Studio 2012 solution'''
+    cmd = 'msvs2012'
+    fun = msvs_generator.fun
+
+    def init(self):
+        self.numver = '12.00'
+        self.vsver  = '2012'
+        self.platformver = 'v110'
+
+        if not getattr(self, 'project_extension', None):
+            self.project_extension = '_2012.vcxproj'
+        if not getattr(self, 'solution_name', None):
+            self.solution_name = getattr(Context.g_module, Context.APPNAME, 'project') + '_2012.sln'
+
+        msvs_generator.init(self)
+
 
 ## NO NEED FOR THIS - WE WILL HAVE ONLY ONE PROJECT PER REPOSITORY
 ##def options(ctx):
