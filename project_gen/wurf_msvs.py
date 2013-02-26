@@ -659,6 +659,7 @@ class vsnode_target(vsnode_project):
         vsnode_project.__init__(self, ctx, node)
         self.name = quote(name)
         self.include_dirs = set() # set of dirs for includes search path
+        self.target_found = False
 ##        self.include_dirs = []
 
 ##    def __init__(self, ctx, tg):
@@ -737,6 +738,7 @@ class vsnode_target(vsnode_project):
             except AttributeError:
                 pass
             else:
+                self.target_found = True
                 print('OUTPUT PATH: '+tsk.outputs[0].abspath())
                 x.output_file = tsk.outputs[0].abspath()
                 x.preprocessor_definitions = ';'.join(tsk.env.DEFINES)
@@ -906,9 +908,10 @@ class msvs_generator(BuildContext):
 ##                print(str.format("Collecting sources: {}", tg))
 ##                    p = self.vsnode_target(self, tg)
                 self.main_project.collect_source(tg) # delegate this processing
-                if hasattr(tg, '_type') and tg._type == 'program':
-                    print(str.format("MAIN PROGRAM FOUND: {}", tg))
-                    self.main_project.collect_properties(tg)
+                if not self.main_project.target_found:
+                    if hasattr(tg, '_type') and tg._type == 'program':
+                        print(str.format("MAIN PROGRAM FOUND: {}", tg))
+                        self.main_project.collect_properties(tg)
 ##                    self.all_projects.append(p)
 
 ##    def add_aliases(self):
