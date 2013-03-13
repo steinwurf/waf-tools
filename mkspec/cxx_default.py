@@ -275,4 +275,7 @@ def mkspec_set_android_common(conf):
 
 @conf
 def mkspec_set_msvc_cxxflags(conf):
-    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/MT', '/EHs']
+    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target) to suppress warnings
+    # Set _CRT_SECURE_NO_WARNINGS to suppress deprecation warnings for strcpy, sprintf, etc.
+    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/MT', '/EHs',
+        '/D_WIN32_WINNT=0x0501', '/D_CRT_SECURE_NO_WARNINGS']
