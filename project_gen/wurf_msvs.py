@@ -684,9 +684,10 @@ class vsnode_target(vsnode_project):
         return self.get_waf()
 
     def set_includes_search_path(self, bldpath):
+        # Skip dirs in the 'build' directory
         lst = [d for d in self.include_dirs if not d.startswith(bldpath)]
         # Add path to all dirs containing header files in the project
-        # Otherwise VS2010 Intellisense will not find includes in current dir
+        # Otherwise VS2010 IntelliSense will not find includes in current dir
         for x in self.source:
             d = x.parent.abspath()
             if d not in lst:
@@ -694,16 +695,21 @@ class vsnode_target(vsnode_project):
 
         lst.sort()
 ##        lst = list(self.include_dirs)
-        print("Includes search path:")
+        print("INCLUDE SEARCH PATH:")
         pprint(lst, indent=2)
+        # Create a string from the list of include dirs
         inc_str = ';'.join(lst)
         for x in self.build_properties:
             x.includes_search_path = inc_str
 
 
     def collect_headers(self, ctx):
-        # remove duplicates
-        self.source.extend(list(set(ctx.path.ant_glob(HEADERS_GLOB, flat=False))))
+        # Get all the header files in the project tree
+        all_headers = ctx.path.ant_glob(HEADERS_GLOB, flat=False)
+        # Skip include files in the 'build' directory
+        filtered = [h for h in all_headers if not h.is_child_of(ctx.bldnode)]
+        # Add the headers to the project source tree
+        self.source.extend(filtered)
         self.source.sort(key=lambda x: x.abspath())
 
 
@@ -711,7 +717,7 @@ class vsnode_target(vsnode_project):
         source_files = tg.to_nodes(getattr(tg, 'source', []))
 ##        include_dirs = Utils.to_list(getattr(tg, 'msvs_includes', []))
 ##        print(tg.path.abspath()+' Include dirs: '+str(include_dirs))
-        include_files = []
+##        include_files = []
 ##        for x in include_dirs:
 ##            if isinstance(x, str):
 ##                x = tg.path.find_node(x)
@@ -719,8 +725,8 @@ class vsnode_target(vsnode_project):
 ##                lst = [y for y in x.ant_glob(HEADERS_GLOB, flat=False)]
 ##                include_files.extend(lst)
 
-        # remove duplicates
-        self.source.extend(list(set(source_files + include_files)))
+        # Remove duplicates
+        self.source.extend(list(set(source_files)))
         self.source.sort(key=lambda x: x.abspath())
 
     def collect_properties(self, tg):
@@ -739,13 +745,13 @@ class vsnode_target(vsnode_project):
                 pass
             else:
                 self.target_found = True
-                print('OUTPUT PATH: '+tsk.outputs[0].abspath())
+                print('OUTPUT PATH:\n\t'+tsk.outputs[0].abspath())
                 x.output_file = tsk.outputs[0].abspath()
                 x.preprocessor_definitions = ';'.join(tsk.env.DEFINES)
-                print('TARGET INCPATH: ')
-                pprint(tg.env.INCPATHS, indent=2)
+                ## print('TARGET INCPATH: ')
+                ##pprint(tg.env.INCPATHS, indent=2)
                 self.include_dirs = set(tg.env.INCPATHS)
-##                x.includes_search_path = ';'.join(tg.env.INCPATHS)
+
 
 class msvs_generator(BuildContext):
     '''generates a Visual Studio 2010 solution'''
@@ -910,7 +916,7 @@ class msvs_generator(BuildContext):
                 self.main_project.collect_source(tg) # delegate this processing
                 if not self.main_project.target_found:
                     if hasattr(tg, '_type') and tg._type == 'program':
-                        print(str.format("MAIN PROGRAM FOUND: {}", tg))
+                        print("MAIN PROGRAM FOUND:\n\t{}".format(tg))
                         self.main_project.collect_properties(tg)
 ##                    self.all_projects.append(p)
 
