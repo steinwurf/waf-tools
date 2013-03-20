@@ -108,6 +108,12 @@ def mkspec_get_gxx_binary_name(conf, major, minor):
         # toolchains that we are aware of
         return ['arm-linux-androideabi-g++']
 
+    if conf.is_mkspec_platform('windows'):
+
+        # On Windows, all binaries are named the same
+        # for all g++ versions
+        return ['g++']
+
     return binary
 
 

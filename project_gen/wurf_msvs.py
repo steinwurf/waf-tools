@@ -748,8 +748,8 @@ class vsnode_target(vsnode_project):
                 print('OUTPUT PATH:\n\t'+tsk.outputs[0].abspath())
                 x.output_file = tsk.outputs[0].abspath()
                 x.preprocessor_definitions = ';'.join(tsk.env.DEFINES)
-                ## print('TARGET INCPATH: ')
-                ##pprint(tg.env.INCPATHS, indent=2)
+                print('TARGET INCPATH: ')
+                pprint(tg.env.INCPATHS, indent=2)
                 self.include_dirs = set(tg.env.INCPATHS)
 
 
