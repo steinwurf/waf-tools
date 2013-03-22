@@ -181,11 +181,20 @@ def mkspec_gxx_configure(conf, major, minor):
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] += ['-O2','-g','-ftree-vectorize',
+    conf.env['CXXFLAGS'] += ['-O2','-ftree-vectorize',
                              '-Wextra','-Wall']
+
+    if conf.has_tool_option('cxx_debug'):
+        conf.env['CXXFLAGS'] += ['-g']
+    else:
+        conf.env['CXXFLAGS'] += ['-s']
 
     if conf.is_mkspec_platform('android'):
         # http://stackoverflow.com/questions/9247151
+        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
+    elif conf.is_mkspec_platform('windows'):
+        # To enable non-standard functions on MinGW
+        # http://stackoverflow.com/questions/6312151
         conf.env['CXXFLAGS'] += ['-std=gnu++0x']
     else:
         conf.env['CXXFLAGS'] += ['-std=c++0x']
@@ -251,7 +260,9 @@ def mkspec_clang_configure(conf, major, minor):
 
 @conf
 def mkspec_set_clang_cxxflags(conf):
-    conf.env['CXXFLAGS'] += ['-O2', '-g', '-Wextra', '-Wall', '-std=c++0x']
+    # Clang is compatible with gcc options
+    mkspec_set_gxx_cxxflags(conf)
+    #conf.env['CXXFLAGS'] += ['-O2', '-s', '-Wextra', '-Wall', '-std=c++0x']
 
 
 @conf
@@ -281,7 +292,9 @@ def mkspec_set_android_common(conf):
 
 @conf
 def mkspec_set_msvc_cxxflags(conf):
-    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target) to suppress warnings
-    # Set _CRT_SECURE_NO_WARNINGS to suppress deprecation warnings for strcpy, sprintf, etc.
+    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target)
+    # to suppress warnings in boost asio
+    # Set _CRT_SECURE_NO_WARNINGS to suppress
+    # deprecation warnings for strcpy, sprintf, etc.
     conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/MT', '/EHs',
         '/D_WIN32_WINNT=0x0501', '/D_CRT_SECURE_NO_WARNINGS']
