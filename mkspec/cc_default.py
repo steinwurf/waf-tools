@@ -7,6 +7,9 @@ from waflib.Tools.compiler_c import c_compiler
 import waflib.Tools.gcc as gcc
 from os.path import abspath, expanduser
 import os
+
+import mkspec_common
+
 """
 Detect and setup the default compiler for the platform
 """
@@ -63,28 +66,6 @@ def configure(conf):
 #     return option
 
 @conf
-def mkspec_get_toolchain_paths(conf):
-    """
-    :return: the common paths where we may find the gcc binary
-    """
-    # The default path to search
-    path_list = os.environ.get('PATH', '').split(os.pathsep)
-
-    if conf.is_mkspec_platform('mac'):
-
-        # If the compiler is installed using macports
-        path_list += ['/opt/local/bin']
-
-    if conf.is_mkspec_platform('android'):
-        ndk = conf.get_tool_option('android_ndk_dir')
-        ndk = abspath(expanduser(ndk))
-        ndk_path = [ndk, os.path.join(ndk,'bin')]
-
-        return ndk_path
-
-    return path_list
-
-@conf
 def mkspec_get_gcc_binary_name(conf, major, minor):
     """
     :param major: The major version number of the gcc binary e.g. 4
@@ -127,19 +108,6 @@ def mkspec_check_gcc_version(conf, major, minor):
 
 
 @conf
-def mkspec_get_ar_binary_name(conf):
-    """
-    :return: The name of the ar binary we are looking for
-             e.g. 'arm-linux-androideabi-ar' for the archiver on android
-    """
-
-    if conf.is_mkspec_platform('android'):
-        return 'arm-linux-androideabi-ar'
-    else:
-        return 'ar'
-
-
-@conf
 def mkspec_gcc_configure(conf, major, minor):
 
     # Where to look
@@ -175,7 +143,6 @@ def mkspec_gcc_configure(conf, major, minor):
 
     # Add our own cxx flags
     conf.mkspec_set_gcc_ccflags()
-
 
 
 @conf
@@ -270,16 +237,16 @@ def mkspec_gcc_android_configure(conf, major, minor):
     conf.mkspec_gcc_configure(major,minor)
     conf.mkspec_set_android_common()
 
-@conf
-def mkspec_set_android_common(conf):
-    sdk = conf.get_tool_option('android_sdk_dir')
-    sdk = abspath(expanduser(sdk))
-    sdk_path = [sdk, os.path.join(sdk,'platform-tools')]
+# @conf
+# def mkspec_set_android_common(conf):
+#     sdk = conf.get_tool_option('android_sdk_dir')
+#     sdk = abspath(expanduser(sdk))
+#     sdk_path = [sdk, os.path.join(sdk,'platform-tools')]
 
-    conf.find_program('adb', path_list = sdk_path, var='ADB')
+#     conf.find_program('adb', path_list = sdk_path, var='ADB')
 
-    # Set the android define - some libraries rely on this define being present
-    conf.env.DEFINES += ['ANDROID']
+#     # Set the android define - some libraries rely on this define being present
+#     conf.env.DEFINES += ['ANDROID']
 
 
 #### UNTESTED!
@@ -289,16 +256,6 @@ def mkspec_gcc_ios_configure(conf, major, minor):
         conf.set_mkspec_platform('ios')
     conf.mkspec_gcc_configure(major,minor)
     conf.mkspec_set_ios_common()
-
-#### UNTESTED!
-@conf
-def mkspec_set_ios_common(conf):
-    sdk = conf.get_tool_option('ios_sdk_dir')
-    sdk = abspath(expanduser(sdk))
-    sdk_path = [sdk]
-
-    conf.env.DEFINES += ['IOS']
-
 
 @conf
 def add_msvc_default_ccflags(conf):
