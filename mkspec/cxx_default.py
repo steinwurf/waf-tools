@@ -184,6 +184,11 @@ def mkspec_set_gxx_cxxflags(conf):
     else:
         conf.env['CXXFLAGS'] += ['-std=c++0x']
 
+    if conf.has_tool_option('cxx_debug'):
+        conf.env['CXXFLAGS'] += ['-g']
+    else:
+        conf.env['CXXFLAGS'] += ['-s']
+
 # @conf
 # def gcc_check_version(conf, version):
 #     """
