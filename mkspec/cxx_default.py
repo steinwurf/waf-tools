@@ -44,7 +44,7 @@ def configure(conf):
     elif 'g++' in CXX:
         conf.mkspec_set_gxx_cxxflags()
     elif 'CL.exe' in CXX or 'cl.exe' in CXX:
-        conf.add_msvc_default_cxxflags()
+        conf.mkspec_set_msvc_cxxflags()
     else:
         raise Errors.WafError('toolchain_cxx flag for unknown compiler %s'
                               % conf.env.CXX)
@@ -279,5 +279,5 @@ def mkspec_set_android_common(conf):
 
 
 @conf
-def add_msvc_default_cxxflags(conf):
+def mkspec_set_msvc_cxxflags(conf):
     conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/MT', '/EHs']
