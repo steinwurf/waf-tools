@@ -282,6 +282,24 @@ def mkspec_set_android_common(conf):
     conf.env.DEFINES += ['ANDROID']
 
 
+#### UNTESTED!
+@conf
+def mkspec_gcc_ios_configure(conf, major, minor):
+    if not conf.get_mkspec_platform == 'ios':
+        conf.set_mkspec_platform('ios')
+    conf.mkspec_gcc_configure(major,minor)
+    conf.mkspec_set_ios_common()
+
+#### UNTESTED!
+@conf
+def mkspec_set_ios_common(conf):
+    sdk = conf.get_tool_option('ios_sdk_dir')
+    sdk = abspath(expanduser(sdk))
+    sdk_path = [sdk]
+
+    conf.env.DEFINES += ['IOS']
+
+
 @conf
 def add_msvc_default_ccflags(conf):
     conf.env['CCFLAGS'] += ['/O2', '/Ob2', '/W3', '/MT', '/EHs']
