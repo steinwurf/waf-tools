@@ -8,11 +8,17 @@ Latest
 ------
 * tbd 
 
+1.5.0
+-----
+* Added automatic project generator for Visual Studio 2008, 2010 and 2012.
+* Support for debugging in Visual Studio with the cxx_debug option.
+* Spurious warnings removed on win32.
+
 1.4.0
 -----
 * Updated default cxxflags to build stripped release versions of the libraries.
 * Possibility to use cxx_debug option when a debug build is desired.
-* Added mkspec for msvc11 x86
+* Added mkspec for msvc11_x86
 
 1.3.1
 -----
