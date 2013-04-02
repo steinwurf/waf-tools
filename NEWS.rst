@@ -8,6 +8,12 @@ Latest
 ------
 * tbd 
 
+1.4.0
+-----
+* Updated default cxxflags to build stripped release versions of the libraries.
+* Possibility to use cxx_debug option when a debug build is desired.
+* Added mkspec for msvc11 x86
+
 1.3.1
 -----
 * Fix problem handling paths to test_files nodes.
