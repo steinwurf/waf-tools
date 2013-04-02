@@ -108,6 +108,12 @@ def mkspec_get_gxx_binary_name(conf, major, minor):
         # toolchains that we are aware of
         return ['arm-linux-androideabi-g++']
 
+    if conf.is_mkspec_platform('windows'):
+
+        # On Windows, all binaries are named the same
+        # for all g++ versions
+        return ['g++']
+
     return binary
 
 
@@ -175,19 +181,23 @@ def mkspec_gxx_configure(conf, major, minor):
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] += ['-O2','-g','-ftree-vectorize',
+    conf.env['CXXFLAGS'] += ['-O2','-ftree-vectorize',
                              '-Wextra','-Wall']
-
-    if conf.is_mkspec_platform('android'):
-        # http://stackoverflow.com/questions/9247151
-        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
-    else:
-        conf.env['CXXFLAGS'] += ['-std=c++0x']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']
     else:
         conf.env['CXXFLAGS'] += ['-s']
+
+    if conf.is_mkspec_platform('android'):
+        # http://stackoverflow.com/questions/9247151
+        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
+    elif conf.is_mkspec_platform('windows'):
+        # To enable non-standard functions on MinGW
+        # http://stackoverflow.com/questions/6312151
+        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
+    else:
+        conf.env['CXXFLAGS'] += ['-std=c++0x']
 
 # @conf
 # def gcc_check_version(conf, version):
@@ -250,7 +260,9 @@ def mkspec_clang_configure(conf, major, minor):
 
 @conf
 def mkspec_set_clang_cxxflags(conf):
-    conf.env['CXXFLAGS'] += ['-O2', '-g', '-Wextra', '-Wall', '-std=c++0x']
+    # Clang is compatible with gcc options
+    mkspec_set_gxx_cxxflags(conf)
+    #conf.env['CXXFLAGS'] += ['-O2', '-s', '-Wextra', '-Wall', '-std=c++0x']
 
 
 @conf
@@ -279,5 +291,21 @@ def mkspec_set_android_common(conf):
 
 
 @conf
-def mkspec_set_msvc_cxxflags(conf):
-    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/MT', '/EHs']
+def mkspec_set_msvc_flags(conf):
+
+    # Set _CRT_SECURE_NO_WARNINGS and _SCL_SECURE_NO_WARNINGS to suppress
+    # deprecation warnings for strcpy, sprintf, etc.
+    if conf.has_tool_option('cxx_debug'):
+        # Produce full-symbolic debugging information in a .pdb file
+        # Use the multithread, debug version of the run-time library
+        conf.env['CXXFLAGS'] += ['/Zi', '/MTd', '/D_SCL_SECURE_NO_WARNINGS']
+        conf.env['LINKFLAGS'] += ['/DEBUG']
+    else:
+        # Use the multithread, release version of the run-time library
+        conf.env['CXXFLAGS'] += ['/MT', '/D_CRT_SECURE_NO_WARNINGS']
+
+    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target)
+    # to suppress warnings in boost asio
+    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/EHs',
+        '/D_WIN32_WINNT=0x0501']
+
