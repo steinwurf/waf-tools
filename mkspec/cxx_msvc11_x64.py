@@ -15,6 +15,6 @@ def configure(conf):
         # have to suppress the find_program output in the get_msvc_version().
         # E.g. by using conf.in_msg = 1, anyway this is future work
         conf.load('msvc')
-        conf.mkspec_set_msvc_cxxflags()
+        conf.mkspec_set_msvc_flags()
     else:
         conf.fatal('%s is unsupported for this mkspec.' % conf.get_mkspec_platform())

@@ -12,7 +12,7 @@ from waflib.Configure import conf
 
 # Allows us to catch queries for platforms that we do not yet support
 
-mkspec_platforms = ['windows','linux', 'android', 'mac']
+mkspec_platforms = ['windows', 'linux', 'android', 'mac']
 
 # If we ever need to do special things on specific platforms:
 """
@@ -62,7 +62,7 @@ def configure(conf):
     # Which mkspec should we use, by default, use the cxx_default
     # that simply fallbacks to use waf auto detect of compiler etc.
     mkspec = "cxx_default"
-    
+
     if conf.has_tool_option('cxx_mkspec'):
         mkspec = conf.get_tool_option('cxx_mkspec')
 
