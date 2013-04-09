@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+1.5.1
+-----
+* Fixing default compiler flags on Windows
+
 1.5.0
 -----
 * Added automatic project generator for Visual Studio 2008, 2010 and 2012.
