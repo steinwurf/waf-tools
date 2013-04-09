@@ -44,7 +44,7 @@ def configure(conf):
     elif 'g++' in CXX:
         conf.mkspec_set_gxx_cxxflags()
     elif 'CL.exe' in CXX or 'cl.exe' in CXX:
-        conf.mkspec_set_msvc_cxxflags()
+        conf.mkspec_set_msvc_flags()
     else:
         raise Errors.WafError('toolchain_cxx flag for unknown compiler %s'
                               % conf.env.CXX)
