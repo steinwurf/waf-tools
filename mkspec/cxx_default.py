@@ -306,6 +306,10 @@ def mkspec_set_msvc_flags(conf):
 
     # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target)
     # to suppress warnings in boost asio
-    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/EHs',
+    # Disable warning C4345 which only states that msvc follows the
+    # C++ standard for initializing POD types when the () form is used
+    # Treat C4100 unreferenced parameter warning as Level 3
+    # instead of Level 4 to better match g++ warnings
+    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100', '/EHs',
         '/D_WIN32_WINNT=0x0501']
 
