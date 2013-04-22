@@ -197,8 +197,10 @@ def mkspec_set_gxx_cxxflags(conf):
         # http://stackoverflow.com/questions/6312151
         conf.env['CXXFLAGS'] += ['-std=gnu++0x']
     elif conf.is_mkspec_platform('mac'):
-        # To enable the latest features on Mac OSX
-        conf.env['CXXFLAGS'] += ['-std=gnu++11']
+        # gnu++0x mode works well with both clang and g++
+        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
+        # To enable the latest features on Mac OSX with clang
+        #conf.env['CXXFLAGS'] += ['-std=gnu++11']
     else:
         conf.env['CXXFLAGS'] += ['-std=c++0x']
 
@@ -254,6 +256,7 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env.ARFLAGS = 'rcs'
 
     conf.gxx_common_flags()
+    conf.to_log(str(conf.env.DEST_OS))
     conf.gxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
