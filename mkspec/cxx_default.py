@@ -256,7 +256,9 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env.ARFLAGS = 'rcs'
 
     conf.gxx_common_flags()
-    conf.to_log(str(conf.env.DEST_OS))
+    # The platform detection does not work with Apple's clang   
+    if conf.is_mkspec_platform('mac'):
+        conf.env.DEST_OS = 'darwin'
     conf.gxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
