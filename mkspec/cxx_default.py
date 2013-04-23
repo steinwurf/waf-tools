@@ -274,6 +274,7 @@ def mkspec_set_clang_cxxflags(conf):
     mkspec_set_gxx_cxxflags(conf)
     # To use clang's own C++ standard library
     conf.env['CXXFLAGS'] += ['-stdlib=libc++']
+    conf.env['LINKFLAGS'] += ['-lc++']
     #conf.env['CXXFLAGS'] += ['-O2', '-s', '-Wextra', '-Wall', '-std=c++0x']
 
 
