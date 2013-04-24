@@ -256,8 +256,8 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env.ARFLAGS = 'rcs'
 
     conf.gxx_common_flags()
-    # The platform detection does not work with Apple's clang   
-    if conf.is_mkspec_platform('mac'):
+    # Automatic platform detection does not work with Apple's clang
+    if conf.is_mkspec_platform('mac') and not conf.env.DEST_OS:
         conf.env.DEST_OS = 'darwin'
     conf.gxx_modifier_platform()
     conf.cxx_load_tools()
@@ -272,9 +272,11 @@ def mkspec_clang_configure(conf, major, minor):
 def mkspec_set_clang_cxxflags(conf):
     # Clang is compatible with gcc options
     mkspec_set_gxx_cxxflags(conf)
-    # To use clang's own C++ standard library
-    conf.env['CXXFLAGS'] += ['-stdlib=libc++']
-    conf.env['LINKFLAGS'] += ['-lc++']
+    # Use clang's own C++ standard library on mac osx only
+    # Add other platforms when the library becomes stable there
+    if conf.is_mkspec_platform('mac'):
+        conf.env['CXXFLAGS'] += ['-stdlib=libc++']
+        conf.env['LINKFLAGS'] += ['-lc++']
     #conf.env['CXXFLAGS'] += ['-O2', '-s', '-Wextra', '-Wall', '-std=c++0x']
 
 
