@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import os
+import sys
+
 from waflib import Utils
 from waflib.Configure import conf
 import waflib.Tools.gxx as gxx
 from os.path import abspath, expanduser
-import os
+
+sys.path.append('./common')
+import msvc_common
 
 """
 Detect and setup the default compiler for the platform
@@ -15,9 +20,9 @@ def configure(conf):
     cxx_compilers = \
     {
         'win32':  ['msvc', 'g++'],
-        'cygwin': ['g++'],
-        'darwin': ['clang++', 'g++'],
         'linux':  ['g++'],
+        'darwin': ['clang++', 'g++'],
+        'cygwin': ['g++'],
         'default': ['g++']
     }
 
@@ -38,7 +43,7 @@ def configure(conf):
         except conf.errors.ConfigurationError as e:
             conf.env.revert()
             conf.end_msg(False)
-            debug('compiler_cxx: %r' % e)
+            conf.to_log('compiler_cxx: %r' % e)
         else:
             if conf.env['CXX']:
                 conf.end_msg(conf.env.get_flat('CXX'))

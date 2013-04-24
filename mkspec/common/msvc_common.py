@@ -7,6 +7,17 @@ from os.path import abspath, expanduser
 import os
 
 @conf
+def mkspec_msvc_configure(conf, version):
+    conf.env.MSVC_VERSIONS = ['msvc %s' % version]
+
+    # Here it would be nice to suppress all the extra "Checking for program CL"
+    # messages printed by waf when loading the msvc tool. It looks as if we
+    # have to suppress the find_program output in the get_msvc_version().
+    # E.g. by using conf.in_msg = 1, anyway this is future work
+    conf.load('msvc')
+    conf.mkspec_set_msvc_flags()
+
+@conf
 def mkspec_set_msvc_flags(conf):
 
     # Set _CRT_SECURE_NO_WARNINGS and _SCL_SECURE_NO_WARNINGS to suppress
