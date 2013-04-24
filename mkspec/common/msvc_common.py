@@ -3,19 +3,29 @@
 
 from waflib import Utils
 from waflib.Configure import conf
+from waflib.Logs import debug
 from os.path import abspath, expanduser
 import os
 
 @conf
 def mkspec_msvc_configure(conf, version):
+
     conf.env.MSVC_VERSIONS = ['msvc %s' % version]
 
-    # Here it would be nice to suppress all the extra "Checking for program CL"
-    # messages printed by waf when loading the msvc tool. It looks as if we
-    # have to suppress the find_program output in the get_msvc_version().
-    # E.g. by using conf.in_msg = 1, anyway this is future work
-    conf.load('msvc')
-    conf.mkspec_set_msvc_flags()
+    # Here we suppress all the "Checking for program CL"
+    # messages printed by waf when loading the msvc tool
+    conf.env.stash()
+    conf.start_msg('Checking for msvc %s compiler' % version)
+    try:
+        conf.load('msvc')
+    except conf.errors.ConfigurationError as e:
+        conf.env.revert()
+        conf.end_msg(False)
+        debug('msvc_common: %r' % e)
+    else:
+        conf.end_msg(conf.env.get_flat('CXX'))
+        conf.end_msg(False)
+        conf.mkspec_set_msvc_flags()
 
 @conf
 def mkspec_set_msvc_flags(conf):

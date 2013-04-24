@@ -6,10 +6,16 @@ import sys
 
 from waflib import Utils
 from waflib.Configure import conf
+from waflib.Logs import debug
 import waflib.Tools.gxx as gxx
 from os.path import abspath, expanduser
 
-sys.path.append('./common')
+# The common modules are in the ./common folder
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(CURRENT_DIR,'common'))
+
+import clang_common
+import gxx_common
 import msvc_common
 
 """
@@ -37,21 +43,28 @@ def configure(conf):
 
     for compiler in possible_compiler_list:
         conf.env.stash()
-        conf.start_msg('Checking for %r (c++ compiler)' % compiler)
+        conf.start_msg('Checking for %r (C++ compiler)' % compiler)
         try:
-            conf.load(compiler)
+            if compiler == 'clang++':
+                # Set the CXX variable manually
+                conf.env['CXX'] = 'clang++'
+                # Use the g++ waf tool to load clang
+                # as there is no tool for clang
+                conf.load('g++')
+            else:
+                conf.load(compiler)
         except conf.errors.ConfigurationError as e:
             conf.env.revert()
             conf.end_msg(False)
-            conf.to_log('compiler_cxx: %r' % e)
+            debug('cxx_default: %r' % e)
         else:
             if conf.env['CXX']:
                 conf.end_msg(conf.env.get_flat('CXX'))
                 conf.env['COMPILER_CXX'] = compiler
-                break
+                break # Break from the for-cycle
             conf.end_msg(False)
     else:
-        conf.fatal('could not configure a c++ compiler!')
+        conf.fatal('Could not configure a C++ compiler!')
 
     CXX = conf.env.get_flat('CXX')
 
