@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import os
+
 from waflib import Utils
 from waflib.Configure import conf
 import waflib.Tools.gxx as gxx
 from os.path import abspath, expanduser
-import os
+
+import cxx_common
 
 @conf
 def mkspec_clang_configure(conf, major, minor):
@@ -23,9 +26,11 @@ def mkspec_clang_configure(conf, major, minor):
 
     # waf's gxx tool for checking version number also works for clang
     # so we just use it
-    conf.mkspec_check_clang_version(major, minor)
+    conf.mkspec_check_cc_version(conf.env['CXX'], major, minor)
 
-    conf.find_program('ar', path_list = paths, var = 'AR')
+    # Find the archiver
+    ar = conf.mkspec_get_ar_binary_name()
+    conf.find_program(ar, path_list = paths, var = 'AR')
     conf.env.ARFLAGS = 'rcs'
 
     conf.gxx_common_flags()
@@ -36,6 +41,12 @@ def mkspec_clang_configure(conf, major, minor):
 
     # Add our own cxx flags
     conf.mkspec_set_clang_cxxflags()
+
+@conf
+def mkspec_clang_android_configure(conf, major, minor):
+    conf.set_mkspec_platform('android')
+    conf.mkspec_clang_configure(major,minor)
+    conf.mkspec_set_android_options()
 
 
 @conf

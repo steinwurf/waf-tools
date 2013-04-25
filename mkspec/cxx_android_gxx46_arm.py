@@ -2,10 +2,11 @@
 # encoding: utf-8
 
 """
-Detect and setup the g++ 4.7 compiler for 64 bit
+Detect and setup the android g++ 4.6 compiler for arm
 """
 def configure(conf):
     conf.load_external_tool('mkspec_common', 'gxx_common')
-    conf.mkspec_gxx_configure(4,7)
-    conf.env['CXXFLAGS'] += ['-m64']
+    conf.mkspec_gxx_android_configure(4,6)
+
+
 

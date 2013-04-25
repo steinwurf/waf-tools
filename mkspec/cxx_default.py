@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os
-import sys
+##import os
+##import sys
 
 from waflib import Utils
 from waflib.Configure import conf
 from waflib.Logs import debug
-import waflib.Tools.gxx as gxx
-from os.path import abspath, expanduser
+##import waflib.Tools.gxx as gxx
+##from os.path import abspath, expanduser
 
-# The common modules are in the ./common folder
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(CURRENT_DIR,'common'))
-
-import clang_common
-import gxx_common
-import msvc_common
+### The common modules are in the ./common folder
+##CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+##sys.path.append(os.path.join(CURRENT_DIR,'common'))
+##
+##import clang_common
+##import gxx_common
+##import msvc_common
 
 """
 Detect and setup the default compiler for the platform
@@ -70,10 +70,13 @@ def configure(conf):
 
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in CXX:
+        conf.load_external_tool('mkspec_common', 'clang_common')
         conf.mkspec_set_clang_cxxflags()
     elif 'g++' in CXX:
+        conf.load_external_tool('mkspec_common', 'gxx_common')
         conf.mkspec_set_gxx_cxxflags()
     elif 'CL.exe' in CXX or 'cl.exe' in CXX:
+        conf.load_external_tool('mkspec_common', 'msvc_common')
         conf.mkspec_set_msvc_flags()
     else:
         raise Errors.WafError('toolchain_cxx flag for unknown compiler %s'

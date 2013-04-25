@@ -1,18 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os, sys
-
-# The common modules are in the ./common folder
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(CURRENT_DIR,'common'))
-
-import gxx_common
-
 """
 Detect and setup the g++ 4.6 compiler for 64 bit
 """
 def configure(conf):
+    conf.load_external_tool('mkspec_common', 'gxx_common')
     conf.mkspec_gxx_configure(4,6)
     conf.env['CXXFLAGS'] += ['-m64']
 
