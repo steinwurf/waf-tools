@@ -49,8 +49,8 @@ def set_mkspec_platform(conf, platform):
                    (platform, conf.env['MKSPEC_PLATFORM']))
 
     if not platform in mkspec_platforms:
-        conf.fatal(("The mkspec platform %s is not supported"
-                   " supported is %s") % (platform, conf.env['MKSPEC_PLATFORM']))
+        conf.fatal(("The mkspec platform %s is not supported."
+                   " Current platform is %s") % (platform, conf.env['MKSPEC_PLATFORM']))
 
     conf.env['MKSPEC_PLATFORM'] = platform
 
