@@ -10,4 +10,4 @@ def configure(conf):
         conf.mkspec_clang_configure(4,2)
         conf.env.CXXFLAGS += ['-m64']
     else:
-        conf.fatal('%s is unsupported for this mkspec.' % conf.get_mkspec_platform())
+        conf.fatal('%s is not supported for this mkspec.' % conf.get_mkspec_platform())

@@ -10,4 +10,4 @@ def configure(conf):
         conf.env.MSVC_TARGETS  = ['x86_amd64']
         conf.mkspec_msvc_configure('11.0')
     else:
-        conf.fatal('%s is unsupported for this mkspec.' % conf.get_mkspec_platform())
+        conf.fatal('%s is not supported for this mkspec.' % conf.get_mkspec_platform())
