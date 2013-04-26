@@ -18,15 +18,14 @@ def mkspec_clang_configure(conf, major, minor):
 
     # Find the compiler
     clang_names = conf.mkspec_get_clang_binary_name(major, minor)
-
-    cxx = conf.find_program(clang_names, path_list = paths, var = 'CXX')
+    cxx = conf.find_program(clang_names, path_list = paths)
     cxx = conf.cmd_to_list(cxx)
-    conf.env.CXX = cxx
-    conf.env.CXX_NAME = os.path.basename(conf.env.get_flat('CXX'))
+    conf.env['CXX'] = cxx
+    conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
 
     # waf's gxx tool for checking version number also works for clang
     # so we just use it
-    conf.mkspec_check_cc_version(conf.env['CXX'], major, minor)
+    conf.mkspec_check_cc_version(cxx, major, minor)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name()
@@ -87,18 +86,4 @@ def mkspec_get_clang_binary_name(conf, major, minor):
     """
 
     return ['clang{0}{1}++'.format(major, minor), 'clang++']
-
-@conf
-def mkspec_check_clang_version(conf, major, minor):
-    """
-    :param major: The major version number of the clang++ binary e.g. 4
-    :param minor: The minor version number of the clang++ binary e.g. 6
-    """
-    conf.get_cc_version(conf.env['CXX'], gcc = True)
-
-    if (int(conf.env['CC_VERSION'][0]) != int(major) or
-        int(conf.env['CC_VERSION'][1]) != int(minor)):
-        conf.fatal("Wrong version number: {0}, "
-                   "expected major={1} and minor={2}."
-                   .format(conf.env['CC_VERSION'], major, minor))
 
