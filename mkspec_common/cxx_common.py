@@ -56,9 +56,9 @@ def mkspec_set_android_options(conf):
     conf.env.DEFINES += ['ANDROID']
 
     # Add common libraries for android
-    conf.env['LINKFLAGS'] += ['-llog', '-lgnustl_shared']
+    conf.env['LINKFLAGS'] += ['-llog']
     # The LIB_ANDROID variable does not work for cxx_program
-    #conf.env.LIB_ANDROID = ['log', 'gnustl_shared']
+    conf.env.LIB_ANDROID = ['gnustl_static']
 
 
 @conf
