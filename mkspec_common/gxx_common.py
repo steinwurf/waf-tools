@@ -5,6 +5,7 @@ import os
 
 from waflib import Utils
 from waflib.Configure import conf
+from waflib.Logs import debug
 import waflib.Tools.gxx as gxx
 import waflib.Tools.gcc as gcc
 from os.path import abspath, expanduser
@@ -40,13 +41,15 @@ def mkspec_gxx_configure(conf, major, minor):
 
     # Set up C++ tools and flags
     conf.gxx_common_flags()
-    conf.gxx_modifier_platform()
+    if not conf.is_mkspec_platform('android'):
+        conf.gxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
 
     # Also set up C tools and flags
     conf.gcc_common_flags()
-    conf.gcc_modifier_platform()
+    if not conf.is_mkspec_platform('android'):
+        conf.gcc_modifier_platform()
     conf.cc_load_tools()
     conf.cc_add_flags()
 
