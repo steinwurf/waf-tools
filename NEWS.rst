@@ -4,9 +4,13 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
-Latest
-------
-* tbd
+2.0.0
+-----
+* Major: Makespecs restructured, common functions moved to modules in mkspec_common
+* Major: gxx45 and msvc10 mkspecs removed
+* Major: Android mkspec renamed to cxx_android_gxx46_arm
+* Minor: Loading g++ in a makespec will also load gcc to compile C code
+* Minor: mkspec added for Apple LLVM 4.2: cxx_apple_llvm42_x64
 
 1.5.1
 -----
