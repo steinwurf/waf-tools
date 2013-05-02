@@ -683,16 +683,17 @@ class vsnode_target(vsnode_project):
 ##        return (self.get_waf(), opt)
         return self.get_waf()
 
-    def set_includes_search_path(self, bldpath):
+    def set_includes_search_path(self, ctx):
+        bldpath = ctx.bldnode.abspath()
         # Skip dirs in the 'build' directory
         lst = [d for d in self.include_dirs if not d.startswith(bldpath)]
         # Add path to all dirs containing header files in the project
         # Otherwise VS2010 IntelliSense will not find includes in current dir
-        for x in self.source:
-            d = x.parent.abspath()
-            if d not in lst:
-                lst.append(d)
-
+        if ctx.vsver == '2010':
+            for x in self.source:
+                d = x.parent.abspath()
+                if d not in lst:
+                    lst.append(d)
         lst.sort()
 ##        lst = list(self.include_dirs)
         print("INCLUDE SEARCH PATH:")
@@ -825,7 +826,7 @@ class msvs_generator(BuildContext):
 
         self.collect_targets()
         self.main_project.collect_headers(self)
-        self.main_project.set_includes_search_path(self.bldnode.abspath())
+        self.main_project.set_includes_search_path(self)
         self.all_projects.append(self.main_project)
         # self.add_aliases()
         # self.collect_dirs()
