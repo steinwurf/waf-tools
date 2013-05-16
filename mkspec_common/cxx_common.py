@@ -42,6 +42,17 @@ def mkspec_get_toolchain_paths(conf):
 
         return ndk_path
 
+    if conf.is_mkspec_platform('ios'):
+        if conf.has_tool_option('ios_toolchain_dir'):
+            toolchain = conf.get_tool_option('ios_toolchain_dir')
+        else:
+            toolchain = "/Applications/Xcode.app/Contents/Developer/" \
+                        "Toolchains/XcodeDefault.xctoolchain/usr/bin/"
+        toolchain = abspath(expanduser(toolchain))
+        #toolchain_path = [toolchain, os.path.join(toolchain,'bin')]
+
+        return toolchain
+
     return path_list
 
 @conf

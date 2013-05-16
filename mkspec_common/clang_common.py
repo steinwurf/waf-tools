@@ -47,6 +47,12 @@ def mkspec_clang_android_configure(conf, major, minor):
     conf.mkspec_clang_configure(major,minor)
     conf.mkspec_set_android_options()
 
+@conf
+def mkspec_clang_ios_configure(conf, major, minor):
+    conf.set_mkspec_platform('ios')
+    conf.mkspec_clang_configure(major,minor)
+    conf.mkspec_set_ios_options()
+
 
 @conf
 def mkspec_set_clang_cxxflags(conf):
