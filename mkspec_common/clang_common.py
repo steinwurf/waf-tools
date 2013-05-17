@@ -25,11 +25,12 @@ def mkspec_clang_configure(conf, major, minor):
 
     # waf's gxx tool for checking version number might also work for clang
     # TODO: write a proper tool for this
-    try:
-        conf.mkspec_check_cc_version(cxx, major, minor)
-    except Exception as e:
-        conf.to_log('Exception when executing mkspec_check_cc_version:')
-        conf.to_log(e)
+    conf.mkspec_check_cc_version(cxx, major, minor)
+##    try:
+##        conf.mkspec_check_cc_version(cxx, major, minor)
+##    except Exception as e:
+##        conf.to_log('Exception when executing mkspec_check_cc_version:')
+##        conf.to_log(e)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name()
@@ -37,7 +38,7 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env.ARFLAGS = 'rcs'
 
     conf.gxx_common_flags()
-    #conf.gxx_modifier_platform()
+    conf.gxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
     conf.link_add_flags()
