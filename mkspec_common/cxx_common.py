@@ -92,7 +92,7 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
 
     triple = "{}-apple-ios{}.0".format(cpu, min_ios_version)
 
-    ios_flags =
+    ios_flags = \
     [
         "-ccc-host-triple", triple, "-integrated-as",
         "-isysroot", sdk,
