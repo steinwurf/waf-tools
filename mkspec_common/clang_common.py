@@ -23,9 +23,13 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
 
-    # waf's gxx tool for checking version number also works for clang
-    # so we just use it
-    conf.mkspec_check_cc_version(cxx, major, minor)
+    # waf's gxx tool for checking version number might also work for clang
+    # TODO: write a proper tool for this
+    try:
+        conf.mkspec_check_cc_version(cxx, major, minor)
+    except Exception as e:
+        conf.to_log('Exception when executing mkspec_check_cc_version:')
+        conf.to_log(e)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name()
@@ -33,7 +37,7 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env.ARFLAGS = 'rcs'
 
     conf.gxx_common_flags()
-    conf.gxx_modifier_platform()
+    #conf.gxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
     conf.link_add_flags()
@@ -91,5 +95,6 @@ def mkspec_get_clang_binary_name(conf, major, minor):
              android
     """
 
-    return ['clang{0}{1}++'.format(major, minor), 'clang++']
+    #return ['clang{0}{1}++'.format(major, minor), 'clang++']
+    return ['clang++']
 
