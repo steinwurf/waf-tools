@@ -74,6 +74,29 @@ def mkspec_set_android_options(conf):
 
 
 @conf
+def mkspec_set_ios_options(conf, min_ios_version, cpu):
+    sdk = conf.get_tool_option('ios_sdk_dir')
+    sdk = abspath(expanduser(sdk))
+
+    # Define what are the necessary common compiler and linker options to build
+    # for the iOS platform. Here, tell the ARM cross-compiler to target the
+    # specified arm-apple-ios platform triplet, specify the location of the iOS SDK,
+    # use the compiler's integrated assembler and set the minimal supported iOS version
+
+    triple = "-ccc-host-triple {}-apple-ios{}".format(cpu, min_ios_version)
+
+    conf.env['CXXFLAGS'] += [ triple, "-integrated-as", "-isysroot {}".format(sdk),
+                              "-miphoneos-version-min={}".format(min_ios_version) ]
+
+    # Set the IPHONE define - some libraries rely on this define being present
+    conf.env.DEFINES += ['IPHONE']
+
+    # Add common libraries for iOS here
+    conf.env['LINKFLAGS'] += ['-lSystem'] # links with libSystem.dylib
+
+
+
+@conf
 def mkspec_get_ar_binary_name(conf):
     """
     :return: The name of the ar binary we are looking for

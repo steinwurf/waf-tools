@@ -44,14 +44,14 @@ def mkspec_clang_configure(conf, major, minor):
 @conf
 def mkspec_clang_android_configure(conf, major, minor):
     conf.set_mkspec_platform('android')
-    conf.mkspec_clang_configure(major,minor)
+    conf.mkspec_clang_configure(major, minor)
     conf.mkspec_set_android_options()
 
 @conf
-def mkspec_clang_ios_configure(conf, major, minor):
+def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
     conf.set_mkspec_platform('ios')
-    conf.mkspec_clang_configure(major,minor)
-    conf.mkspec_set_ios_options()
+    conf.mkspec_clang_configure(major, minor)
+    conf.mkspec_set_ios_options(min_ios_version, cpu)
 
 
 @conf
@@ -75,9 +75,9 @@ def mkspec_set_clang_cxxflags(conf):
     # To enable the latest standard on Mac OSX
     #conf.env['CXXFLAGS'] += ['-std=gnu++11']
 
-    # Use clang's own C++ standard library on mac osx only
+    # Use clang's own C++ standard library on Mac OSX and iOS
     # Add other platforms when the library becomes stable there
-    if conf.is_mkspec_platform('mac'):
+    if conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['CXXFLAGS'] += ['-stdlib=libc++']
         conf.env['LINKFLAGS'] += ['-lc++']
 

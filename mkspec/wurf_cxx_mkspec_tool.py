@@ -12,7 +12,7 @@ from waflib.Configure import conf
 
 # Allows us to catch queries for platforms that we do not yet support
 
-mkspec_platforms = ['windows', 'linux', 'android', 'mac']
+mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios']
 
 # If we ever need to do special things on specific platforms:
 """
