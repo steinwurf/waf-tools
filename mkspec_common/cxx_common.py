@@ -78,6 +78,12 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     sdk = conf.get_tool_option('ios_sdk_dir')
     sdk = abspath(expanduser(sdk))
     include_dir = sdk + '/usr/include'
+    
+    # Set the IPHONE define - some libraries rely on this define being present
+    conf.env.DEFINES += ['IPHONE']
+
+    # Add common libraries for iOS here
+    conf.env['LINKFLAGS'] += ['-lSystem'] # links with libSystem.dylib
 
     # Define what are the necessary common compiler and linker options to build
     # for the iOS platform. Here, tell the ARM cross-compiler to target the
@@ -86,20 +92,15 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
 
     triple = "{}-apple-ios{}.0".format(cpu, min_ios_version)
 
-    conf.env['CXXFLAGS'] += \
+    ios_flags =
     [
         "-ccc-host-triple", triple, "-integrated-as",
-        "-isysroot", sdk, "-I"+include_dir,
+        "-isysroot", sdk,
         "-miphoneos-version-min={}".format(min_ios_version)
-    ]
+    ]   
 
-    # Set the IPHONE define - some libraries rely on this define being present
-    conf.env.DEFINES += ['IPHONE']
-
-    # Add common libraries for iOS here
-    conf.env['LINKFLAGS'] += ['-lSystem'] # links with libSystem.dylib
-
-
+    conf.env['CXXFLAGS'] += ios_flags
+    conf.env['LINKFLAGS'] += ios_flags
 
 @conf
 def mkspec_get_ar_binary_name(conf):
