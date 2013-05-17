@@ -77,16 +77,21 @@ def mkspec_set_android_options(conf):
 def mkspec_set_ios_options(conf, min_ios_version, cpu):
     sdk = conf.get_tool_option('ios_sdk_dir')
     sdk = abspath(expanduser(sdk))
+    include_dir = sdk + '/usr/include'
 
     # Define what are the necessary common compiler and linker options to build
     # for the iOS platform. Here, tell the ARM cross-compiler to target the
     # specified arm-apple-ios platform triplet, specify the location of the iOS SDK,
     # use the compiler's integrated assembler and set the minimal supported iOS version
-    
+
     triple = "{}-apple-ios{}.0".format(cpu, min_ios_version)
 
-    conf.env['CXXFLAGS'] += [ "-ccc-host-triple", triple, "-integrated-as", "-isysroot", sdk,
-                              "-miphoneos-version-min={}".format(min_ios_version) ]
+    conf.env['CXXFLAGS'] += \
+    [
+        "-ccc-host-triple", triple, "-integrated-as",
+        "-isysroot", sdk, "-I"+include_dir,
+        "-miphoneos-version-min={}".format(min_ios_version)
+    ]
 
     # Set the IPHONE define - some libraries rely on this define being present
     conf.env.DEFINES += ['IPHONE']
