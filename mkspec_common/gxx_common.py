@@ -5,7 +5,6 @@ import os
 
 from waflib import Utils
 from waflib.Configure import conf
-from waflib.Logs import debug
 import waflib.Tools.gxx as gxx
 import waflib.Tools.gcc as gcc
 from os.path import abspath, expanduser

@@ -6,6 +6,7 @@ import os
 from waflib import Utils
 from waflib.Configure import conf
 import waflib.Tools.gxx as gxx
+import waflib.Tools.gcc as gcc
 from os.path import abspath, expanduser
 
 import cxx_common
@@ -16,16 +17,24 @@ def mkspec_clang_configure(conf, major, minor):
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
 
-    # Find the compiler
-    clang_names = conf.mkspec_get_clang_binary_name(major, minor)
-    cxx = conf.find_program(clang_names, path_list = paths)
+    # Find the clang++ compiler
+    #clang_names = conf.mkspec_get_clang_binary_name(major, minor)
+    cxx = conf.find_program('clang++', path_list = paths)
     cxx = conf.cmd_to_list(cxx)
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
-
     # waf's gxx tool for checking version number might also work for clang
     # TODO: write a proper tool for this
     conf.mkspec_check_cc_version(cxx, major, minor)
+
+    # Find clang as the C compiler
+    cc = conf.find_program('clang', path_list = paths)
+    cc = conf.cmd_to_list(cc)
+    conf.env['CC'] = cc
+    conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
+    # TODO: write a proper tool for this
+    conf.mkspec_check_cc_version(cc, major, minor)
+
 ##    try:
 ##        conf.mkspec_check_cc_version(cxx, major, minor)
 ##    except Exception as e:
@@ -37,14 +46,25 @@ def mkspec_clang_configure(conf, major, minor):
     conf.find_program(ar, path_list = paths, var = 'AR')
     conf.env.ARFLAGS = 'rcs'
 
+    # Set up C++ tools and flags
     conf.gxx_common_flags()
     conf.gxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
+
+    # Also set up C tools and flags
+    conf.gcc_common_flags()
+    conf.gcc_modifier_platform()
+    conf.cc_load_tools()
+    conf.cc_add_flags()
+
+    # Add linker flags
     conf.link_add_flags()
 
     # Add our own cxx flags
     conf.mkspec_set_clang_cxxflags()
+    # Add our own cc flags
+    conf.mkspec_set_clang_ccflags()
 
 @conf
 def mkspec_clang_android_configure(conf, major, minor):
@@ -58,11 +78,18 @@ def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
     conf.mkspec_clang_configure(major, minor)
     conf.mkspec_set_ios_options(min_ios_version, cpu)
 
+@conf
+def mkspec_set_clang_ccflags(conf):
+
+    conf.env['CCFLAGS'] += ['-O2', '-Wextra', '-Wall']
+
+    if conf.has_tool_option('cxx_debug'):
+        conf.env['CCFLAGS'] += ['-g']
 
 @conf
 def mkspec_set_clang_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] += ['-O2', '-Wextra','-Wall']
+    conf.env['CXXFLAGS'] += ['-O2', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']

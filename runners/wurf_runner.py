@@ -32,7 +32,7 @@ def configure(conf):
         conf.load('wurf_dependency_bundle')
         conf.load('wurf_tools')
         conf.load_external_tool('mkspec', 'wurf_cxx_mkspec_tool')
-        conf.load_external_tool('runners', 'wurf_runner')    
+        conf.load_external_tool('runners', 'wurf_runner')
 
 Finally in the build step, we add 'test' as a feature:
 
@@ -81,9 +81,11 @@ def make_run(taskgen, run_type):
     if getattr(taskgen, 'link_task', None):
 
         taskgen.bld.add_group()
-        
+
         if taskgen.bld.is_mkspec_platform('android'):
             task = taskgen.create_task('AndroidRunner', taskgen.link_task.outputs)
+        elif taskgen.bld.is_mkspec_platform('ios'):
+            task = taskgen.create_task('IosRunner', taskgen.link_task.outputs)
         else:
             task = taskgen.create_task('BasicRunner', taskgen.link_task.outputs)
 
@@ -107,7 +109,7 @@ def make_run(taskgen, run_type):
     else:
         taskgen.bld.add_post_fun(summary)
         taskgen.bld.add_post_fun(set_exit_code)
-    
+
 
 def summary(bld):
     """
