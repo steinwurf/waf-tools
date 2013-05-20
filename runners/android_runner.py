@@ -53,6 +53,22 @@ class AndroidRunner(BasicRunner):
         if bld.has_tool_option('device_id'):
             device_id = bld.get_tool_option('device_id')
 
+        # ADB shell command
+        adb_shell = []
+
+        if device_id:
+            adb_shell += [adb, '-s', device_id, 'shell']
+        else:
+            adb_shell += [adb, 'shell']
+
+        # First we remove all files from dest_dir
+        adb_shell += ["rm {}/*".format(dest_dir)]
+        result = run_cmd(adb_shell)
+        results.append(result)
+        if result['return_code'] != 0:
+            self.save_result(results)
+            return
+
         # Run the adb commands
         adb_push = []
 
@@ -101,6 +117,7 @@ class AndroidRunner(BasicRunner):
             adb_shell += [adb, 'shell']
 
         # We have to cd to the dir
+        # Then we remove all files from the target dir with rm -rf
         adb_shell += ["cd %s;./%s;echo shellexit:$?" % (dest_dir, binary)]
 
         result = run_cmd(adb_shell)

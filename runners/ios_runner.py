@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import os, sys, re
+import time
 from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner
@@ -47,9 +48,24 @@ class IosRunner(BasicRunner):
             (stdout, stderr) = proc.communicate()
 
             result =  {'cmd': cmd, 'return_code': proc.returncode,
-                       'stdout': stdout, 'stderr':stderr}
+                       'stdout': stdout, 'stderr': stderr}
 
             return result
+
+        def start_proc(cmd):
+
+            Logs.debug("wr: starting %r", cmd)
+
+            proc = Utils.subprocess.Popen(
+                cmd,
+                stderr=Utils.subprocess.PIPE,
+                stdout=Utils.subprocess.PIPE)
+            # Wait for a second so that the process can start
+            time.sleep(1.0)
+
+            return proc
+
+
 
         usbmux_dir = None
         if bld.has_tool_option('usbmux_dir'):
@@ -57,52 +73,62 @@ class IosRunner(BasicRunner):
         else:
             bld.fatal('usbmux_dir is not specified')
 
+        usbmux = os.path.join(usbmux_dir, 'tcprelay.py')
+        usbmux_cmd = [usbmux, '22:{}'.format(localport)]
+
+        # Start the usbmux daemon to forward 'localport' to port 22 on USB
+        usbmux_proc = start_proc(usbmux_cmd)
+
+        # First we remove all files from dest_dir
+        ssh_cmd = ['ssh', '-p', localport, ssh_target]
+        ssh_cmd += ["'rm {}/*'".format(dest_dir)]
+        result = run_cmd(ssh_cmd)
+        results.append(result)
+        if result['return_code'] != 0:
+            self.save_result(results)
+            usbmux_proc.kill()
+            return
+
         # Run the scp command
-        scp_cmd = []
+        scp_cmd = ['scp', '-P', localport]
+        file_list = []
 
-        if device_id:
-            scp_cmd += ['scp', '-P', localport]
-
-
-        # Copy the test files
+        # Enumerate the test files
         for t in self.tst_inputs:
-
             filename = os.path.basename(t.abspath())
-            dest_file = os.path.join(dest_dir, filename)
+            file_list += filename
 
-            scp_cmd_file = scp_cmd + [t.abspath(), dest_file]
-
-            result = run_cmd(scp_cmd_file)
-            results.append(result)
-
-            if result['return_code'] != 0:
-                self.save_result(results)
-                return
-
-
-        # Copy the binary
+        # Add the binary
         binary = str(self.inputs[0])
-        dest_bin = dest_dir + binary
+        #dest_bin = dest_dir + binary
+        file_list += self.inputs[0].abspath()
 
-        scp_cmd_bin = scp_cmd + [self.inputs[0].abspath(), dest_bin]
+        # Copy all files in file_list
+        scp_all_files = scp_cmd + file_list + [ssh_target+':'+dest_dir]
 
-        result = run_cmd(scp_cmd_bin)
+        result = run_cmd(scp_all_files)
         results.append(result)
 
         if result['return_code'] != 0:
             self.save_result(results)
+            usbmux_proc.kill()
             return
 
         cmd = self.format_command(dest_bin)
 
-        ssh_cmd = ['ssh', '-p', localport]
+
+        ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
         # We have to cd to the dir
+        # Then we remove all files from the target dir with rm -rf
         # Echo the exit code after the shell command
-        ssh_cmd += ["cd %s;./%s;echo shellexit:$?" % (dest_dir, binary)]
+        ssh_cmd += ["'cd %s;./%s;echo shellexit:$?'" % (dest_dir, binary)]
 
         result = run_cmd(ssh_cmd)
         results.append(result)
+
+        # Kill the usbmux process
+        usbmux_proc.kill()
 
         if result['return_code'] != 0:
             self.save_result(results)
