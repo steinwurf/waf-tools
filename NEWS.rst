@@ -4,6 +4,12 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.1.0
+-----
+* Minor: New mkspec for iOS 5.0 (cxx_ios50_apple_llvm42_armv7)
+* Minor: Added ios_runner for automated testing on iOS
+* Minor: Makespecs for clang++ and Apple LLVM will also load clang as a C compiler
+
 2.0.0
 -----
 * Major: Makespecs restructured, common functions moved to modules in mkspec_common
