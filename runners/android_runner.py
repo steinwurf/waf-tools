@@ -62,7 +62,7 @@ class AndroidRunner(BasicRunner):
             adb_shell += [adb, 'shell']
 
         # First we remove all files from dest_dir with rm -rf
-        adb_shell += ["rm -rf {}*".format(dest_dir)]
+        adb_shell += ["rm {}*".format(dest_dir)]
         result = run_cmd(adb_shell)
         results.append(result)
         if result['return_code'] != 0:
@@ -116,7 +116,7 @@ class AndroidRunner(BasicRunner):
         else:
             adb_shell += [adb, 'shell']
 
-        # We have to cd to the dir and run the binary        
+        # We have to cd to the dir and run the binary
         adb_shell += ["cd %s;./%s;echo shellexit:$?" % (dest_dir, binary)]
 
         result = run_cmd(adb_shell)
