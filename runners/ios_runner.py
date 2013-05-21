@@ -93,13 +93,13 @@ class IosRunner(BasicRunner):
 
         # Enumerate the test files
         for t in self.tst_inputs:
-            filename = os.path.basename(t.abspath())
-            file_list += filename
+            filename = t.abspath()
+            file_list += [filename]
 
         # Add the binary
         binary = str(self.inputs[0])
         #dest_bin = dest_dir + binary
-        file_list += self.inputs[0].abspath()
+        file_list += [self.inputs[0].abspath()]
 
         # Copy all files in file_list
         scp_all_files = scp_cmd + file_list + [ssh_target+':'+dest_dir]
