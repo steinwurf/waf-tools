@@ -79,7 +79,7 @@ class IosRunner(BasicRunner):
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
 
-        # First we remove all files from dest_dir
+        # First we remove all files from dest_dir with rm -rf
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
         ssh_cmd += ['rm -rf {}/*'.format(dest_dir)]
         result = run_cmd(ssh_cmd)
@@ -118,8 +118,7 @@ class IosRunner(BasicRunner):
         
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
-        # We have to cd to the dir
-        # Then we remove all files from the target dir with rm -rf
+        # We have to cd to dest_dir and run the binary
         # Echo the exit code after the shell command
         ssh_cmd += ['cd %s;./%s;echo shellexit:$?' % (dest_dir, binary)]
 
