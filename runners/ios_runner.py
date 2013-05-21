@@ -81,11 +81,13 @@ class IosRunner(BasicRunner):
 
         # First we remove all files from dest_dir
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
-        ssh_cmd += ["'rm {}/*'".format(dest_dir)]
-        # Note: this will return an error code if there are no files in dest_dir
-        # We can safely ignore this
+        ssh_cmd += ['rm -rf {}/*'.format(dest_dir)]
         result = run_cmd(ssh_cmd)
         results.append(result)
+                
+        if result['return_code'] != 0:
+            self.save_result(results)
+            return
 
         # Run the scp command
         scp_cmd = ['scp', '-P', localport]
@@ -112,6 +114,8 @@ class IosRunner(BasicRunner):
             usbmux_proc.kill()
             return
         
+        cmd = self.format_command(binary)
+        
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
         # We have to cd to the dir
@@ -123,9 +127,9 @@ class IosRunner(BasicRunner):
         results.append(result)
 
         # Kill the usbmux process
-        usbmux_proc.kill()
+        usbmux_proc.kill()        
 
-        if result['return_code'] != 0:
+        if result['return_code'] != 0:            
             self.save_result(results)
             return
 
@@ -151,6 +155,3 @@ class IosRunner(BasicRunner):
             return
 
         self.save_result(results)
-
-
-
