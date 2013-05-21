@@ -33,7 +33,7 @@ class IosRunner(BasicRunner):
 
         results = []
 
-        dest_dir = '/var/mobile/tmp'
+        dest_dir = 'private/var/mobile/tmp'
         localport = '22222'
         ssh_target = 'mobile@localhost'
 
