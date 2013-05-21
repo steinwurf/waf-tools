@@ -33,7 +33,7 @@ class IosRunner(BasicRunner):
 
         results = []
 
-        dest_dir = 'private/var/mobile/tmp'
+        dest_dir = '/private/var/mobile/tmp'
         localport = '22222'
         ssh_target = 'mobile@localhost'
 
@@ -82,12 +82,10 @@ class IosRunner(BasicRunner):
         # First we remove all files from dest_dir
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
         ssh_cmd += ["'rm {}/*'".format(dest_dir)]
+        # Note: this will return an error code if there are no files in dest_dir
+        # We can safely ignore this
         result = run_cmd(ssh_cmd)
         results.append(result)
-        if result['return_code'] != 0:
-            self.save_result(results)
-            usbmux_proc.kill()
-            return
 
         # Run the scp command
         scp_cmd = ['scp', '-P', localport]
