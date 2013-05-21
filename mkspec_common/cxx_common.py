@@ -42,6 +42,17 @@ def mkspec_get_toolchain_paths(conf):
 
         return ndk_path
 
+    if conf.is_mkspec_platform('ios'):
+        if conf.has_tool_option('ios_toolchain_dir'):
+            toolchain = conf.get_tool_option('ios_toolchain_dir')
+        else:
+            toolchain = "/Applications/Xcode.app/Contents/Developer/" \
+                        "Toolchains/XcodeDefault.xctoolchain/usr/bin/"
+        toolchain = abspath(expanduser(toolchain))
+        #toolchain_path = [toolchain, os.path.join(toolchain,'bin')]
+
+        return toolchain
+
     return path_list
 
 @conf
@@ -61,6 +72,35 @@ def mkspec_set_android_options(conf):
     # The Android toolchain will select the appropriate standard library
     #conf.env.LIB_ANDROID = ['gnustl_static']
 
+
+@conf
+def mkspec_set_ios_options(conf, min_ios_version, cpu):
+    sdk = conf.get_tool_option('ios_sdk_dir')
+    sdk = abspath(expanduser(sdk))
+    include_dir = sdk + '/usr/include'
+    
+    # Set the IPHONE define - some libraries rely on this define being present
+    conf.env.DEFINES += ['IPHONE']
+
+    # Add common libraries for iOS here
+    conf.env['LINKFLAGS'] += ['-lSystem'] # links with libSystem.dylib
+
+    # Define what are the necessary common compiler and linker options to build
+    # for the iOS platform. Here, tell the ARM cross-compiler to target the
+    # specified arm-apple-ios platform triplet, specify the location of the iOS SDK,
+    # use the compiler's integrated assembler and set the minimal supported iOS version
+
+    triple = "{}-apple-ios{}.0".format(cpu, min_ios_version)
+
+    ios_flags = \
+    [
+        "-ccc-host-triple", triple, "-integrated-as",
+        "-isysroot", sdk,
+        "-miphoneos-version-min={}".format(min_ios_version)
+    ]   
+
+    conf.env['CXXFLAGS'] += ios_flags
+    conf.env['LINKFLAGS'] += ios_flags
 
 @conf
 def mkspec_get_ar_binary_name(conf):

@@ -2,11 +2,12 @@
 # encoding: utf-8
 
 import os, sys, re
+import time
 from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner
 
-class AndroidRunner(BasicRunner):
+class IosRunner(BasicRunner):
 
     def save_result(self, results):
 
@@ -22,17 +23,19 @@ class AndroidRunner(BasicRunner):
         result = (self.format_command(self.inputs[0]), combined_return_code,
                   combined_stdout, combined_stderr)
 
-        super(AndroidRunner, self).save_result(result)
+        super(IosRunner, self).save_result(result)
 
     def run(self):
 
         bld = self.generator.bld
 
-        adb = bld.env['ADB']
+        #adb = bld.env['ADB']
 
         results = []
 
-        dest_dir = '/data/local/tmp/'
+        dest_dir = '/private/var/mobile/tmp'
+        localport = '22222'
+        ssh_target = 'mobile@localhost'
 
         def run_cmd(cmd):
 
@@ -45,84 +48,87 @@ class AndroidRunner(BasicRunner):
             (stdout, stderr) = proc.communicate()
 
             result =  {'cmd': cmd, 'return_code': proc.returncode,
-                       'stdout': stdout, 'stderr':stderr}
+                       'stdout': stdout, 'stderr': stderr}
 
             return result
 
-        device_id = None
-        if bld.has_tool_option('device_id'):
-            device_id = bld.get_tool_option('device_id')
+        def start_proc(cmd):
 
-        # ADB shell command
-        adb_shell = []
+            Logs.debug("wr: starting %r", cmd)
 
-        if device_id:
-            adb_shell += [adb, '-s', device_id, 'shell']
+            proc = Utils.subprocess.Popen(
+                cmd,
+                stderr=Utils.subprocess.PIPE,
+                stdout=Utils.subprocess.PIPE)
+            # Wait for a second so that the process can start
+            time.sleep(1.0)
+
+            return proc
+
+
+
+        usbmux_dir = None
+        if bld.has_tool_option('usbmux_dir'):
+            usbmux_dir = bld.get_tool_option('usbmux_dir')
         else:
-            adb_shell += [adb, 'shell']
+            bld.fatal('usbmux_dir is not specified')
+
+        usbmux = os.path.join(usbmux_dir, 'tcprelay.py')
+        usbmux_cmd = [usbmux, '22:{}'.format(localport)]
+
+        # Start the usbmux daemon to forward 'localport' to port 22 on USB
+        usbmux_proc = start_proc(usbmux_cmd)
 
         # First we remove all files from dest_dir with rm -rf
-        adb_shell += ["rm -rf {}*".format(dest_dir)]
-        result = run_cmd(adb_shell)
+        ssh_cmd = ['ssh', '-p', localport, ssh_target]
+        ssh_cmd += ['rm -rf {}/*'.format(dest_dir)]
+        result = run_cmd(ssh_cmd)
         results.append(result)
+                
         if result['return_code'] != 0:
             self.save_result(results)
             return
 
-        # Run the adb commands
-        adb_push = []
+        # Run the scp command
+        scp_cmd = ['scp', '-P', localport]
+        file_list = []
 
-        if device_id:
-            adb_push += [adb, '-s', device_id, 'push']
-        else:
-            adb_push += [adb, 'push']
-
-        # Push the test files
+        # Enumerate the test files
         for t in self.tst_inputs:
+            filename = t.abspath()
+            file_list += [filename]
 
-            filename = os.path.basename(t.abspath())
-            dest_file = os.path.join(dest_dir, filename)
-
-            adb_push_file = adb_push + [t.abspath(), dest_file]
-
-            result = run_cmd(adb_push_file)
-            results.append(result)
-
-            if result['return_code'] != 0:
-                self.save_result(results)
-                return
-
-
-        # Push the binary
+        # Add the binary
         binary = str(self.inputs[0])
-        dest_bin = dest_dir + binary
+        #dest_bin = dest_dir + binary
+        file_list += [self.inputs[0].abspath()]
 
-        adb_push_bin = adb_push + [self.inputs[0].abspath(), dest_bin]
+        # Copy all files in file_list
+        scp_all_files = scp_cmd + file_list + [ssh_target+':'+dest_dir]
 
-        result = run_cmd(adb_push_bin)
+        result = run_cmd(scp_all_files)
         results.append(result)
 
         if result['return_code'] != 0:
             self.save_result(results)
+            usbmux_proc.kill()
             return
+        
+        cmd = self.format_command(binary)
+        
+        ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
-        cmd = self.format_command(dest_bin)
-
+        # We have to cd to dest_dir and run the binary
         # Echo the exit code after the shell command
-        adb_shell = []
+        ssh_cmd += ['cd %s;./%s;echo shellexit:$?' % (dest_dir, binary)]
 
-        if device_id:
-            adb_shell += [adb, '-s', device_id, 'shell']
-        else:
-            adb_shell += [adb, 'shell']
-
-        # We have to cd to the dir and run the binary        
-        adb_shell += ["cd %s;./%s;echo shellexit:$?" % (dest_dir, binary)]
-
-        result = run_cmd(adb_shell)
+        result = run_cmd(ssh_cmd)
         results.append(result)
 
-        if result['return_code'] != 0:
+        # Kill the usbmux process
+        usbmux_proc.kill()        
+
+        if result['return_code'] != 0:            
             self.save_result(results)
             return
 
@@ -138,7 +144,7 @@ class AndroidRunner(BasicRunner):
             return
 
         if match.group(1) != "0":
-            result =  {'cmd': 'Shell exit indicate error',
+            result =  {'cmd': 'Shell exit indicates error',
                        'return_code': match.group(1),
                        'stdout': '',
                        'stderr': 'Exit code was %s' % match.group(1)}
@@ -148,6 +154,3 @@ class AndroidRunner(BasicRunner):
             return
 
         self.save_result(results)
-
-
-
