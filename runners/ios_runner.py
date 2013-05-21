@@ -111,10 +111,7 @@ class IosRunner(BasicRunner):
             self.save_result(results)
             usbmux_proc.kill()
             return
-
-        cmd = self.format_command(dest_bin)
-
-
+        
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
         # We have to cd to the dir
@@ -144,7 +141,7 @@ class IosRunner(BasicRunner):
             return
 
         if match.group(1) != "0":
-            result =  {'cmd': 'Shell exit indicate error',
+            result =  {'cmd': 'Shell exit indicates error',
                        'return_code': match.group(1),
                        'stdout': '',
                        'stderr': 'Exit code was %s' % match.group(1)}
