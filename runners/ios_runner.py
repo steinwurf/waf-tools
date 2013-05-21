@@ -117,7 +117,7 @@ class IosRunner(BasicRunner):
         # We have to cd to the dir
         # Then we remove all files from the target dir with rm -rf
         # Echo the exit code after the shell command
-        ssh_cmd += ["'cd %s;./%s'" % (dest_dir, binary)]
+        ssh_cmd += ['cd %s;./%s' % (dest_dir, binary)]
 
         result = run_cmd(ssh_cmd)
         results.append(result)
