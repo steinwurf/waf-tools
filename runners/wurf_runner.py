@@ -61,6 +61,7 @@ from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner
 from android_runner import AndroidRunner
+from ios_runner import IosRunner
 
 @feature('test')
 @after_method('apply_link')
