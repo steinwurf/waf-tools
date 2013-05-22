@@ -4,6 +4,11 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.1.1
+-----
+* Bugfix: Android and iOS runners will remove all previous test files
+          from the device before running a new test
+
 2.1.0
 -----
 * Minor: New mkspec for iOS 5.0 (cxx_ios50_apple_llvm42_armv7)
