@@ -8,6 +8,16 @@ from os.path import abspath, expanduser
 import os
 
 @conf
+def mkspec_check_minimum_msvc_version(conf, minimum):
+    """
+    :param minimum: The major version number, e.g. 11.0
+    """
+    if (conf.env['MSVC_VERSION'] < float(minimum)):
+        conf.fatal("Compiler version: {0}, "
+                   "required minimum: {1}"
+                   .format(conf.env['MSVC_VERSION'], minimum))
+
+@conf
 def mkspec_msvc_configure(conf, version):
 
     conf.env.MSVC_VERSIONS = ['msvc %s' % version]
@@ -49,4 +59,8 @@ def mkspec_set_msvc_flags(conf):
     # instead of Level 4 to better match g++ warnings
     conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100', '/EHs',
         '/D_WIN32_WINNT=0x0501']
+    # Disable LNK4221 linker warning for empty object files
+    conf.env['LINKFLAGS'] += ['/ignore:4221']  # used for LINK.exe
+    conf.env['ARFLAGS'] +=   ['/ignore:4221']  # used for LIB.exe
+
 

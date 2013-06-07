@@ -97,7 +97,7 @@ def make_run(taskgen, run_type):
 
 
 
-    # We are creating a new task which should run a executable after
+    # We are creating a new task which should run an executable after
     # a build finishes. Here we add two functions to the BuildContext
     # which prints a summary and ensures that the build fails if the
     # test fails.
@@ -138,9 +138,18 @@ def summary(bld):
             if code:
                 Logs.pprint('CYAN', '    %s' % f)
 
+def assemble_output(out, err):
+    """Helper function to assemble output message from the test results"""
+    msg = []
+    if out:
+        msg.append('\nstdout:\n\n%s' % (out.decode('utf-8')))
+    if err:
+        msg.append('\nstderr:\n\n%s' % (err.decode('utf-8')))
+    return msg
+
 def set_exit_code(bld):
     """
-    If any of the tests fail waf will exit with that exit code.
+    If any of the tests fails waf will exit with that exit code.
     This is useful if you have an automated build system which need
     to report on errors from the tests.
     You may use it like this:
@@ -153,9 +162,9 @@ def set_exit_code(bld):
     lst = getattr(bld, 'runner_results', [])
     for (f, code, out, err) in lst:
         if code:
-            msg = []
-            if out:
-                msg.append('stdout:%s%s' % (os.linesep, out.decode('utf-8')))
-            if err:
-                msg.append('stderr:%s%s' % (os.linesep, err.decode('utf-8')))
+            msg = assemble_output(out, err)
             bld.fatal(os.linesep.join(msg))
+        elif not bld.has_tool_option('run_silent'):
+            msg = assemble_output(out, err)
+            Logs.pprint('WHITE', os.linesep.join(msg))
+

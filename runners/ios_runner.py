@@ -16,8 +16,8 @@ class IosRunner(BasicRunner):
         combined_return_code = 0
 
         for result in results:
-            combined_stdout += 'Running %(cmd)s %(stdout)s' % result
-            combined_stderr += 'Running %(cmd)s %(stderr)s' % result
+            combined_stdout += 'Running %(cmd)s\n%(stdout)s\n' % result
+            combined_stderr += 'Running %(cmd)s\n%(stderr)s\n' % result
             if result['return_code'] != 0: combined_return_code = -1
 
         result = (self.format_command(self.inputs[0]), combined_return_code,
@@ -84,7 +84,7 @@ class IosRunner(BasicRunner):
         ssh_cmd += ['rm -rf {}/*'.format(dest_dir)]
         result = run_cmd(ssh_cmd)
         results.append(result)
-                
+
         if result['return_code'] != 0:
             self.save_result(results)
             return
@@ -113,9 +113,9 @@ class IosRunner(BasicRunner):
             self.save_result(results)
             usbmux_proc.kill()
             return
-        
+
         cmd = self.format_command(binary)
-        
+
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
         # We have to cd to dest_dir and run the binary
@@ -126,9 +126,9 @@ class IosRunner(BasicRunner):
         results.append(result)
 
         # Kill the usbmux process
-        usbmux_proc.kill()        
+        usbmux_proc.kill()
 
-        if result['return_code'] != 0:            
+        if result['return_code'] != 0:
             self.save_result(results)
             return
 
