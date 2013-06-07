@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-##import os
+import os
 ##import sys
 
 from waflib import Utils
 from waflib.Configure import conf
 from waflib import Logs
+from waflib import Errors
+
 ##import waflib.Tools.gxx as gxx
 ##from os.path import abspath, expanduser
 
@@ -29,13 +31,13 @@ def load_compiler(conf, compiler):
         conf.load('g++')
         conf.load_external_tool('mkspec_common', 'clang_common')
         CXX = conf.cmd_to_list(conf.env['CXX'])
-        conf.mkspec_check_minimum_cc_version(CXX, 4, 3)
+        conf.mkspec_check_minimum_cc_version(CXX, 3, 0)
         conf.mkspec_set_clang_cxxflags()
     elif 'g++' in compiler:
         conf.load('g++')
         conf.load_external_tool('mkspec_common', 'gxx_common')
         CXX = conf.cmd_to_list(conf.env['CXX'])
-        conf.mkspec_check_minimum_cc_version(CXX, 4, 8)
+        conf.mkspec_check_minimum_cc_version(CXX, 4, 6)
         conf.mkspec_set_gxx_cxxflags()
     elif 'msvc' in compiler or 'CL.exe' in compiler or 'cl.exe' in compiler:
         conf.load('msvc')
@@ -70,9 +72,8 @@ def configure(conf):
     possible_compiler_list = []
     # If the user-defined CXX variable is set
     # then use that compiler as the first option
-    if conf.env['CXX']:
-        Logs.pprint('RED', 'CXX: %s' % conf.env.get_flat('CXX'))
-        possible_compiler_list += conf.env.get_flat('CXX')
+    if 'CXX' in os.environ:
+        possible_compiler_list += [os.environ['CXX']]
     # Otherwise use the default compilers for the current platform
     possible_compiler_list += cxx_compilers[platform]
 
