@@ -4,6 +4,13 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.2.0
+-----
+* Minor: cxx_default explicitly checks for minimum versions of the compilers
+* Minor: User-defined CXX variable can be used to specify compiler
+* Minor: The test runner prints test results also on success (disable with run_silent option)
+* Minor: Disable MSVC LNK4221 linker warning for empty object files
+
 2.1.1
 -----
 * Bugfix: Android and iOS runners will remove all previous test files
