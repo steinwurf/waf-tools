@@ -9,6 +9,23 @@ import os
 
 
 @conf
+def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
+    """
+    :param major: The major version number, e.g. 4
+    :param minor: The minor version number, e.g. 6
+    """
+    conf.get_cc_version(compiler, gcc = True)
+
+    cc_major = int(conf.env['CC_VERSION'][0])
+    cc_minor = int(conf.env['CC_VERSION'][1])
+
+    if ((cc_major < int(major)) or
+       (cc_major == int(major) and cc_minor < int(minor))):
+        conf.fatal("Compiler version: {0}, "
+                   "required minimum: major={1} and minor={2}."
+                   .format(conf.env['CC_VERSION'], major, minor))
+
+@conf
 def mkspec_check_cc_version(conf, compiler, major, minor):
     """
     :param major: The major version number of the g++ binary e.g. 4
@@ -78,7 +95,7 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     sdk = conf.get_tool_option('ios_sdk_dir')
     sdk = abspath(expanduser(sdk))
     include_dir = sdk + '/usr/include'
-    
+
     # Set the IPHONE define - some libraries rely on this define being present
     conf.env.DEFINES += ['IPHONE']
 
@@ -97,7 +114,7 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
         "-ccc-host-triple", triple, "-integrated-as",
         "-isysroot", sdk,
         "-miphoneos-version-min={}".format(min_ios_version)
-    ]   
+    ]
 
     conf.env['CXXFLAGS'] += ios_flags
     conf.env['LINKFLAGS'] += ios_flags

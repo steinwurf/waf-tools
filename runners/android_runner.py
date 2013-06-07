@@ -15,8 +15,8 @@ class AndroidRunner(BasicRunner):
         combined_return_code = 0
 
         for result in results:
-            combined_stdout += 'Running %(cmd)s %(stdout)s' % result
-            combined_stderr += 'Running %(cmd)s %(stderr)s' % result
+            combined_stdout += 'Running %(cmd)s\n%(stdout)s\n' % result
+            combined_stderr += 'Running %(cmd)s\n%(stderr)s\n' % result
             if result['return_code'] != 0: combined_return_code = -1
 
         result = (self.format_command(self.inputs[0]), combined_return_code,
@@ -138,7 +138,7 @@ class AndroidRunner(BasicRunner):
             return
 
         if match.group(1) != "0":
-            result =  {'cmd': 'Shell exit indicate error',
+            result =  {'cmd': 'Shell exit indicates error',
                        'return_code': match.group(1),
                        'stdout': '',
                        'stderr': 'Exit code was %s' % match.group(1)}
