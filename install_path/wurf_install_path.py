@@ -42,7 +42,7 @@ structure when installing e.g.:
 import os
 from waflib.TaskGen import feature, before_method, after_method
 
-@feature('cxxprogram')
+@feature('cxxprogram', 'cprogram')
 @before_method('apply_link')
 def update_install_path(self):
     """
@@ -56,7 +56,7 @@ def update_install_path(self):
         self.install_path = os.path.abspath(os.path.expanduser(install_path))
 
 
-@feature('cxxprogram')
+@feature('cxxprogram', 'cprogram')
 @after_method('apply_link')
 def change_relative_path_option(self):
     """
@@ -68,5 +68,6 @@ def change_relative_path_option(self):
 
     if self.install_task:
         self.install_task.relative_trick = install_relative
+
 
 
