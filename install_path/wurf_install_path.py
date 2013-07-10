@@ -66,7 +66,7 @@ def change_relative_path_option(self):
 
     install_relative = self.bld.has_tool_option('install_relative')
 
-    if self.install_task:
+    if getattr(self,'install_task',None):
         self.install_task.relative_trick = install_relative
 
 
