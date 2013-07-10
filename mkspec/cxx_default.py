@@ -20,27 +20,43 @@ from waflib import Errors
 ##import gxx_common
 ##import msvc_common
 
+def check_minimum_cc_versions(conf, major, minor):
+    # Enforce minimum version for C++ compiler
+    CXX = conf.cmd_to_list(conf.env['CXX'])
+    conf.mkspec_check_minimum_cc_version(CXX, major, minor)
+    # Enforce minimum version for C compiler
+    CC = conf.cmd_to_list(conf.env['CC'])
+    conf.mkspec_check_minimum_cc_version(CC, major, minor)
+
 def load_compiler(conf, compiler):
 
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in compiler:
-        # Set the CXX variable manually if needed
+        # Set the CXX and CC variables manually if needed
         if not conf.env['CXX']: conf.env['CXX'] = 'clang++'
+        if not conf.env['CC']: conf.env['CC'] = 'clang'
         # Use the g++ waf tool to load clang
         # as there is no tool for clang
         conf.load('g++')
+        # Also load 'clang' as a C compiler using the gcc tool
+        conf.load('gcc')
         conf.load_external_tool('mkspec_common', 'clang_common')
-        CXX = conf.cmd_to_list(conf.env['CXX'])
-        conf.mkspec_check_minimum_cc_version(CXX, 3, 0)
+        # Enforce minimum version for compilers
+        check_minimum_cc_versions(conf, 3, 0)
         conf.mkspec_set_clang_cxxflags()
+        conf.mkspec_set_clang_ccflags()
     elif 'g++' in compiler:
         conf.load('g++')
+        # Also load 'gcc' as a C compiler
+        conf.load('gcc')
         conf.load_external_tool('mkspec_common', 'gxx_common')
-        CXX = conf.cmd_to_list(conf.env['CXX'])
-        conf.mkspec_check_minimum_cc_version(CXX, 4, 6)
+        # Enforce minimum version for compilers
+        check_minimum_cc_versions(conf, 4, 6)
         conf.mkspec_set_gxx_cxxflags()
+        conf.mkspec_set_gcc_ccflags()
     elif 'msvc' in compiler or 'CL.exe' in compiler or 'cl.exe' in compiler:
         conf.load('msvc')
+        # Note: the waf msvc tool also load msvc as a C compiler
         conf.load_external_tool('mkspec_common', 'msvc_common')
         conf.mkspec_check_minimum_msvc_version(11.0)
         conf.mkspec_set_msvc_flags()
