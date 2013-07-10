@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.4.0
+-----
+* Minor: Updated cxx_default.py to automatically load gcc and clang as C compilers.
+
 2.3.0
 -----
 * Minor: Updated wurf_install_path.py tool to also work for cprograms.
