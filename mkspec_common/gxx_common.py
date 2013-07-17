@@ -60,6 +60,10 @@ def mkspec_gxx_configure(conf, major, minor):
     # Add our own cc flags
     conf.mkspec_set_gcc_ccflags()
 
+@conf
+def mkspec_gxx_toolchain_configure(conf, toolchain, major, minor):
+    conf.set_mkspec_toolchain(toolchain)
+    conf.mkspec_gxx_configure(major, minor)
 
 @conf
 def mkspec_gxx_android_configure(conf, major, minor):
@@ -116,6 +120,12 @@ def mkspec_get_gnu_binary_name(conf, base, major, minor):
 
     # First the default case
     binary = ['{0}-{1}.{2}'.format(base, major, minor)]
+
+    toolchain = conf.get_mkspec_toolchain()
+    if toolchain:
+        # Cross-compiler toolchains use the
+        # toolchains that we are aware of
+        return ['{0}-{1}'.format(toolchain, base)]
 
     if conf.is_mkspec_platform('mac'):
 
