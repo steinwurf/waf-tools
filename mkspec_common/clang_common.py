@@ -35,12 +35,6 @@ def mkspec_clang_configure(conf, major, minor):
     # TODO: write a proper tool for this
     conf.mkspec_check_cc_version(cc, major, minor)
 
-##    try:
-##        conf.mkspec_check_cc_version(cxx, major, minor)
-##    except Exception as e:
-##        conf.to_log('Exception when executing mkspec_check_cc_version:')
-##        conf.to_log(e)
-
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name()
     conf.find_program(ar, path_list = paths, var = 'AR')
@@ -85,8 +79,6 @@ def mkspec_set_clang_ccflags(conf):
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CCFLAGS'] += ['-g']
-    else:
-        conf.env['LINKFLAGS'] += ['-s']
 
 @conf
 def mkspec_set_clang_cxxflags(conf):

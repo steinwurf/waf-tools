@@ -75,9 +75,6 @@ def mkspec_set_gcc_ccflags(conf):
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CCFLAGS'] += ['-g']
-    else:
-        conf.env['LINKFLAGS'] += ['-s']
-
 
 @conf
 def mkspec_set_gxx_cxxflags(conf):
