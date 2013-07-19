@@ -120,14 +120,17 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     conf.env['LINKFLAGS'] += ios_flags
 
 @conf
-def mkspec_get_ar_binary_name(conf):
+def mkspec_get_ar_binary_name(conf, prefix = None):
     """
     :return: The name of the ar binary we are looking for
              e.g. 'arm-linux-androideabi-ar' for the archiver on android
     """
 
-    if conf.is_mkspec_platform('android'):
-        return 'arm-linux-androideabi-ar'
-    else:
-        return 'ar'
+    binary = 'ar'
+
+    if prefix != None:
+        # Toolchains use a specific prefix
+        return ['{0}-{1}'.format(prefix, binary)]
+
+    return binary
 

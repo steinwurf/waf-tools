@@ -59,14 +59,6 @@ def is_mkspec_platform(conf, platform):
     return conf.get_mkspec_platform() == platform
 
 
-@conf
-def get_mkspec_toolchain(conf):
-    return conf.env['MKSPEC_TOOLCHAIN']
-
-@conf
-def set_mkspec_toolchain(conf, toolchain):
-    conf.env['MKSPEC_TOOLCHAIN'] = toolchain
-
 def configure(conf):
     # Which mkspec should we use, by default, use the cxx_default
     # that simply fallbacks to use waf auto detect of compiler etc.
