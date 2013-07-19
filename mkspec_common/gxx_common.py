@@ -12,13 +12,13 @@ from os.path import abspath, expanduser
 import cxx_common
 
 @conf
-def mkspec_gxx_configure(conf, major, minor):
+def mkspec_gxx_configure(conf, major, minor, prefix = None):
 
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
 
     # Find g++ first
-    gxx_names = conf.mkspec_get_gnu_binary_name('g++', major, minor)
+    gxx_names = conf.mkspec_get_gnu_binary_name('g++', major, minor, prefix)
     cxx = conf.find_program(gxx_names, path_list = paths)
     cxx = conf.cmd_to_list(cxx)
     conf.env['CXX'] = cxx
@@ -26,7 +26,7 @@ def mkspec_gxx_configure(conf, major, minor):
     conf.mkspec_check_cc_version(cxx, major, minor)
 
     # Also find gcc
-    gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor)
+    gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor, prefix)
     cc = conf.find_program(gcc_names, path_list = paths)
     cc = conf.cmd_to_list(cc)
     conf.env['CC'] = cc
@@ -34,7 +34,7 @@ def mkspec_gxx_configure(conf, major, minor):
     conf.mkspec_check_cc_version(cc, major, minor)
 
     # Find the archiver
-    ar = conf.mkspec_get_ar_binary_name()
+    ar = conf.mkspec_get_ar_binary_name(prefix)
     conf.find_program(ar, path_list = paths, var = 'AR')
     conf.env.ARFLAGS = 'rcs'
 
@@ -62,9 +62,9 @@ def mkspec_gxx_configure(conf, major, minor):
 
 
 @conf
-def mkspec_gxx_android_configure(conf, major, minor):
+def mkspec_gxx_android_configure(conf, major, minor, prefix):
     conf.set_mkspec_platform('android')
-    conf.mkspec_gxx_configure(major,minor)
+    conf.mkspec_gxx_configure(major, minor, prefix)
     conf.mkspec_set_android_options()
 
 @conf
@@ -75,9 +75,6 @@ def mkspec_set_gcc_ccflags(conf):
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CCFLAGS'] += ['-g']
-    else:
-        conf.env['LINKFLAGS'] += ['-s']
-
 
 @conf
 def mkspec_set_gxx_cxxflags(conf):
@@ -104,7 +101,7 @@ def mkspec_set_gxx_cxxflags(conf):
     #conf.env['CXXFLAGS'] += ['-std=c++11']
 
 @conf
-def mkspec_get_gnu_binary_name(conf, base, major, minor):
+def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix = None):
     """
     :param base:  'gcc' or 'g++'
     :param major: The major version number of the g++/gcc binary e.g. 4
@@ -117,16 +114,14 @@ def mkspec_get_gnu_binary_name(conf, base, major, minor):
     # First the default case
     binary = ['{0}-{1}.{2}'.format(base, major, minor)]
 
+    if prefix != None:
+        # Toolchains use a specific prefix
+        return ['{0}-{1}'.format(prefix, base)]
+
     if conf.is_mkspec_platform('mac'):
 
         # If the compiler is installed using macports
         return binary + ['{0}-mp-{1}.{2}'.format(base, major, minor)]
-
-    if conf.is_mkspec_platform('android'):
-
-        # Here all binaries are named the same for all NDK standalone
-        # toolchains that we are aware of
-        return ['arm-linux-androideabi-{0}'.format(base)]
 
     if conf.is_mkspec_platform('windows'):
 
