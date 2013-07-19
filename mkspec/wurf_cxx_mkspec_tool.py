@@ -58,6 +58,7 @@ def set_mkspec_platform(conf, platform):
 def is_mkspec_platform(conf, platform):
     return conf.get_mkspec_platform() == platform
 
+
 def configure(conf):
     # Which mkspec should we use, by default, use the cxx_default
     # that simply fallbacks to use waf auto detect of compiler etc.
