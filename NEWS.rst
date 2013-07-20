@@ -4,6 +4,12 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.5.0
+-----
+* Minor: Added new mkspecs for cross-compiler toolchains targeting 
+  legacy Linux versions (cxx_crosslinux_gxx46_x86, cxx_crosslinux_gxx46_x64)
+* Minor: Strip all debugging symbols from g++ and clang release builds (-s flag)
+
 2.4.0
 -----
 * Minor: Updated cxx_default.py to automatically load gcc and clang as C compilers.
