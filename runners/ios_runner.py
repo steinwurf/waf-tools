@@ -121,8 +121,8 @@ class IosRunner(BasicRunner):
         run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
         #is this a benchmark, and if so do we need to retrieve the result?
         if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('benchmark_python_result'):
-            run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("benchmark_python_result"))
+        and bld.has_tool_option('python_result'):
+            run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("python_result"))
 
         # We have to cd to dest_dir and run the binary
         # Echo the exit code after the shell command
@@ -158,7 +158,7 @@ class IosRunner(BasicRunner):
 
         # Everything seems to be fine, lets pull the output file if needed
         if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('benchmark_python_result'):
+        and bld.has_tool_option('python_result'):
             # Run the scp command
             benchmark_result_folder = "benchmark_results"
             scp_cmd = ['scp', '-P', localport]
@@ -166,7 +166,7 @@ class IosRunner(BasicRunner):
             # scp fails if the destination folder doesn't exist.
             run_cmd(["mkdir","-p",benchmark_result_folder])
 
-            output_file = bld.get_tool_option("benchmark_python_result")
+            output_file = bld.get_tool_option("python_result")
 
             benchmark_result = os.path.join(dest_dir,output_file)
             scp_file = scp_cmd + ['{0}:{1}'.format(ssh_target,benchmark_result), benchmark_result_folder]

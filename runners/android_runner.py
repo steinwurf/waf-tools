@@ -119,8 +119,8 @@ class AndroidRunner(BasicRunner):
         run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
         #is this a benchmark, and if so do we need to retrieve the result?
         if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('benchmark_python_result'):
-            run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("benchmark_python_result"))
+        and bld.has_tool_option('python_result'):
+            run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("python_result"))
 
         # We have to cd to the dir and run the binary
         adb_shell += ["{};echo shellexit:$?".format(run_binary_cmd)]
@@ -155,7 +155,7 @@ class AndroidRunner(BasicRunner):
 
         # Everything seems to be fine, lets pull the output file if needed
         if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('benchmark_python_result'):
+        and bld.has_tool_option('python_result'):
 
             adb_pull = []
 
@@ -164,7 +164,7 @@ class AndroidRunner(BasicRunner):
             else:
                 adb_pull += [adb, 'pull']
 
-            output_file = bld.get_tool_option("benchmark_python_result")
+            output_file = bld.get_tool_option("python_result")
 
             src_file  = os.path.join(dest_dir, output_file)
             dest_file = os.path.join(".","benchmark_results", output_file)
