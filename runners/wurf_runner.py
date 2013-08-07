@@ -74,12 +74,19 @@ def make_test(self):
 def make_benchmark(self):
     if self.bld.has_tool_option('run_benchmarks'):
         make_run(self, "benchmark")
-
-
+    elif hasattr(self, 'link_task'):
+        if self.bld.has_tool_option('run_benchmark'):
+            if self.bld.get_tool_option("run_benchmark") == self.link_task.outputs[0].name:
+                make_run(self, "benchmark")
+                
+        if self.bld.has_tool_option('print_benchmarks'):
+            print self.link_task.outputs[0].name
+        
 def make_run(taskgen, run_type):
     """Create the run task. There can be only one unit test task by task generator."""
     task = None
-    if getattr(taskgen, 'link_task', None):
+
+    if hasattr(taskgen, 'link_task'):
 
         taskgen.bld.add_group()
 

@@ -115,8 +115,15 @@ class AndroidRunner(BasicRunner):
         else:
             adb_shell += [adb, 'shell']
 
+        
+        run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
+        #is this a benchmark, and if so do we need to retrieve the result?
+        if  bld.has_tool_option('run_benchmark') \
+        and bld.has_tool_option('benchmark_python_result'):
+            run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("benchmark_python_result"))
+
         # We have to cd to the dir and run the binary
-        adb_shell += ["cd {0};./{1};echo shellexit:$?".format(dest_dir, binary)]
+        adb_shell += ["{};echo shellexit:$?".format(run_binary_cmd)]
 
         result = run_cmd(adb_shell)
         results.append(result)
@@ -146,9 +153,10 @@ class AndroidRunner(BasicRunner):
             self.save_result(results)
             return
 
-        
-        # Everything seems to be fine, lets pull the output files if any
-        if self.benchmark_results:
+        # Everything seems to be fine, lets pull the output file if needed
+        if  bld.has_tool_option('run_benchmark') \
+        and bld.has_tool_option('benchmark_python_result'):
+
             adb_pull = []
 
             if device_id:
@@ -156,18 +164,19 @@ class AndroidRunner(BasicRunner):
             else:
                 adb_pull += [adb, 'pull']
 
-            for o in self.benchmark_results:
-                src_file  = os.path.join(dest_dir, o)
-                dest_file = os.path.join(".","benchmark_results", o)
+            output_file = bld.get_tool_option("benchmark_python_result")
 
-                adb_pull_file = adb_pull + [src_file, dest_file]
+            src_file  = os.path.join(dest_dir, output_file)
+            dest_file = os.path.join(".","benchmark_results", output_file)
 
-                result = run_cmd(adb_pull_file)
-                results.append(result)
+            adb_pull_file = adb_pull + [src_file, dest_file]
 
-                if result['return_code'] != 0:
-                    self.save_result(results)
-                    return
+            result = run_cmd(adb_pull_file)
+            results.append(result)
+
+            if result['return_code'] != 0:
+                self.save_result(results)
+                return
 
         self.save_result(results)
 
