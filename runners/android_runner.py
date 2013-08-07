@@ -15,8 +15,8 @@ class AndroidRunner(BasicRunner):
         combined_return_code = 0
 
         for result in results:
-            combined_stdout += 'Running %(cmd)s\n%(stdout)s\n' % result
-            combined_stderr += 'Running %(cmd)s\n%(stderr)s\n' % result
+            combined_stdout += 'Running {cmd}\n{stdout}\n'.format(**result)
+            combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
             if result['return_code'] != 0: combined_return_code = -1
 
         result = (self.format_command(self.inputs[0]), combined_return_code,
@@ -25,11 +25,10 @@ class AndroidRunner(BasicRunner):
         super(AndroidRunner, self).save_result(result)
 
     def run(self):
-
         bld = self.generator.bld
 
         adb = bld.env['ADB']
-
+        
         results = []
 
         dest_dir = '/data/local/tmp/'
@@ -78,7 +77,7 @@ class AndroidRunner(BasicRunner):
             adb_push += [adb, 'push']
 
         # Push the test files
-        for t in self.tst_inputs:
+        for t in self.test_inputs:
 
             filename = os.path.basename(t.abspath())
             dest_file = os.path.join(dest_dir, filename)
@@ -117,7 +116,7 @@ class AndroidRunner(BasicRunner):
             adb_shell += [adb, 'shell']
 
         # We have to cd to the dir and run the binary
-        adb_shell += ["cd %s;./%s;echo shellexit:$?" % (dest_dir, binary)]
+        adb_shell += ["cd {0};./{1};echo shellexit:$?".format(dest_dir, binary)]
 
         result = run_cmd(adb_shell)
         results.append(result)
@@ -146,6 +145,29 @@ class AndroidRunner(BasicRunner):
             results.append(result)
             self.save_result(results)
             return
+
+        
+        # Everything seems to be fine, lets pull the output files if any
+        if self.benchmark_results:
+            adb_pull = []
+
+            if device_id:
+                adb_pull += [adb, '-s', device_id, 'pull']
+            else:
+                adb_pull += [adb, 'pull']
+
+            for o in self.benchmark_results:
+                src_file  = os.path.join(dest_dir, o)
+                dest_file = os.path.join(".","benchmark_results", o)
+
+                adb_pull_file = adb_pull + [src_file, dest_file]
+
+                result = run_cmd(adb_pull_file)
+                results.append(result)
+
+                if result['return_code'] != 0:
+                    self.save_result(results)
+                    return
 
         self.save_result(results)
 

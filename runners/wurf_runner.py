@@ -92,10 +92,10 @@ def make_run(taskgen, run_type):
 
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
-        task.tst_inputs = taskgen.to_nodes(test_files)
-        #task.tst_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
-
-
+        task.test_inputs = taskgen.to_nodes(test_files)
+        #task.test_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
+        
+        task.benchmark_results = getattr(taskgen, 'benchmark_results', [])
 
     # We are creating a new task which should run an executable after
     # a build finishes. Here we add two functions to the BuildContext

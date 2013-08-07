@@ -16,8 +16,8 @@ class IosRunner(BasicRunner):
         combined_return_code = 0
 
         for result in results:
-            combined_stdout += 'Running %(cmd)s\n%(stdout)s\n' % result
-            combined_stderr += 'Running %(cmd)s\n%(stderr)s\n' % result
+            combined_stdout += 'Running {cmd}\n{stdout}\n'.format(**result)
+            combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
             if result['return_code'] != 0: combined_return_code = -1
 
         result = (self.format_command(self.inputs[0]), combined_return_code,
@@ -94,13 +94,10 @@ class IosRunner(BasicRunner):
         file_list = []
 
         # Enumerate the test files
-        for t in self.tst_inputs:
+        for t in self.test_inputs:
             filename = t.abspath()
             file_list += [filename]
-
-        # Add the binary
-        binary = str(self.inputs[0])
-        #dest_bin = dest_dir + binary
+        
         file_list += [self.inputs[0].abspath()]
 
         # Copy all files in file_list
@@ -114,13 +111,16 @@ class IosRunner(BasicRunner):
             usbmux_proc.kill()
             return
 
+        # Add the binary
+        binary = str(self.inputs[0])
+
         cmd = self.format_command(binary)
 
         ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
         # We have to cd to dest_dir and run the binary
         # Echo the exit code after the shell command
-        ssh_cmd += ['cd %s;./%s;echo shellexit:$?' % (dest_dir, binary)]
+        ssh_cmd += ['cd {0};./{1};echo shellexit:$?'.format(dest_dir, binary)]
 
         result = run_cmd(ssh_cmd)
         results.append(result)
@@ -152,5 +152,27 @@ class IosRunner(BasicRunner):
             results.append(result)
             self.save_result(results)
             return
+
+        if self.benchmark_results:
+            # Run the scp command
+            benchmark_result_folder = "benchmark_results"
+            scp_cmd = ['scp', '-P', localport]
+
+            # scp fails if the destination folder doesn't exist.
+            run_cmd(["mkdir","-p",benchmark_result_folder])
+            
+            # Enumerate the test files
+            for filename in self.benchmark_results:
+                #ned scp -rp buildmaster:/home/buildmaster/test_file.txt .
+                benchmark_result = os.path.join(dest_dir,o)
+                scp_file = scp_cmd + ['{0}:{1}'.format(ssh_target,benchmark_result), benchmark_result_folder]
+
+                result = run_cmd(scp_file)
+                results.append(result)
+
+                if result['return_code'] != 0:
+                    self.save_result(results)
+                    usbmux_proc.kill()
+                    return
 
         self.save_result(results)
