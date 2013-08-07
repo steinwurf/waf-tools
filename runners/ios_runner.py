@@ -9,7 +9,9 @@ from basic_runner import BasicRunner
 
 class IosRunner(BasicRunner):
 
-    def save_result(self, results):
+    def save_result(self, results, usbmux_proc):
+        # Kill the usbmux process
+        usbmux_proc.kill()
 
         combined_stdout = ""
         combined_stderr = ""
@@ -86,7 +88,7 @@ class IosRunner(BasicRunner):
         results.append(result)
 
         if result['return_code'] != 0:
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
         # Run the scp command
@@ -107,8 +109,7 @@ class IosRunner(BasicRunner):
         results.append(result)
 
         if result['return_code'] != 0:
-            self.save_result(results)
-            usbmux_proc.kill()
+            self.save_result(results, usbmux_proc)
             return
 
         # Add the binary
@@ -128,11 +129,10 @@ class IosRunner(BasicRunner):
         result = run_cmd(ssh_cmd + ["{};echo shellexit:$?".format(run_binary_cmd)])
         results.append(result)
 
-        # Kill the usbmux process
-        usbmux_proc.kill()
+        
 
         if result['return_code'] != 0:
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
         # Look for the exit code in the output and fail if non-zero
@@ -143,7 +143,7 @@ class IosRunner(BasicRunner):
                        'stdout': '', 'stderr': 'Failed to find exitcode'}
 
             results.append(result)
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
         if match.group(1) != "0":
@@ -153,7 +153,7 @@ class IosRunner(BasicRunner):
                        'stderr': 'Exit code was %s' % match.group(1)}
 
             results.append(result)
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
         # Everything seems to be fine, lets pull the output file if needed
@@ -175,8 +175,7 @@ class IosRunner(BasicRunner):
             results.append(result)
 
             if result['return_code'] != 0:
-                self.save_result(results)
-                usbmux_proc.kill()
+                self.save_result(results,usbmux_proc)
                 return
 
-        self.save_result(results)
+        self.save_result(results, usbmux_proc)
