@@ -115,7 +115,7 @@ class BasicRunner(Task.Task):
                 t.abspath(), test_file_out.abspath()))
 
             test_file_out.write(t.read('rb'), 'wb')
-            if getattr(self.generator, 'chmod', None):
+            if hasattr(self.generator, 'chmod'):
                 os.chmod(test_file_out.abspath(), self.generator.chmod)
 
 

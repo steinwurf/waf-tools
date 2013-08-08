@@ -22,16 +22,14 @@ class IosRunner(BasicRunner):
             combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
             if result['return_code'] != 0: combined_return_code = -1
 
-        result = (self.format_command(self.inputs[0]), combined_return_code,
+        combined_result = (self.inputs[0], combined_return_code,
                   combined_stdout, combined_stderr)
 
-        super(IosRunner, self).save_result(result)
+        super(IosRunner, self).save_result(combined_result)
 
     def run(self):
 
         bld = self.generator.bld
-
-        #adb = bld.env['ADB']
 
         results = []
 
@@ -69,11 +67,7 @@ class IosRunner(BasicRunner):
 
 
 
-        usbmux_dir = None
-        if bld.has_tool_option('usbmux_dir'):
-            usbmux_dir = bld.get_tool_option('usbmux_dir')
-        else:
-            bld.fatal('usbmux_dir is not specified')
+        usbmux_dir = bld.get_tool_option('usbmux_dir')
 
         usbmux = os.path.join(usbmux_dir, 'tcprelay.py')
         usbmux_cmd = [usbmux, '22:{}'.format(localport)]
@@ -81,61 +75,57 @@ class IosRunner(BasicRunner):
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
 
-        # First we remove all files from dest_dir with rm -rf
-        ssh_cmd = ['ssh', '-p', localport, ssh_target]
+        # Immutable ssh command:
+        ssh_cmd = ('ssh', '-p', localport, ssh_target)
         
-        result = run_cmd(ssh_cmd + ['rm -rf {}/*'.format(dest_dir)])
+        # First we remove all files from dest_dir with rm -rf
+        result = run_cmd(list(ssh_cmd) + ['rm -rf {}/*'.format(dest_dir)])
         results.append(result)
 
         if result['return_code'] != 0:
             self.save_result(results, usbmux_proc)
             return
 
-        # Run the scp command
-        scp_cmd = ['scp', '-P', localport]
-        file_list = []
+        # Immutable scp command
+        scp_cmd = ('scp', '-P', localport)
 
         # Enumerate the test files
-        for t in self.test_inputs:
-            filename = t.abspath()
-            file_list += [filename]
-        
-        file_list += [self.inputs[0].abspath()]
-
-        # Copy all files in file_list
-        scp_all_files = scp_cmd + file_list + [ssh_target+':'+dest_dir]
-
-        result = run_cmd(scp_all_files)
-        results.append(result)
-
-        if result['return_code'] != 0:
-            self.save_result(results, usbmux_proc)
-            return
+        file_list = [test_input.abspath() for test_input in self.test_inputs]
 
         # Add the binary
         binary = str(self.inputs[0])
+        file_list.append(binary)
 
-        #!!!!!!!BUGBUGBUGBUGBUG THIS IS NOT USED!!!!!!!!!
-        #cmd = self.format_command(binary)
-                         
-        run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
-        #is this a benchmark, and if so do we need to retrieve the result?
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
-            run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("python_result"))
-
-        # We have to cd to dest_dir and run the binary
-        # Echo the exit code after the shell command
-        result = run_cmd(ssh_cmd + ["{};echo shellexit:$?".format(run_binary_cmd)])
+        # Copy all files in file_list
+        result = run_cmd(list(scp_cmd) + file_list + [ssh_target+':'+dest_dir])
         results.append(result)
 
+        if result['return_code'] != 0:
+            self.save_result(results, usbmux_proc)
+            return
         
+        # To run the binary; cd to dest_dir, run the binary ...            
+        run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
+
+        # Wait! is this a benchmark, and if so do we need to retrieve the 
+        # result file?
+        if  bld.has_tool_option('run_benchmark') \
+        and bld.has_tool_option('python_result'):
+            # ... add the benchmark python result output filename option ...
+            run_binary_cmd += " --pyfile={}".format(
+                bld.get_tool_option("python_result"))
+
+        # ... finally echo the exit code
+        result = run_cmd(list(ssh_cmd) + ["{};echo shellexit:$?".format(
+            run_binary_cmd)])
+        results.append(result)
 
         if result['return_code'] != 0:
             self.save_result(results, usbmux_proc)
             return
 
-        # Look for the exit code in the output and fail if non-zero
+        # Almost done. Look for the exit code in the output
+        # and fail if non-zero
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
@@ -159,19 +149,15 @@ class IosRunner(BasicRunner):
         # Everything seems to be fine, lets pull the output file if needed
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
-            # Run the scp command
-            benchmark_result_folder = "benchmark_results"
-            scp_cmd = ['scp', '-P', localport]
-
-            # scp fails if the destination folder doesn't exist.
-            run_cmd(["mkdir","-p",benchmark_result_folder])
-
+            # Remove the old benchmark if it exists
             output_file = bld.get_tool_option("python_result")
+            run_cmd(["rm", "-f", output_file])
 
             benchmark_result = os.path.join(dest_dir,output_file)
-            scp_file = scp_cmd + ['{0}:{1}'.format(ssh_target,benchmark_result), benchmark_result_folder]
+            
 
-            result = run_cmd(scp_file)
+            result = run_cmd(list(scp_cmd) + ['{0}:{1}'.format(
+                ssh_target,benchmark_result), '.'])
             results.append(result)
 
             if result['return_code'] != 0:

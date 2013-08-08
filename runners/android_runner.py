@@ -52,41 +52,38 @@ class AndroidRunner(BasicRunner):
         if bld.has_tool_option('device_id'):
             device_id = bld.get_tool_option('device_id')
 
-        # ADB shell command
-        adb_shell = []
-
+        # ADB shell command, we make it immutable using a tuple.
+        adb_shell = None
         if device_id:
-            adb_shell += [adb, '-s', device_id, 'shell']
+            adb_shell = (adb, '-s', device_id, 'shell')
         else:
-            adb_shell += [adb, 'shell']
+            adb_shell = (adb, 'shell')
 
         # First we remove all files from dest_dir with rm -rf
-        adb_shell += ["rm {}*".format(dest_dir)]
-        result = run_cmd(adb_shell)
+        result = run_cmd(list(adb_shell) + ["rm {}*".format(dest_dir)])
         results.append(result)
         if result['return_code'] != 0:
             self.save_result(results)
             return
 
-        # Run the adb commands
-        adb_push = []
+        # Run the adb commands, we make it immutable using a tuple.
+        adb_push = None
 
         if device_id:
-            adb_push += [adb, '-s', device_id, 'push']
+            adb_push = (adb, '-s', device_id, 'push')
         else:
-            adb_push += [adb, 'push']
+            adb_push = (adb, 'push')
 
         # Push the test files
         for t in self.test_inputs:
 
             filename = os.path.basename(t.abspath())
-            dest_file = os.path.join(dest_dir, filename)
+            # This path is on android, hence we use '/' regardless of the host platform.
+            dest_file = dest_dir + filename
 
-            adb_push_file = adb_push + [t.abspath(), dest_file]
-
-            result = run_cmd(adb_push_file)
+            result = run_cmd(list(adb_push) + [t.abspath(), dest_file])
+            
             results.append(result)
-
             if result['return_code'] != 0:
                 self.save_result(results)
                 return
@@ -94,9 +91,7 @@ class AndroidRunner(BasicRunner):
 
         # Push the binary
         binary = str(self.inputs[0])
-        dest_bin = dest_dir + binary
-
-        adb_push_bin = adb_push + [self.inputs[0].abspath(), dest_bin]
+        adb_push_bin = list(adb_push) + [self.inputs[0].abspath(), dest_dir + binary]
 
         result = run_cmd(adb_push_bin)
         results.append(result)
@@ -105,27 +100,16 @@ class AndroidRunner(BasicRunner):
             self.save_result(results)
             return
 
-        cmd = self.format_command(dest_bin)
-
-        # Echo the exit code after the shell command
-        adb_shell = []
-
-        if device_id:
-            adb_shell += [adb, '-s', device_id, 'shell']
-        else:
-            adb_shell += [adb, 'shell']
-
-        
+        # We have to cd to the dir and run the binary
         run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
+
         #is this a benchmark, and if so do we need to retrieve the result?
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
             run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("python_result"))
 
-        # We have to cd to the dir and run the binary
-        adb_shell += ["{};echo shellexit:$?".format(run_binary_cmd)]
-
-        result = run_cmd(adb_shell)
+        # Echo the exit code after the shell command
+        result = run_cmd(list(adb_shell) + ["{};echo shellexit:$?".format(run_binary_cmd)])
         results.append(result)
 
         if result['return_code'] != 0:
@@ -157,21 +141,21 @@ class AndroidRunner(BasicRunner):
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
 
-            adb_pull = []
+            adb_pull = None
 
             if device_id:
-                adb_pull += [adb, '-s', device_id, 'pull']
+                adb_pull = (adb, '-s', device_id, 'pull')
             else:
-                adb_pull += [adb, 'pull']
+                adb_pull = (adb, 'pull')
 
             output_file = bld.get_tool_option("python_result")
 
-            src_file  = os.path.join(dest_dir, output_file)
+            # This path is on android and not the host platform
+            src_file  = dest_dir + output_file
+            
             dest_file = os.path.join(".","benchmark_results", output_file)
 
-            adb_pull_file = adb_pull + [src_file, dest_file]
-
-            result = run_cmd(adb_pull_file)
+            result = run_cmd(list(adb_pull) + [src_file, dest_file])
             results.append(result)
 
             if result['return_code'] != 0:
@@ -179,6 +163,3 @@ class AndroidRunner(BasicRunner):
                 return
 
         self.save_result(results)
-
-
-
