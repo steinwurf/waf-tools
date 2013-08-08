@@ -74,12 +74,19 @@ def make_test(self):
 def make_benchmark(self):
     if self.bld.has_tool_option('run_benchmarks'):
         make_run(self, "benchmark")
-
-
+    elif hasattr(self, 'link_task'):
+        if self.bld.has_tool_option('run_benchmark'):
+            if self.bld.get_tool_option("run_benchmark") == self.link_task.outputs[0].name:
+                make_run(self, "benchmark")
+                
+        if self.bld.has_tool_option('print_benchmarks'):
+            print self.link_task.outputs[0].name
+        
 def make_run(taskgen, run_type):
     """Create the run task. There can be only one unit test task by task generator."""
     task = None
-    if getattr(taskgen, 'link_task', None):
+
+    if hasattr(taskgen, 'link_task'):
 
         taskgen.bld.add_group()
 
@@ -92,10 +99,10 @@ def make_run(taskgen, run_type):
 
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
-        task.tst_inputs = taskgen.to_nodes(test_files)
-        #task.tst_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
-
-
+        task.test_inputs = taskgen.to_nodes(test_files)
+        #task.test_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
+        
+        task.benchmark_results = getattr(taskgen, 'benchmark_results', [])
 
     # We are creating a new task which should run an executable after
     # a build finishes. Here we add two functions to the BuildContext

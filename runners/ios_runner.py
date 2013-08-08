@@ -9,27 +9,27 @@ from basic_runner import BasicRunner
 
 class IosRunner(BasicRunner):
 
-    def save_result(self, results):
+    def save_result(self, results, usbmux_proc):
+        # Kill the usbmux process
+        usbmux_proc.kill()
 
         combined_stdout = ""
         combined_stderr = ""
         combined_return_code = 0
 
         for result in results:
-            combined_stdout += 'Running %(cmd)s\n%(stdout)s\n' % result
-            combined_stderr += 'Running %(cmd)s\n%(stderr)s\n' % result
+            combined_stdout += 'Running {cmd}\n{stdout}\n'.format(**result)
+            combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
             if result['return_code'] != 0: combined_return_code = -1
 
-        result = (self.format_command(self.inputs[0]), combined_return_code,
+        combined_result = (self.inputs[0], combined_return_code,
                   combined_stdout, combined_stderr)
 
-        super(IosRunner, self).save_result(result)
+        super(IosRunner, self).save_result(combined_result)
 
     def run(self):
 
         bld = self.generator.bld
-
-        #adb = bld.env['ADB']
 
         results = []
 
@@ -67,11 +67,7 @@ class IosRunner(BasicRunner):
 
 
 
-        usbmux_dir = None
-        if bld.has_tool_option('usbmux_dir'):
-            usbmux_dir = bld.get_tool_option('usbmux_dir')
-        else:
-            bld.fatal('usbmux_dir is not specified')
+        usbmux_dir = bld.get_tool_option('usbmux_dir')
 
         usbmux = os.path.join(usbmux_dir, 'tcprelay.py')
         usbmux_cmd = [usbmux, '22:{}'.format(localport)]
@@ -79,60 +75,57 @@ class IosRunner(BasicRunner):
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
 
+        # Immutable ssh command:
+        ssh_cmd = ('ssh', '-p', localport, ssh_target)
+        
         # First we remove all files from dest_dir with rm -rf
-        ssh_cmd = ['ssh', '-p', localport, ssh_target]
-        ssh_cmd += ['rm -rf {}/*'.format(dest_dir)]
-        result = run_cmd(ssh_cmd)
+        result = run_cmd(list(ssh_cmd) + ['rm -rf {}/*'.format(dest_dir)])
         results.append(result)
 
         if result['return_code'] != 0:
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
-        # Run the scp command
-        scp_cmd = ['scp', '-P', localport]
-        file_list = []
+        # Immutable scp command
+        scp_cmd = ('scp', '-P', localport)
 
         # Enumerate the test files
-        for t in self.tst_inputs:
-            filename = t.abspath()
-            file_list += [filename]
+        file_list = [test_input.abspath() for test_input in self.test_inputs]
 
         # Add the binary
-        binary = str(self.inputs[0])
-        #dest_bin = dest_dir + binary
-        file_list += [self.inputs[0].abspath()]
+        binary = self.inputs[0]
+        file_list.append(binary.abspath())
 
         # Copy all files in file_list
-        scp_all_files = scp_cmd + file_list + [ssh_target+':'+dest_dir]
-
-        result = run_cmd(scp_all_files)
+        result = run_cmd(list(scp_cmd) + file_list + [ssh_target+':'+dest_dir])
         results.append(result)
 
         if result['return_code'] != 0:
-            self.save_result(results)
-            usbmux_proc.kill()
+            self.save_result(results, usbmux_proc)
             return
+        
+        # To run the binary; cd to dest_dir, run the binary ...            
+        run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
 
-        cmd = self.format_command(binary)
+        # Wait! is this a benchmark, and if so do we need to retrieve the 
+        # result file?
+        if  bld.has_tool_option('run_benchmark') \
+        and bld.has_tool_option('python_result'):
+            # ... add the benchmark python result output filename option ...
+            run_binary_cmd += " --pyfile={}".format(
+                bld.get_tool_option("python_result"))
 
-        ssh_cmd = ['ssh', '-p', localport, ssh_target]
-
-        # We have to cd to dest_dir and run the binary
-        # Echo the exit code after the shell command
-        ssh_cmd += ['cd %s;./%s;echo shellexit:$?' % (dest_dir, binary)]
-
-        result = run_cmd(ssh_cmd)
+        # ... finally echo the exit code
+        result = run_cmd(list(ssh_cmd) + ["{};echo shellexit:$?".format(
+            run_binary_cmd)])
         results.append(result)
 
-        # Kill the usbmux process
-        usbmux_proc.kill()
-
         if result['return_code'] != 0:
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
-        # Look for the exit code in the output and fail if non-zero
+        # Almost done. Look for the exit code in the output
+        # and fail if non-zero
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
@@ -140,7 +133,7 @@ class IosRunner(BasicRunner):
                        'stdout': '', 'stderr': 'Failed to find exitcode'}
 
             results.append(result)
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
         if match.group(1) != "0":
@@ -150,7 +143,25 @@ class IosRunner(BasicRunner):
                        'stderr': 'Exit code was %s' % match.group(1)}
 
             results.append(result)
-            self.save_result(results)
+            self.save_result(results, usbmux_proc)
             return
 
-        self.save_result(results)
+        # Everything seems to be fine, lets pull the output file if needed
+        if  bld.has_tool_option('run_benchmark') \
+        and bld.has_tool_option('python_result'):
+            output_file = bld.get_tool_option("python_result")
+
+            # Remove the old benchmark if it exists
+            run_cmd(["rm", "-f", output_file])
+
+            benchmark_result = os.path.join(dest_dir,output_file)
+            
+            result = run_cmd(list(scp_cmd) + ['{0}:{1}'.format(
+                ssh_target,benchmark_result), '.'])
+            results.append(result)
+
+            if result['return_code'] != 0:
+                self.save_result(results,usbmux_proc)
+                return
+
+        self.save_result(results, usbmux_proc)
