@@ -94,7 +94,7 @@ class IosRunner(BasicRunner):
 
         # Add the binary
         binary = str(self.inputs[0])
-        file_list.append(binary)
+        file_list.append(binary.abspath())
 
         # Copy all files in file_list
         result = run_cmd(list(scp_cmd) + file_list + [ssh_target+':'+dest_dir])
