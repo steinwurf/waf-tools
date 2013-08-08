@@ -78,7 +78,8 @@ class AndroidRunner(BasicRunner):
         for t in self.test_inputs:
 
             filename = os.path.basename(t.abspath())
-            # This path is on android, hence we use '/' regardless of the host platform.
+            # This path is on android, hence we use '/'
+            # regardless of the host platform.
             dest_file = dest_dir + filename
 
             result = run_cmd(list(adb_push) + [t.abspath(), dest_file])
@@ -91,7 +92,9 @@ class AndroidRunner(BasicRunner):
 
         # Push the binary
         binary = str(self.inputs[0])
-        adb_push_bin = list(adb_push) + [self.inputs[0].abspath(), dest_dir + binary]
+        adb_push_bin = list(adb_push) + [
+            self.inputs[0].abspath(),
+            dest_dir + binary]
 
         result = run_cmd(adb_push_bin)
         results.append(result)
@@ -106,10 +109,12 @@ class AndroidRunner(BasicRunner):
         #is this a benchmark, and if so do we need to retrieve the result?
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
-            run_binary_cmd += " --pyfile={}".format(bld.get_tool_option("python_result"))
+            run_binary_cmd += " --pyfile={}".format(
+                bld.get_tool_option("python_result"))
 
         # Echo the exit code after the shell command
-        result = run_cmd(list(adb_shell) + ["{};echo shellexit:$?".format(run_binary_cmd)])
+        result = run_cmd(list(adb_shell) + ["{};echo shellexit:$?".format(
+            run_binary_cmd)])
         results.append(result)
 
         if result['return_code'] != 0:
@@ -151,11 +156,12 @@ class AndroidRunner(BasicRunner):
             output_file = bld.get_tool_option("python_result")
 
             # This path is on android and not the host platform
-            src_file  = dest_dir + output_file
+            benchmark_result  = dest_dir + output_file
             
-            dest_file = os.path.join(".","benchmark_results", output_file)
+            # Remove the old benchmark if it exists
+            run_cmd(["rm", "-f", output_file])
 
-            result = run_cmd(list(adb_pull) + [src_file, dest_file])
+            result = run_cmd(list(adb_pull) + [benchmark_result, output_file])
             results.append(result)
 
             if result['return_code'] != 0:

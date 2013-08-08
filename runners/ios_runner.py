@@ -149,13 +149,13 @@ class IosRunner(BasicRunner):
         # Everything seems to be fine, lets pull the output file if needed
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
-            # Remove the old benchmark if it exists
             output_file = bld.get_tool_option("python_result")
+
+            # Remove the old benchmark if it exists
             run_cmd(["rm", "-f", output_file])
 
             benchmark_result = os.path.join(dest_dir,output_file)
             
-
             result = run_cmd(list(scp_cmd) + ['{0}:{1}'.format(
                 ssh_target,benchmark_result), '.'])
             results.append(result)
