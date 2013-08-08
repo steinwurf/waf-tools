@@ -93,7 +93,7 @@ class IosRunner(BasicRunner):
         file_list = [test_input.abspath() for test_input in self.test_inputs]
 
         # Add the binary
-        binary = str(self.inputs[0])
+        binary = self.inputs[0]
         file_list.append(binary.abspath())
 
         # Copy all files in file_list
