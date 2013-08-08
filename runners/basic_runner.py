@@ -22,12 +22,12 @@ class BasicRunner(Task.Task):
         env = self.env
         src_str = ' '.join([a.nice_path() for a in self.inputs])
         tgt_str = ' '.join([a.nice_path() for a in self.outputs])
-        tst_str = ' '.join([a.nice_path() for a in self.tst_inputs])
+        tst_str = ' '.join([a.nice_path() for a in self.test_inputs])
 
         if self.outputs: sep = ' -> '
         else: sep = ''
 
-        if self.tst_inputs: tst_str = ' {test input: %s} ' % tst_str
+        if self.test_inputs: tst_str = ' {test input: %s} ' % tst_str
 
         return '%s: %s%s%s%s\n' % (
             self.__class__.__name__.replace('_task', ''),
@@ -105,7 +105,7 @@ class BasicRunner(Task.Task):
         cmd = self.format_command(self.inputs[0].abspath()).split(' ')
 
         # First check whether we require any test files
-        for t in self.tst_inputs:
+        for t in self.test_inputs:
 
             filename = os.path.basename(t.abspath())
 
@@ -115,7 +115,7 @@ class BasicRunner(Task.Task):
                 t.abspath(), test_file_out.abspath()))
 
             test_file_out.write(t.read('rb'), 'wb')
-            if getattr(self.generator, 'chmod', None):
+            if hasattr(self.generator, 'chmod'):
                 os.chmod(test_file_out.abspath(), self.generator.chmod)
 
 
