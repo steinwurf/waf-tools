@@ -99,10 +99,18 @@ class BasicRunner(Task.Task):
         results are stored on ``self.generator.bld.runner_results`` for
         post processing.
         """
+        bld = self.generator.bld
 
         fu = self.setup_path()
         cwd = self.inputs[0].parent.abspath()
         cmd = self.format_command(self.inputs[0].abspath()).split(' ')
+
+        # If this is a benchmark run and we have specified
+        # an output file name; use it.
+        if  bld.has_tool_option('run_benchmark') \
+        and bld.has_tool_option('python_result'):
+            cmd += ["--pyfile={}".format(
+                bld.get_tool_option("python_result"))]
 
         # First check whether we require any test files
         for t in self.test_inputs:
