@@ -79,8 +79,8 @@ def make_benchmark(self):
             if self.bld.get_tool_option("run_benchmark") == self.link_task.outputs[0].name:
                 make_run(self, "benchmark")
                 
-        if self.bld.has_tool_option('print_benchmarks'):
-            print(self.link_task.outputs[0].name)
+        if self.bld.has_tool_option('print_benchmark_paths'):
+            print(self.link_task.outputs[0].relpath())
         
 def make_run(taskgen, run_type):
     """Create the run task. There can be only one unit test task by task generator."""
