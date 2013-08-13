@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.7.0
+-----
+* Minor: Changed the output of print_benchmark_paths command.
+
 2.6.0
 -----
 * Minor: Added additional benchmarking capabilities.
