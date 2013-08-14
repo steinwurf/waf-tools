@@ -62,6 +62,7 @@ from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner
 from android_runner import AndroidRunner
 from ios_runner import IosRunner
+from ssh_runner import SshRunner
 
 @feature('test')
 @after_method('apply_link')
@@ -78,10 +79,10 @@ def make_benchmark(self):
         if self.bld.has_tool_option('run_benchmark'):
             if self.bld.get_tool_option("run_benchmark") == self.link_task.outputs[0].name:
                 make_run(self, "benchmark")
-                
+
         if self.bld.has_tool_option('print_benchmark_paths'):
             print(self.link_task.outputs[0].relpath())
-        
+
 def make_run(taskgen, run_type):
     """Create the run task. There can be only one unit test task by task generator."""
     task = None
@@ -90,7 +91,9 @@ def make_run(taskgen, run_type):
 
         taskgen.bld.add_group()
 
-        if taskgen.bld.is_mkspec_platform('android'):
+        if taskgen.bld.has_tool_option('ssh_runner'):
+            task = taskgen.create_task('SshRunner', taskgen.link_task.outputs)
+        elif taskgen.bld.is_mkspec_platform('android'):
             task = taskgen.create_task('AndroidRunner', taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('ios'):
             task = taskgen.create_task('IosRunner', taskgen.link_task.outputs)
@@ -101,7 +104,7 @@ def make_run(taskgen, run_type):
         test_files = getattr(taskgen, 'test_files', [])
         task.test_inputs = taskgen.to_nodes(test_files)
         #task.test_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
-        
+
         task.benchmark_results = getattr(taskgen, 'benchmark_results', [])
 
     # We are creating a new task which should run an executable after
