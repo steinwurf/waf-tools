@@ -22,7 +22,7 @@ class SshRunner(BasicRunner):
         combined_result = (self.inputs[0], combined_return_code,
                   combined_stdout, combined_stderr)
 
-        super(IosRunner, self).save_result(combined_result)
+        super(SshRunner, self).save_result(combined_result)
 
     def run(self):
 
