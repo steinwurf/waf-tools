@@ -50,7 +50,7 @@ class SshRunner(BasicRunner):
 
             return result
 
-        # Immutable ssh command:
+        # ssh command as a list
         ssh_cmd = ['ssh', ssh_target]
 
         # First we remove all files from dest_dir with rm -rf
@@ -61,7 +61,7 @@ class SshRunner(BasicRunner):
 ##            self.save_result(results)
 ##            return
 
-        # Immutable scp command
+        # scp command as a list
         scp_cmd = ['scp']
 
         # Enumerate the test files
