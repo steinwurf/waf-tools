@@ -51,10 +51,10 @@ class SshRunner(BasicRunner):
             return result
 
         # Immutable ssh command:
-        ssh_cmd = ('ssh', ssh_target)
+        ssh_cmd = ['ssh', ssh_target]
 
         # First we remove all files from dest_dir with rm -rf
-##        result = run_cmd(list(ssh_cmd) + ['rm -rf {}/*'.format(dest_dir)])
+##        result = run_cmd(ssh_cmd + ['rm -rf {}/*'.format(dest_dir)])
 ##        results.append(result)
 ##
 ##        if result['return_code'] != 0:
@@ -62,7 +62,7 @@ class SshRunner(BasicRunner):
 ##            return
 
         # Immutable scp command
-        scp_cmd = ('scp')
+        scp_cmd = ['scp']
 
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
@@ -72,7 +72,7 @@ class SshRunner(BasicRunner):
         file_list.append(binary.abspath())
 
         # Copy all files in file_list
-        result = run_cmd(list(scp_cmd) + file_list + [ssh_target+':'+dest_dir])
+        result = run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
         results.append(result)
 
         if result['return_code'] != 0:
@@ -91,7 +91,7 @@ class SshRunner(BasicRunner):
                 bld.get_tool_option("python_result"))
 
         # ... finally echo the exit code
-        result = run_cmd(list(ssh_cmd) + \
+        result = run_cmd(ssh_cmd + \
             ["{};echo shellexit:$?".format(run_binary_cmd)])
         results.append(result)
 
@@ -131,7 +131,7 @@ class SshRunner(BasicRunner):
 
             benchmark_result = os.path.join(dest_dir,output_file)
 
-            result = run_cmd(list(scp_cmd) + \
+            result = run_cmd(scp_cmd + \
                 ['{0}:{1}'.format(ssh_target,benchmark_result), '.'])
             results.append(result)
 
