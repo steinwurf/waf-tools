@@ -122,8 +122,9 @@ def make_run(taskgen, run_type):
         if not set_exit_code in post_funs:
             taskgen.bld.add_post_fun(set_exit_code)
     else:
-        taskgen.bld.add_post_fun(summary)
         taskgen.bld.add_post_fun(set_exit_code)
+        taskgen.bld.add_post_fun(summary)
+        
 
 
 def summary(bld):
@@ -137,21 +138,21 @@ def summary(bld):
     """
     lst = getattr(bld, 'runner_results', [])
     if lst:
-        print len(lst)
-        Logs.pprint('CYAN', 'execution summary')
+        Logs.pprint('CYAN', 'Execution Summary:')
 
         total = len(lst)
         fail = len([x for x in lst if x[1]])
 
         Logs.pprint('CYAN', '  successful runs %d/%d' % (total-fail, total))
-        for (f, code, out, err) in lst:
-            if not code:
-                Logs.pprint('CYAN', '    %s' % f)
-
-        Logs.pprint('CYAN', '  failed runs %d/%d' % (fail, total))
-        for (f, code, out, err) in lst:
-            if code:
-                Logs.pprint('CYAN', '    %s' % f)
+        for (filename, return_code, stdout, stderr) in lst:
+            if return_code == 0:
+                Logs.pprint('CYAN', '    %s' % filename)
+        
+        if fail != 0:
+            Logs.pprint('CYAN', '  failed runs %d/%d' % (fail, total))
+            for (filename, return_code, stdout, stderr) in lst:
+                if return_code != 0:
+                    Logs.pprint('CYAN', '     %s' % filname)
 
 def assemble_output(out, err):
     """Helper function to assemble output message from the test results"""
@@ -175,12 +176,7 @@ def set_exit_code(bld):
         bld.add_post_fun(waf_unit_test.set_exit_code)
     """
     lst = getattr(bld, 'runner_results', [])
-    print lst
     for (filename, return_code, stdout, stderr) in lst:
-        print "filename{}".format(filename)
-        print "return_code{}".format(return_code)
-        print "out{}".format(stdout)
-        print "stderr{}".format(stderr)
         if return_code:
             msg = assemble_output(stdout, stderr)
             bld.fatal(os.linesep.join(msg))

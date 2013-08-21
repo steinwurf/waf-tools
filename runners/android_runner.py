@@ -8,7 +8,6 @@ from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner, run_cmd
 
 class AndroidRunner(BasicRunner):
-
     def run(self):
         bld = self.generator.bld
 
