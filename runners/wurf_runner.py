@@ -94,7 +94,6 @@ def make_run(taskgen, run_type):
     if hasattr(taskgen, 'link_task'):
 
         taskgen.bld.add_group()
-        
         if taskgen.bld.has_tool_option('ssh_runner'):
             task = taskgen.create_task('SSHRunner', 
                 taskgen.link_task.outputs)
@@ -138,6 +137,7 @@ def summary(bld):
     """
     lst = getattr(bld, 'runner_results', [])
     if lst:
+        print len(lst)
         Logs.pprint('CYAN', 'execution summary')
 
         total = len(lst)
@@ -175,11 +175,16 @@ def set_exit_code(bld):
         bld.add_post_fun(waf_unit_test.set_exit_code)
     """
     lst = getattr(bld, 'runner_results', [])
-    for (f, code, out, err) in lst:
-        if code:
-            msg = assemble_output(out, err)
+    print lst
+    for (filename, return_code, stdout, stderr) in lst:
+        print "filename{}".format(filename)
+        print "return_code{}".format(return_code)
+        print "out{}".format(stdout)
+        print "stderr{}".format(stderr)
+        if return_code:
+            msg = assemble_output(stdout, stderr)
             bld.fatal(os.linesep.join(msg))
         elif not bld.has_tool_option('run_silent'):
-            msg = assemble_output(out, err)
+            msg = assemble_output(stdout, stderr)
             Logs.pprint('WHITE', os.linesep.join(msg))
 

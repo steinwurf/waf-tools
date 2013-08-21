@@ -141,7 +141,7 @@ class BasicRunner(Task.Task):
             combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
             if result['return_code'] != 0: combined_return_code = -1
 
-        combined_result = (format_command(self.inputs[0]), combined_return_code,
+        combined_result = (self.format_command(self.inputs[0]), combined_return_code,
                   combined_stdout, combined_stderr)
 
         testlock.acquire()
@@ -149,9 +149,9 @@ class BasicRunner(Task.Task):
             bld = self.generator.bld
             Logs.debug("wr: %r", result)
             try:
-                bld.runner_results.append(result)
+                bld.runner_results.append(combined_result)
             except AttributeError:
-                bld.runner_results = [result]
+                bld.runner_results = [combined_result]
         finally:
             testlock.release()
 
