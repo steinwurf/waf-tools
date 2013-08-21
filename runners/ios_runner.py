@@ -5,27 +5,14 @@ import os, sys, re
 import time
 from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
-from basic_runner import BasicRunner
+from basic_runner import BasicRunner, run_cmd
 
-class IosRunner(BasicRunner):
-
+class IOSRunner(BasicRunner):
     def save_result(self, results, usbmux_proc):
         # Kill the usbmux process
         usbmux_proc.kill()
 
-        combined_stdout = ""
-        combined_stderr = ""
-        combined_return_code = 0
-
-        for result in results:
-            combined_stdout += 'Running {cmd}\n{stdout}\n'.format(**result)
-            combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
-            if result['return_code'] != 0: combined_return_code = -1
-
-        combined_result = (self.inputs[0], combined_return_code,
-                  combined_stdout, combined_stderr)
-
-        super(IosRunner, self).save_result(combined_result)
+        super(IOSRunner, self).save_result(combined_result)
 
     def run(self):
 
@@ -36,21 +23,6 @@ class IosRunner(BasicRunner):
         dest_dir = '/private/var/mobile/tmp'
         localport = '22222'
         ssh_target = 'mobile@localhost'
-
-        def run_cmd(cmd):
-
-            Logs.debug("wr: running %r", cmd)
-
-            proc = Utils.subprocess.Popen(
-                cmd,
-                stderr=Utils.subprocess.PIPE,
-                stdout=Utils.subprocess.PIPE)
-            (stdout, stderr) = proc.communicate()
-
-            result =  {'cmd': cmd, 'return_code': proc.returncode,
-                       'stdout': stdout, 'stderr': stderr}
-
-            return result
 
         def start_proc(cmd):
 
@@ -64,8 +36,6 @@ class IosRunner(BasicRunner):
             time.sleep(1.0)
 
             return proc
-
-
 
         usbmux_dir = bld.get_tool_option('usbmux_dir')
 

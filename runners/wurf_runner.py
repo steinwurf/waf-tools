@@ -61,8 +61,8 @@ from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner
 from android_runner import AndroidRunner
-from ios_runner import IosRunner
-from ssh_runner import SshRunner
+from ios_runner import IOSRunner
+from ssh_runner import SSHRunner
 
 @feature('test')
 @after_method('apply_link')
@@ -77,35 +77,40 @@ def make_benchmark(self):
         make_run(self, "benchmark")
     elif hasattr(self, 'link_task'):
         if self.bld.has_tool_option('run_benchmark'):
-            if self.bld.get_tool_option("run_benchmark") == self.link_task.outputs[0].name:
+            if self.bld.get_tool_option("run_benchmark") == \
+               self.link_task.outputs[0].name:
                 make_run(self, "benchmark")
 
         if self.bld.has_tool_option('print_benchmark_paths'):
             print(self.link_task.outputs[0].relpath())
 
 def make_run(taskgen, run_type):
-    """Create the run task. There can be only one unit test task by task generator."""
+    """
+    Create the run task. There can be only one unit test 
+    task by task generator.
+    """
     task = None
 
     if hasattr(taskgen, 'link_task'):
 
         taskgen.bld.add_group()
-
+        
         if taskgen.bld.has_tool_option('ssh_runner'):
-            task = taskgen.create_task('SshRunner', taskgen.link_task.outputs)
+            task = taskgen.create_task('SSHRunner', 
+                taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('android'):
-            task = taskgen.create_task('AndroidRunner', taskgen.link_task.outputs)
+            task = taskgen.create_task('AndroidRunner', 
+                taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('ios'):
-            task = taskgen.create_task('IosRunner', taskgen.link_task.outputs)
+            task = taskgen.create_task('IOSRunner', 
+                taskgen.link_task.outputs)
         else:
-            task = taskgen.create_task('BasicRunner', taskgen.link_task.outputs)
+            task = taskgen.create_task('BasicRunner', 
+                taskgen.link_task.outputs)
 
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
         task.test_inputs = taskgen.to_nodes(test_files)
-        #task.test_inputs = [taskgen.bld.path.find_node(t) for t in test_files]
-
-        task.benchmark_results = getattr(taskgen, 'benchmark_results', [])
 
     # We are creating a new task which should run an executable after
     # a build finishes. Here we add two functions to the BuildContext

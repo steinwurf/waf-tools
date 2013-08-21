@@ -101,8 +101,6 @@ class BasicRunner(Task.Task):
         """
         bld = self.generator.bld
 
-        fu = self.setup_path()
-        cwd = self.inputs[0].parent.abspath()
         cmd = self.format_command(self.inputs[0].abspath()).split(' ')
 
         # If this is a benchmark run and we have specified
@@ -126,25 +124,26 @@ class BasicRunner(Task.Task):
             if hasattr(self.generator, 'chmod'):
                 os.chmod(test_file_out.abspath(), self.generator.chmod)
 
+        result = run_cmd(cmd)
 
-        Logs.debug("wr: running %r in %s" % (cmd, str(cwd)))
+        self.save_result([result])
 
-        proc = Utils.subprocess.Popen(
-            cmd,
-            cwd=cwd,
-            env=fu,
-            stderr=Utils.subprocess.PIPE,
-            stdout=Utils.subprocess.PIPE)
-
-        (stdout, stderr) = proc.communicate()
-
-        result = (cmd, proc.returncode, stdout, stderr)
-        self.save_result(result)
-
-    def save_result(self, result):
+    def save_result(self, results):
         """
         Stores the result in the self.generator.bld.runner_results
         """
+        combined_stdout = ""
+        combined_stderr = ""
+        combined_return_code = 0
+
+        for result in results:
+            combined_stdout += 'Running {cmd}\n{stdout}\n'.format(**result)
+            combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
+            if result['return_code'] != 0: combined_return_code = -1
+
+        combined_result = (format_command(self.inputs[0]), combined_return_code,
+                  combined_stdout, combined_stderr)
+
         testlock.acquire()
         try:
             bld = self.generator.bld
@@ -156,3 +155,16 @@ class BasicRunner(Task.Task):
         finally:
             testlock.release()
 
+def run_cmd(cmd):
+    Logs.debug("wr: running %r", cmd)
+
+    proc = Utils.subprocess.Popen(
+        cmd,
+        stderr=Utils.subprocess.PIPE,
+        stdout=Utils.subprocess.PIPE)
+    (stdout, stderr) = proc.communicate()
+
+    result =  {'cmd': cmd, 'return_code': proc.returncode,
+               'stdout': stdout, 'stderr': stderr}
+
+    return result
