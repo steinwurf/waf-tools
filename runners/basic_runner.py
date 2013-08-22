@@ -113,10 +113,10 @@ class BasicRunner(Task.Task):
 
             if result["stdout"]:
                 combined_stdout += 'Running: {0}\n{1}'.format(
-                    cmd, result["stdout"])
+                    cmd, result["stdout"].decode('utf-8'))
             if result["stderr"]:
                 combined_stderr += 'Running: {0}\n{1}'.format(
-                        cmd, result["stderr"])
+                        cmd, result["stderr"].decode('utf-8'))
             if result['return_code'] != 0: combined_return_code = -1
 
         combined_result = (

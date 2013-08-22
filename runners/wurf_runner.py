@@ -154,13 +154,13 @@ def summary(bld):
                 if return_code != 0:
                     Logs.pprint('CYAN', '     %s' % filname)
 
-def assemble_output(out, err):
+def assemble_output(stdout, stderr):
     """Helper function to assemble output message from the test results"""
     msg = []
-    if out:
-        msg.append('\nstdout:\n\n%s' % (out.decode('utf-8')))
-    if err:
-        msg.append('\nstderr:\n\n%s' % (err.decode('utf-8')))
+    if stdout:
+        msg.append('\nstdout:\n\n{}'.format(stdout))
+    if stderr:
+        msg.append('\nstderr:\n\n{}'.format(stderr))
     return msg
 
 def set_exit_code(bld):
