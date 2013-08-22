@@ -77,7 +77,7 @@ class IOSRunner(BasicRunner):
 
         # Finally echo the exit code
         result = run_cmd(
-            [ssh_cmd] + \
+            ssh_cmd + \
             ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
         results.append(result)
