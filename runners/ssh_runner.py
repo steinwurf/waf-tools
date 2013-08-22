@@ -19,10 +19,7 @@ class SSHRunner(BasicRunner):
         ssh_user = bld.get_tool_option('ssh_user')
         ssh_target = ssh_user + '@' + ssh_host
 
-        # ssh command as a list
         ssh_cmd = ['ssh', ssh_target]
-
-        # scp command as a list
         scp_cmd = ['scp']
 
         # Enumerate the test files
@@ -40,20 +37,20 @@ class SSHRunner(BasicRunner):
             self.save_result(results)
             return
 
-        # To run the binary; cd to dest_dir, run the binary ...
-        run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
+        run_binary_cmd = "./{1}".format(binary)
 
-        # Wait! is this a benchmark, and if so do we need to retrieve the
-        # result file?
+        # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
-            # ... add the benchmark python result output filename option ...
+            # Add the benchmark python result output filename option
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
 
-        # ... finally echo the exit code
-        result = run_cmd(ssh_cmd + \
-            ["{};echo shellexit:$?".format(run_binary_cmd)])
+        # Finally echo the exit code
+        result = run_cmd(
+            ssh_cmd + \
+            ["cd {0};{};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
+
         results.append(result)
 
         if result['return_code'] != 0:
