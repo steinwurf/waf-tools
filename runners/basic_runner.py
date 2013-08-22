@@ -108,7 +108,7 @@ class BasicRunner(Task.Task):
 
         for result in results:
             cmd = result["cmd"]
-            if not isinstance(cmd, basestring):
+            if not isinstance(cmd, str):
                 cmd = " ".join(cmd)
 
             if result["stdout"]:

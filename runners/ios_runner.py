@@ -12,7 +12,7 @@ class IOSRunner(BasicRunner):
         # Kill the usbmux process
         usbmux_proc.kill()
 
-        super(IOSRunner, self).save_result(combined_result)
+        super(IOSRunner, self).save_result(results)
 
     def run(self):
 
