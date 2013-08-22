@@ -5,25 +5,9 @@ import os, sys, re
 import time
 from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
-from basic_runner import BasicRunner
+from basic_runner import BasicRunner, run_cmd
 
-class SshRunner(BasicRunner):
-
-    def save_result(self, results):
-        combined_stdout = ""
-        combined_stderr = ""
-        combined_return_code = 0
-
-        for result in results:
-            combined_stdout += 'Running {cmd}\n{stdout}\n'.format(**result)
-            combined_stderr += 'Running {cmd}\n{stderr}\n'.format(**result)
-            if result['return_code'] != 0: combined_return_code = -1
-
-        combined_result = (self.inputs[0], combined_return_code,
-                  combined_stdout, combined_stderr)
-
-        super(SshRunner, self).save_result(combined_result)
-
+class SSHRunner(BasicRunner):
     def run(self):
 
         bld = self.generator.bld
@@ -35,31 +19,8 @@ class SshRunner(BasicRunner):
         ssh_user = bld.get_tool_option('ssh_user')
         ssh_target = ssh_user + '@' + ssh_host
 
-        def run_cmd(cmd):
-
-            Logs.debug("wr: running %r", cmd)
-
-            proc = Utils.subprocess.Popen(
-                cmd,
-                stderr=Utils.subprocess.PIPE,
-                stdout=Utils.subprocess.PIPE)
-            (stdout, stderr) = proc.communicate()
-
-            result =  {'cmd': cmd, 'return_code': proc.returncode,
-                       'stdout': stdout, 'stderr': stderr}
-
-            return result
-
         # ssh command as a list
         ssh_cmd = ['ssh', ssh_target]
-
-        # First we remove all files from dest_dir with rm -rf
-##        result = run_cmd(ssh_cmd + ['rm -rf {}/*'.format(dest_dir)])
-##        results.append(result)
-##
-##        if result['return_code'] != 0:
-##            self.save_result(results)
-##            return
 
         # scp command as a list
         scp_cmd = ['scp']
