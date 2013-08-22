@@ -22,26 +22,23 @@ class AndroidRunner(BasicRunner):
             device_id = bld.get_tool_option('device_id')
 
         # ADB shell command, we make it immutable using a tuple.
-        adb_shell = None
+        adb_shell = [adb]
         if device_id:
-            adb_shell = (adb, '-s', device_id, 'shell')
-        else:
-            adb_shell = (adb, 'shell')
+            adb_shell = ['-s', device_id]
+        adb_shell += ['shell']
 
         # First we remove all files from dest_dir with rm -rf
-        result = run_cmd(list(adb_shell) + ["rm {}*".format(dest_dir)])
+        result = run_cmd(adb_shell + ["rm {}*".format(dest_dir)])
         results.append(result)
         if result['return_code'] != 0:
             self.save_result(results)
             return
 
         # Run the adb commands, we make it immutable using a tuple.
-        adb_push = None
-
+        adb_push = [adb]
         if device_id:
-            adb_push = (adb, '-s', device_id, 'push')
-        else:
-            adb_push = (adb, 'push')
+            adb_push += ['-s', device_id]
+        adb_push += ['push']
 
         # Push the test files
         for t in self.test_inputs:
@@ -51,7 +48,7 @@ class AndroidRunner(BasicRunner):
             # regardless of the host platform.
             dest_file = dest_dir + filename
 
-            result = run_cmd(list(adb_push) + [t.abspath(), dest_file])
+            result = run_cmd(adb_push + [t.abspath(), dest_file])
             
             results.append(result)
             if result['return_code'] != 0:
@@ -61,7 +58,7 @@ class AndroidRunner(BasicRunner):
 
         # Push the binary
         binary = str(self.inputs[0])
-        adb_push_bin = list(adb_push) + [
+        adb_push_bin = adb_push + [
             self.inputs[0].abspath(),
             dest_dir + binary]
 
@@ -72,18 +69,21 @@ class AndroidRunner(BasicRunner):
             self.save_result(results)
             return
 
-        # We have to cd to the dir and run the binary
-        run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
-
-        #is this a benchmark, and if so do we need to retrieve the result?
+        run_binary_cmd = "./{}".format(binary)
+        
+        # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
 
+        # Add the given run command modifications
+        run_binary_cmd = self.format_command(run_binary_cmd)
+
         # Echo the exit code after the shell command
-        result = run_cmd(list(adb_shell) + ["{};echo shellexit:$?".format(
-            run_binary_cmd)])
+        result = run_cmd(
+            adb_shell + \
+            ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
         results.append(result)
 
         if result['return_code'] != 0:
@@ -130,7 +130,7 @@ class AndroidRunner(BasicRunner):
             # Remove the old benchmark if it exists
             run_cmd(["rm", "-f", output_file])
 
-            result = run_cmd(list(adb_pull) + [benchmark_result, output_file])
+            result = run_cmd(adb_pull + [benchmark_result, output_file])
             results.append(result)
 
             if result['return_code'] != 0:

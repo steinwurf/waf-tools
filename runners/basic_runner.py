@@ -29,9 +29,13 @@ class BasicRunner(Task.Task):
 
         if self.test_inputs: tst_str = ' {test input: %s} ' % tst_str
 
-        return '%s: %s%s%s%s\n' % (
-            self.__class__.__name__.replace('_task', ''),
-            src_str, sep, tgt_str, tst_str)
+        
+        return '{name}: {source_str}{seperator}{target_str}{test_str}\n'.format(
+            name = self.__class__.__name__.replace('_task', ''),
+            source_str = self.format_command(src_str),
+            seperator = sep,
+            target_str = tgt_str,
+            test_str = tst_str)
 
 
     def runnable_status(self):
@@ -71,14 +75,13 @@ class BasicRunner(Task.Task):
         """
         bld = self.generator.bld
 
+        # split the command string into a list of strings
         cmd = self.format_command(self.inputs[0].abspath()).split(' ')
 
-        # If this is a benchmark run and we have specified
-        # an output file name; use it.
+        # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
-            cmd += ["--pyfile={}".format(
-                bld.get_tool_option("python_result"))]
+            cmd += ["--pyfile={}".format(bld.get_tool_option("python_result"))]
 
         # First check whether we require any test files
         for t in self.test_inputs:

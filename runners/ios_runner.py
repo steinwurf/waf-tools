@@ -40,24 +40,21 @@ class IOSRunner(BasicRunner):
         usbmux_dir = bld.get_tool_option('usbmux_dir')
 
         usbmux = os.path.join(usbmux_dir, 'tcprelay.py')
+
         usbmux_cmd = [usbmux, '22:{}'.format(localport)]
+        scp_cmd = ['scp', '-P', localport]
+        ssh_cmd = ['ssh', '-p', localport, ssh_target]
 
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
-
-        # Immutable ssh command:
-        ssh_cmd = ('ssh', '-p', localport, ssh_target)
         
         # First we remove all files from dest_dir with rm -rf
-        result = run_cmd(list(ssh_cmd) + ['rm -rf {}/*'.format(dest_dir)])
+        result = run_cmd(ssh_cmd + ['rm -rf {}/*'.format(dest_dir)])
         results.append(result)
 
         if result['return_code'] != 0:
             self.save_result(results, usbmux_proc)
             return
-
-        # Immutable scp command
-        scp_cmd = ('scp', '-P', localport)
 
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
@@ -67,27 +64,30 @@ class IOSRunner(BasicRunner):
         file_list.append(binary.abspath())
 
         # Copy all files in file_list
-        result = run_cmd(list(scp_cmd) + file_list + [ssh_target+':'+dest_dir])
+        result = run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
         results.append(result)
 
         if result['return_code'] != 0:
             self.save_result(results, usbmux_proc)
             return
-        
-        # To run the binary; cd to dest_dir, run the binary ...            
-        run_binary_cmd = "cd {0};./{1}".format(dest_dir, binary)
+                  
+        run_binary_cmd = "./{1}".format(dest_dir, binary)
 
-        # Wait! is this a benchmark, and if so do we need to retrieve the 
-        # result file?
+        # if this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
-            # ... add the benchmark python result output filename option ...
+            # Add the benchmark python result output filename option
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
 
-        # ... finally echo the exit code
-        result = run_cmd(list(ssh_cmd) + ["{};echo shellexit:$?".format(
-            run_binary_cmd)])
+        # Add the given run command modifications
+        run_binary_cmd = self.format_command(run_binary_cmd)
+
+        # Finally echo the exit code
+        result = run_cmd(
+            [ssh_cmd] + \
+            ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
+
         results.append(result)
 
         if result['return_code'] != 0:
