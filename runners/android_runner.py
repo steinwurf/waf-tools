@@ -23,7 +23,7 @@ class AndroidRunner(BasicRunner):
 
         adb_shell = [adb]
         if device_id:
-            adb_shell = ['-s', device_id]
+            adb_shell += ['-s', device_id]
         adb_shell += ['shell']
 
         adb_push = [adb]
