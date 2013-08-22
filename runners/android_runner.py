@@ -21,20 +21,11 @@ class AndroidRunner(BasicRunner):
         if bld.has_tool_option('device_id'):
             device_id = bld.get_tool_option('device_id')
 
-        # ADB shell command, we make it immutable using a tuple.
         adb_shell = [adb]
         if device_id:
             adb_shell = ['-s', device_id]
         adb_shell += ['shell']
 
-        # First we remove all files from dest_dir with rm -rf
-        result = run_cmd(adb_shell + ["rm {}*".format(dest_dir)])
-        results.append(result)
-        if result['return_code'] != 0:
-            self.save_result(results)
-            return
-
-        # Run the adb commands, we make it immutable using a tuple.
         adb_push = [adb]
         if device_id:
             adb_push += ['-s', device_id]

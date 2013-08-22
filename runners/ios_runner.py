@@ -48,14 +48,6 @@ class IOSRunner(BasicRunner):
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
         
-        # First we remove all files from dest_dir with rm -rf
-        result = run_cmd(ssh_cmd + ['rm -rf {}/*'.format(dest_dir)])
-        results.append(result)
-
-        if result['return_code'] != 0:
-            self.save_result(results, usbmux_proc)
-            return
-
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
 
@@ -95,7 +87,7 @@ class IOSRunner(BasicRunner):
             return
 
         # Almost done. Look for the exit code in the output
-        # and fail if non-zero
+        # and fail if nonzero
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
