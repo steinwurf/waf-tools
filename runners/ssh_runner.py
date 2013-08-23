@@ -37,7 +37,7 @@ class SSHRunner(BasicRunner):
             self.save_result(results)
             return
 
-        run_binary_cmd = "./{1}".format(binary)
+        run_binary_cmd = "./{0}".format(binary)
 
         # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
@@ -46,10 +46,13 @@ class SSHRunner(BasicRunner):
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
 
+        # Add the given run command modifications
+        run_binary_cmd = self.format_command(run_binary_cmd)
+
         # Finally echo the exit code
         result = run_cmd(
             ssh_cmd + \
-            ["cd {0};{};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
+            ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
         results.append(result)
 
