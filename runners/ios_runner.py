@@ -63,7 +63,7 @@ class IOSRunner(BasicRunner):
             self.save_result(results, usbmux_proc)
             return
                   
-        run_binary_cmd = "./{1}".format(dest_dir, binary)
+        run_binary_cmd = "./{}".format(binary)
 
         # if this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
@@ -75,7 +75,7 @@ class IOSRunner(BasicRunner):
         # Add the given run command modifications
         run_binary_cmd = self.format_command(run_binary_cmd)
 
-        # Finally echo the exit code
+        # Echo the exit code after the shell command
         result = run_cmd(
             ssh_cmd + \
             ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])

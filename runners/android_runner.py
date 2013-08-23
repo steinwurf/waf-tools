@@ -65,6 +65,7 @@ class AndroidRunner(BasicRunner):
         # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
+            # Add the benchmark python result output filename option
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
 
@@ -75,13 +76,15 @@ class AndroidRunner(BasicRunner):
         result = run_cmd(
             adb_shell + \
             ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
+
         results.append(result)
 
         if result['return_code'] != 0:
             self.save_result(results)
             return
 
-        # Look for the exit code in the output and fail if non-zero
+        # Almost done. Look for the exit code in the output
+        # and fail if non-zero
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
