@@ -22,12 +22,12 @@ class BasicRunner(Task.Task):
         env = self.env
         src_str = ' '.join([a.nice_path() for a in self.inputs])
         tgt_str = ' '.join([a.nice_path() for a in self.outputs])
-        tst_str = ' '.join([a.nice_path() for a in self.test_inputs])
+        tst_str = '\n\t'.join([a.nice_path() for a in self.test_inputs])
 
         if self.outputs: sep = ' -> '
         else: sep = ''
 
-        if self.test_inputs: tst_str = ' {test input: %s} ' % tst_str
+        if self.test_inputs: tst_str = 'test input:\n\t{}'.format(tst_str)
 
         
         return '{name}: {source_str}{seperator}{target_str}{test_str}\n'.format(
@@ -83,6 +83,7 @@ class BasicRunner(Task.Task):
         and bld.has_tool_option('python_result'):
             cmd += ["--pyfile={}".format(bld.get_tool_option("python_result"))]
 
+
         # First check whether we require any test files
         for t in self.test_inputs:
 
@@ -97,7 +98,7 @@ class BasicRunner(Task.Task):
             if hasattr(self.generator, 'chmod'):
                 os.chmod(test_file_out.abspath(), self.generator.chmod)
 
-        result = run_cmd(cmd)
+        result = self.run_cmd(cmd)
 
         self.save_result([result])
 
@@ -139,16 +140,17 @@ class BasicRunner(Task.Task):
         finally:
             testlock.release()
 
-def run_cmd(cmd):
-    Logs.debug("wr: running %r", cmd)
+    def run_cmd(self, cmd):
+        Logs.debug("wr: running %r", cmd)
 
-    proc = Utils.subprocess.Popen(
-        cmd,
-        stderr=Utils.subprocess.PIPE,
-        stdout=Utils.subprocess.PIPE)
-    (stdout, stderr) = proc.communicate()
+        proc = Utils.subprocess.Popen(
+            cmd,
+            cwd=self.inputs[0].parent.abspath(),
+            stderr=Utils.subprocess.PIPE,
+            stdout=Utils.subprocess.PIPE)
+        (stdout, stderr) = proc.communicate()
 
-    result =  {'cmd': cmd, 'return_code': proc.returncode,
-               'stdout': stdout, 'stderr': stderr}
+        result =  {'cmd': cmd, 'return_code': proc.returncode,
+                   'stdout': stdout, 'stderr': stderr}
 
-    return result
+        return result

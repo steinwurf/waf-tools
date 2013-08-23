@@ -5,7 +5,7 @@ import os, sys, re
 
 from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
-from basic_runner import BasicRunner, run_cmd
+from basic_runner import BasicRunner
 
 class AndroidRunner(BasicRunner):
     def run(self):
@@ -39,7 +39,7 @@ class AndroidRunner(BasicRunner):
             # regardless of the host platform.
             dest_file = dest_dir + filename
 
-            result = run_cmd(adb_push + [t.abspath(), dest_file])
+            result = self.run_cmd(adb_push + [t.abspath(), dest_file])
             
             results.append(result)
             if result['return_code'] != 0:
@@ -53,7 +53,7 @@ class AndroidRunner(BasicRunner):
             self.inputs[0].abspath(),
             dest_dir + binary]
 
-        result = run_cmd(adb_push_bin)
+        result = self.run_cmd(adb_push_bin)
         results.append(result)
 
         if result['return_code'] != 0:
@@ -73,7 +73,7 @@ class AndroidRunner(BasicRunner):
         run_binary_cmd = self.format_command(run_binary_cmd)
 
         # Echo the exit code after the shell command
-        result = run_cmd(
+        result = self.run_cmd(
             adb_shell + \
             ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
@@ -122,9 +122,9 @@ class AndroidRunner(BasicRunner):
             benchmark_result  = dest_dir + output_file
             
             # Remove the old benchmark if it exists
-            run_cmd(["rm", "-f", output_file])
+            self.run_cmd(["rm", "-f", output_file])
 
-            result = run_cmd(adb_pull + [benchmark_result, output_file])
+            result = self.run_cmd(adb_pull + [benchmark_result, output_file])
             results.append(result)
 
             if result['return_code'] != 0:

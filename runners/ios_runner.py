@@ -5,7 +5,7 @@ import os, sys, re
 import time
 from waflib.TaskGen import feature, after_method
 from waflib import Utils, Task, Logs, Options
-from basic_runner import BasicRunner, run_cmd
+from basic_runner import BasicRunner
 
 class IOSRunner(BasicRunner):
     def save_result(self, results, usbmux_proc):
@@ -56,7 +56,7 @@ class IOSRunner(BasicRunner):
         file_list.append(binary.abspath())
 
         # Copy all files in file_list
-        result = run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
+        result = self.run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
         results.append(result)
 
         if result['return_code'] != 0:
@@ -76,7 +76,7 @@ class IOSRunner(BasicRunner):
         run_binary_cmd = self.format_command(run_binary_cmd)
 
         # Echo the exit code after the shell command
-        result = run_cmd(
+        result = self.run_cmd(
             ssh_cmd + \
             ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
@@ -114,11 +114,11 @@ class IOSRunner(BasicRunner):
             output_file = bld.get_tool_option("python_result")
 
             # Remove the old benchmark if it exists
-            run_cmd(["rm", "-f", output_file])
+            self.run_cmd(["rm", "-f", output_file])
 
             benchmark_result = os.path.join(dest_dir,output_file)
             
-            result = run_cmd(list(scp_cmd) + ['{0}:{1}'.format(
+            result = self.run_cmd(list(scp_cmd) + ['{0}:{1}'.format(
                 ssh_target,benchmark_result), '.'])
             results.append(result)
 
