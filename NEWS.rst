@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.9.0
+* Minor: Improved support for the run_cmd option.
+* Minor: Refactored the different runners.
+
 2.8.0
 -----
 * Minor: Added cxx_raspberry_gxx47_arm mkspec for Raspberry Pi toolchain.
