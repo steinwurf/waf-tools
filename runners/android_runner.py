@@ -12,7 +12,7 @@ class AndroidRunner(BasicRunner):
         bld = self.generator.bld
 
         adb = bld.env['ADB']
-        
+
         results = []
 
         dest_dir = '/data/local/tmp/'
@@ -40,7 +40,7 @@ class AndroidRunner(BasicRunner):
             dest_file = dest_dir + filename
 
             result = self.run_cmd(adb_push + [t.abspath(), dest_file])
-            
+
             results.append(result)
             if result['return_code'] != 0:
                 self.save_result(results)
@@ -61,7 +61,7 @@ class AndroidRunner(BasicRunner):
             return
 
         run_binary_cmd = "./{}".format(binary)
-        
+
         # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
@@ -109,18 +109,18 @@ class AndroidRunner(BasicRunner):
         if  bld.has_tool_option('run_benchmark') \
         and bld.has_tool_option('python_result'):
 
-            adb_pull = None
+            adb_pull = [adb]
 
             if device_id:
-                adb_pull = (adb, '-s', device_id, 'pull')
-            else:
-                adb_pull = (adb, 'pull')
+                adb_pull += ['-s', device_id]
+
+            adb_pull += ['pull']
 
             output_file = bld.get_tool_option("python_result")
 
             # This path is on android and not the host platform
             benchmark_result  = dest_dir + output_file
-            
+
             # Remove the old benchmark if it exists
             self.run_cmd(["rm", "-f", output_file])
 
