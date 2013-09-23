@@ -83,10 +83,12 @@ def make_benchmark(self):
 
         if self.bld.has_tool_option('print_benchmark_paths'):
             print(self.link_task.outputs[0].relpath())
+        if self.bld.has_tool_option('print_benchmarks'):
+            print(self.link_task.outputs[0].name)
 
 def make_run(taskgen, run_type):
     """
-    Create the run task. There can be only one unit test 
+    Create the run task. There can be only one unit test
     task by task generator.
     """
     task = None
@@ -95,16 +97,16 @@ def make_run(taskgen, run_type):
 
         taskgen.bld.add_group()
         if taskgen.bld.has_tool_option('ssh_runner'):
-            task = taskgen.create_task('SSHRunner', 
+            task = taskgen.create_task('SSHRunner',
                 taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('android'):
-            task = taskgen.create_task('AndroidRunner', 
+            task = taskgen.create_task('AndroidRunner',
                 taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('ios'):
-            task = taskgen.create_task('IOSRunner', 
+            task = taskgen.create_task('IOSRunner',
                 taskgen.link_task.outputs)
         else:
-            task = taskgen.create_task('BasicRunner', 
+            task = taskgen.create_task('BasicRunner',
                 taskgen.link_task.outputs)
 
         # Check if the executable requires any test files
@@ -124,7 +126,7 @@ def make_run(taskgen, run_type):
     else:
         taskgen.bld.add_post_fun(set_exit_code)
         taskgen.bld.add_post_fun(summary)
-        
+
 
 
 def summary(bld):
@@ -147,7 +149,7 @@ def summary(bld):
         for (filename, return_code, stdout, stderr) in lst:
             if return_code == 0:
                 Logs.pprint('CYAN', '    %s' % filename)
-        
+
         if fail != 0:
             Logs.pprint('CYAN', '  failed runs %d/%d' % (fail, total))
             for (filename, return_code, stdout, stderr) in lst:
