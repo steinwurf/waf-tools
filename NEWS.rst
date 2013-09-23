@@ -5,6 +5,7 @@ This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
 2.10.1
+------
 * Bug: Fixed pull command bug in the android runner.
 
 2.10.0
