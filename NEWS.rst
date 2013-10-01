@@ -4,6 +4,9 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.11.0
+* Minor: Added cxx_clang32_x32/64 mkspecs for clang 3.2 targets.
+
 2.10.1
 ------
 * Bug: Fixed pull command bug in the android runner.
