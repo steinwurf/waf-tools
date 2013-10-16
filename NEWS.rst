@@ -6,11 +6,12 @@ of every change, see the Git log.
 
 2.12.0
 ------
-* Minor: Added mkspecs for G++ 4.8 and clang 3.1, 3.3 compilers.
+* Minor: Added mkspecs cxx_gxx48_x86/64 for g++ 4.8 compiler.
+* Minor: Added cxx_clang31_x86/64 and cxx_clang33_x86/64 mkspecs.
 
 2.11.0
 ------
-* Minor: Added cxx_clang32_x32/64 mkspecs for clang 3.2 targets.
+* Minor: Added cxx_clang32_x86/64 mkspecs for clang 3.2 compiler.
 
 2.10.1
 ------
