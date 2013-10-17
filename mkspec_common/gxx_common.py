@@ -70,17 +70,15 @@ def mkspec_gxx_android_configure(conf, major, minor, prefix):
 @conf
 def mkspec_set_gcc_ccflags(conf):
 
-    conf.env['CCFLAGS'] += ['-O2','-ftree-vectorize',
-                             '-Wextra','-Wall']
+    conf.env['CFLAGS'] += ['-O2','-ftree-vectorize', '-Wextra','-Wall']
 
     if conf.has_tool_option('cxx_debug'):
-        conf.env['CCFLAGS'] += ['-g']
+        conf.env['CFLAGS'] += ['-g']
 
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] += ['-O2','-ftree-vectorize',
-                             '-Wextra','-Wall']
+    conf.env['CXXFLAGS'] += ['-O2','-ftree-vectorize', '-Wextra','-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']

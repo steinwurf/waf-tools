@@ -7,6 +7,14 @@ from waflib.Configure import conf
 from os.path import abspath, expanduser
 import os
 
+@conf
+def mkspec_add_common_flag(conf, flag):
+    """
+    :param flag: The flag to be set for C/C++ compiler and linker
+    """
+    conf.env['CFLAGS'] += [flag]
+    conf.env['CXXFLAGS'] += [flag]
+    conf.env['LINKFLAGS'] += [flag]
 
 @conf
 def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
