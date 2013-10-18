@@ -4,6 +4,11 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.13.0
+------
+* Minor: Add -m32/-m64 flag for CFLAGS/CXXFLAGS/LINKFLAGS to enable 32-bit
+  compilation on 64-bit systems (applies to all g++ and clang mkspecs).
+
 2.12.0
 ------
 * Minor: Added mkspecs cxx_gxx48_x86/64 for g++ 4.8 compiler.
