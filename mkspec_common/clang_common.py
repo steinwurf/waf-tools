@@ -75,10 +75,10 @@ def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
 @conf
 def mkspec_set_clang_ccflags(conf):
 
-    conf.env['CCFLAGS'] += ['-O2', '-Wextra', '-Wall']
+    conf.env['CFLAGS'] += ['-O2', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
-        conf.env['CCFLAGS'] += ['-g']
+        conf.env['CFLAGS'] += ['-g']
 
 @conf
 def mkspec_set_clang_cxxflags(conf):
