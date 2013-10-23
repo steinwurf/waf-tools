@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.14.0
+------
+* Minor: Added mkspecs cxx_apple_llvm50_x86/64 for Apple LLVM 5.0 compiler.
+
 2.13.0
 ------
 * Minor: Add -m32/-m64 flag for CFLAGS/CXXFLAGS/LINKFLAGS to enable 32-bit
