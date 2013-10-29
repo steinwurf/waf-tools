@@ -10,6 +10,11 @@ from waflib import Errors
 
 from waflib.Configure import conf
 
+# Import the makespecs from all compiler families
+import clang_mkspecs
+import gxx_mkspecs
+import msvc_mkspecs
+
 # Allows us to catch queries for platforms that we do not yet support
 
 mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios']
@@ -44,13 +49,14 @@ def get_mkspec_platform(conf):
 @conf
 def set_mkspec_platform(conf, platform):
     if conf.env['MKSPEC_PLATFORM']:
-        conf.fatal(("The mkspec platform could not be set to %s, as it was "
-                   "already set to %s.") %
-                   (platform, conf.env['MKSPEC_PLATFORM']))
+        conf.fatal("The mkspec platform could not be set to {0}, as it was "
+                   "already set to {1}.".format(
+                   platform, conf.env['MKSPEC_PLATFORM']))
 
     if not platform in mkspec_platforms:
-        conf.fatal(("The mkspec platform %s is not supported."
-                   " Current platform is %s") % (platform, conf.env['MKSPEC_PLATFORM']))
+        conf.fatal("The mkspec platform {0} is not supported."
+                   " Current platform is {1}".format(
+                   platform, conf.env['MKSPEC_PLATFORM']))
 
     conf.env['MKSPEC_PLATFORM'] = platform
 
@@ -68,7 +74,17 @@ def configure(conf):
         mkspec = conf.get_tool_option('cxx_mkspec')
 
     conf.msg('Using the mkspec:', mkspec)
-    conf.load_external_tool('mkspec', mkspec)
+    if mkspec == "cxx_default":
+        conf.load_external_tool('mkspec', mkspec)
+    else:
+        # Find the mkspec function on the conf object
+        try:
+            mkspec_func = getattr(conf, mkspec)
+            mkspec_func()
+        except AttributeError:
+            conf.fatal("The mkspec is not available: {0}".format(mkspec))
+
+
 
 
 
