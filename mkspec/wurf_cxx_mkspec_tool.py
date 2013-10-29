@@ -77,11 +77,10 @@ def configure(conf):
     if mkspec == "cxx_default":
         conf.load_external_tool('mkspec', mkspec)
     else:
-        # Find the mkspec function on the conf object
-        try:
-            mkspec_func = getattr(conf, mkspec)
-            mkspec_func()
-        except AttributeError:
+        # Find and call the mkspec function on the conf object
+        if hasattr(conf, mkspec):
+            getattr(conf, mkspec)()
+        else:
             conf.fatal("The mkspec is not available: {0}".format(mkspec))
 
 
