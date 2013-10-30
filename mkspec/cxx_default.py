@@ -2,23 +2,15 @@
 # encoding: utf-8
 
 import os
-##import sys
 
 from waflib import Utils
 from waflib.Configure import conf
 from waflib import Logs
 from waflib import Errors
 
-##import waflib.Tools.gxx as gxx
-##from os.path import abspath, expanduser
-
-### The common modules are in the ./common folder
-##CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-##sys.path.append(os.path.join(CURRENT_DIR,'common'))
-##
-##import clang_common
-##import gxx_common
-##import msvc_common
+import clang_common
+import gxx_common
+import msvc_common
 
 def check_minimum_cc_versions(conf, major, minor):
     # Enforce minimum version for C++ compiler
@@ -40,7 +32,7 @@ def load_compiler(conf, compiler):
         conf.load('g++')
         # Also load 'clang' as a C compiler using the gcc tool
         conf.load('gcc')
-        conf.load_external_tool('mkspec_common', 'clang_common')
+
         # Enforce minimum version for compilers
         check_minimum_cc_versions(conf, 3, 0)
         conf.mkspec_set_clang_cxxflags()
@@ -49,7 +41,7 @@ def load_compiler(conf, compiler):
         conf.load('g++')
         # Also load 'gcc' as a C compiler
         conf.load('gcc')
-        conf.load_external_tool('mkspec_common', 'gxx_common')
+
         # Enforce minimum version for compilers
         check_minimum_cc_versions(conf, 4, 6)
         conf.mkspec_set_gxx_cxxflags()
@@ -57,7 +49,6 @@ def load_compiler(conf, compiler):
     elif 'msvc' in compiler or 'CL.exe' in compiler or 'cl.exe' in compiler:
         conf.load('msvc')
         # Note: the waf msvc tool also load msvc as a C compiler
-        conf.load_external_tool('mkspec_common', 'msvc_common')
         conf.mkspec_check_minimum_msvc_version(11.0)
         conf.mkspec_set_msvc_flags()
     else:
