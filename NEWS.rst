@@ -4,6 +4,12 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.15.0
+------
+* Minor: Combined mkspecs into single files for each compiler family.
+* Minor: Added mkspec cxx_crosslinux_gxx46_arm for Linux on 32-bit ARM.
+* Minor: Added cflags,cxxflags,linkflags,commonflags options
+
 2.14.0
 ------
 * Minor: Added mkspecs cxx_apple_llvm50_x86/64 for Apple LLVM 5.0 compiler.
