@@ -83,7 +83,19 @@ def configure(conf):
         else:
             conf.fatal("The mkspec is not available: {0}".format(mkspec))
 
+    # Additional flags for C/C++ compiler and linker
+    if conf.has_tool_option('cflags'):
+        conf.env['CFLAGS'] += conf.get_tool_option('cflags').split(';')
+    if conf.has_tool_option('cxxflags'):
+        conf.env['CXXFLAGS'] += conf.get_tool_option('cxxflags').split(';')
+    if conf.has_tool_option('linkflags'):
+        conf.env['LINKFLAGS'] += conf.get_tool_option('linkflags').split(';')
 
+    # Common flags to be set for C/C++ compiler and linker
+    if conf.has_tool_option('commonflags'):
+        conf.env['CFLAGS'] += conf.get_tool_option('commonflags').split(';')
+        conf.env['CXXFLAGS'] += conf.get_tool_option('commonflags').split(';')
+        conf.env['LINKFLAGS'] += conf.get_tool_option('commonflags').split(';')
 
 
 
