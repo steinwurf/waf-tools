@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.16.1
+------
+* Bugfix: Remove added quotes from ssh_options and scp_options.
+
 2.16.0
 ------
 * Minor: Add ssh_options and scp_options for SSH runner customization.
