@@ -19,8 +19,16 @@ class SSHRunner(BasicRunner):
         ssh_user = bld.get_tool_option('ssh_user')
         ssh_target = ssh_user + '@' + ssh_host
 
-        ssh_cmd = ['ssh', ssh_target]
-        scp_cmd = ['scp']
+        ssh_options = []
+        if bld.has_tool_option('ssh_options'):
+            ssh_options = bld.get_tool_option('ssh_options').split(' ')
+
+        scp_options = []
+        if bld.has_tool_option('scp_options'):
+            scp_options = bld.get_tool_option('scp_options').split(' ')
+
+        ssh_cmd = ['ssh'] + ssh_options + [ssh_target]
+        scp_cmd = ['scp'] + scp_options
 
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
