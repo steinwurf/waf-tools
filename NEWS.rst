@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.16.0
+------
+* Minor: Add ssh_options and scp_options for SSH runner customization.
+
 2.15.0
 ------
 * Minor: Combined mkspecs into single files for each compiler family.
