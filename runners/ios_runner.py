@@ -47,13 +47,13 @@ class IOSRunner(BasicRunner):
 
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
-        
+
         # Enumerate the test files
-        file_list = [test_input.abspath() for test_input in self.test_inputs]
+        file_list = [test_input.nice_path() for test_input in self.test_inputs]
 
         # Add the binary
         binary = self.inputs[0]
-        file_list.append(binary.abspath())
+        file_list.append(binary.nice_path())
 
         # Copy all files in file_list
         result = self.run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
@@ -62,7 +62,7 @@ class IOSRunner(BasicRunner):
         if result['return_code'] != 0:
             self.save_result(results, usbmux_proc)
             return
-                  
+
         run_binary_cmd = "./{}".format(binary)
 
         # if this is a benchmark and we need to retrieve the result file
@@ -117,7 +117,7 @@ class IOSRunner(BasicRunner):
             self.run_cmd(["rm", "-f", output_file])
 
             benchmark_result = os.path.join(dest_dir,output_file)
-            
+
             result = self.run_cmd(list(scp_cmd) + ['{0}:{1}'.format(
                 ssh_target,benchmark_result), '.'])
             results.append(result)

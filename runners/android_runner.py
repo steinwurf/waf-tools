@@ -34,12 +34,12 @@ class AndroidRunner(BasicRunner):
         # Push the test files
         for t in self.test_inputs:
 
-            filename = os.path.basename(t.abspath())
+            filename = os.path.basename(t.nice_path())
             # This path is on android, hence we use '/'
             # regardless of the host platform.
             dest_file = dest_dir + filename
 
-            result = self.run_cmd(adb_push + [t.abspath(), dest_file])
+            result = self.run_cmd(adb_push + [t.nice_path(), dest_file])
 
             results.append(result)
             if result['return_code'] != 0:
@@ -50,7 +50,7 @@ class AndroidRunner(BasicRunner):
         # Push the binary
         binary = str(self.inputs[0])
         adb_push_bin = adb_push + [
-            self.inputs[0].abspath(),
+            self.inputs[0].nice_path(),
             dest_dir + binary]
 
         result = self.run_cmd(adb_push_bin)

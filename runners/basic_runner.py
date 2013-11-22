@@ -29,7 +29,7 @@ class BasicRunner(Task.Task):
 
         if self.test_inputs: tst_str = 'test input:\n\t{}'.format(tst_str)
 
-        
+
         return '{name}: {source_str}{seperator}{target_str}{test_str}\n'.format(
             name = self.__class__.__name__.replace('_task', ''),
             source_str = self.format_command(src_str),
@@ -76,7 +76,7 @@ class BasicRunner(Task.Task):
         bld = self.generator.bld
 
         # split the command string into a list of strings
-        cmd = self.format_command(self.inputs[0].abspath()).split(' ')
+        cmd = self.format_command(self.inputs[0].nice_path()).split(' ')
 
         # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') \
@@ -87,16 +87,16 @@ class BasicRunner(Task.Task):
         # First check whether we require any test files
         for t in self.test_inputs:
 
-            filename = os.path.basename(t.abspath())
+            filename = os.path.basename(t.nice_path())
 
             test_file_out = self.inputs[0].parent.find_or_declare(filename)
 
             Logs.debug("wr: test file {0} -> {1}".format(
-                t.abspath(), test_file_out.abspath()))
+                t.nice_path(), test_file_out.nice_path()))
 
             test_file_out.write(t.read('rb'), 'wb')
             if hasattr(self.generator, 'chmod'):
-                os.chmod(test_file_out.abspath(), self.generator.chmod)
+                os.chmod(test_file_out.nice_path(), self.generator.chmod)
 
         result = self.run_cmd(cmd)
 
@@ -145,7 +145,7 @@ class BasicRunner(Task.Task):
 
         proc = Utils.subprocess.Popen(
             cmd,
-            cwd=self.inputs[0].parent.abspath(),
+            cwd=self.inputs[0].parent.nice_path(),
             stderr=Utils.subprocess.PIPE,
             stdout=Utils.subprocess.PIPE)
         (stdout, stderr) = proc.communicate()
