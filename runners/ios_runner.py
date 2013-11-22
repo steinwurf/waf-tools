@@ -49,11 +49,11 @@ class IOSRunner(BasicRunner):
         usbmux_proc = start_proc(usbmux_cmd)
 
         # Enumerate the test files
-        file_list = [test_input.bldpath() for test_input in self.test_inputs]
+        file_list = [test_input.abspath() for test_input in self.test_inputs]
 
         # Add the binary
         binary = self.inputs[0]
-        file_list.append(binary.bldpath())
+        file_list.append(binary.abspath())
 
         # Copy all files in file_list
         result = self.run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
@@ -63,7 +63,7 @@ class IOSRunner(BasicRunner):
             self.save_result(results, usbmux_proc)
             return
 
-        run_binary_cmd = "./{}".format(binary)
+        run_binary_cmd = "./{0}".format(binary)
 
         # if this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') and \

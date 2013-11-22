@@ -35,12 +35,12 @@ class AndroidRunner(BasicRunner):
         # Push the test files
         for t in self.test_inputs:
 
-            filename = os.path.basename(t.bldpath())
+            filename = os.path.basename(t.abspath())
             # This path is on android, hence we use '/'
             # regardless of the host platform.
             dest_file = dest_dir + filename
 
-            result = self.run_cmd(adb_push + [t.bldpath(), dest_file])
+            result = self.run_cmd(adb_push + [t.abspath(), dest_file])
 
             results.append(result)
             if result['return_code'] != 0:
@@ -50,7 +50,7 @@ class AndroidRunner(BasicRunner):
 
         # Push the binary
         binary = str(self.inputs[0])
-        adb_push_bin = adb_push + [self.inputs[0].bldpath(), dest_dir + binary]
+        adb_push_bin = adb_push + [self.inputs[0].abspath(), dest_dir + binary]
 
         result = self.run_cmd(adb_push_bin)
         results.append(result)
@@ -59,7 +59,7 @@ class AndroidRunner(BasicRunner):
             self.save_result(results)
             return
 
-        run_binary_cmd = "./{}".format(binary)
+        run_binary_cmd = "./{0}".format(binary)
 
         # If this is a benchmark and we need to retrieve the result file
         if bld.has_tool_option('run_benchmark') and \

@@ -27,8 +27,8 @@ class BasicRunner(Task.Task):
         if self.outputs: sep = ' -> '
         else: sep = ''
 
-        if self.test_inputs: tst_str = 'test input:\n\t{}'.format(tst_str)
-
+        if self.test_inputs:
+            tst_str = 'test input:\n\t{}'.format(tst_str)
 
         return '{name}: {source_str}{seperator}{target_str}{test_str}\n'.format(
             name = self.__class__.__name__.replace('_task', ''),
@@ -42,11 +42,11 @@ class BasicRunner(Task.Task):
         """
         Always execute the task if `waf --options=run_always` was used
         """
-
         ret = super(BasicRunner, self).runnable_status()
         if ret == Task.SKIP_ME:
             if self.generator.bld.has_tool_option('run_always'):
                 return Task.RUN_ME
+
         return ret
 
     def format_command(self, executable):
@@ -62,7 +62,7 @@ class BasicRunner(Task.Task):
             testcmd = bld.get_tool_option('run_cmd')
             cmd = testcmd % executable
         else:
-            cmd  = executable
+            cmd = executable
 
         return cmd
 
@@ -75,28 +75,33 @@ class BasicRunner(Task.Task):
         """
         bld = self.generator.bld
 
-        # split the command string into a list of strings
-        cmd = self.format_command(self.inputs[0].bldpath()).split(' ')
+        # It is enough to use the basename of the binary, because it is always
+        # executed in its parent folder
+        binary = self.inputs[0].name
+        # Prefix the binary with ./ if the platform is not Windows
+        if platform != 'win32':
+            binary = './' + binary
+        # Then command string can be safely split into a list of strings
+        cmd = self.format_command(binary).split(' ')
 
         # If this is a benchmark and we need to retrieve the result file
-        if  bld.has_tool_option('run_benchmark') and \
-            bld.has_tool_option('python_result'):
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
             cmd += ["--pyfile={0}".format(bld.get_tool_option("python_result"))]
-
 
         # First check whether we require any test files
         for t in self.test_inputs:
 
-            filename = os.path.basename(t.bldpath())
+            filename = os.path.basename(t.abspath())
 
             test_file_out = self.inputs[0].parent.find_or_declare(filename)
 
             Logs.debug("wr: test file {0} -> {1}".format(
-                t.bldpath(), test_file_out.bldpath()))
+                t.abspath(), test_file_out.abspath()))
 
             test_file_out.write(t.read('rb'), 'wb')
             if hasattr(self.generator, 'chmod'):
-                os.chmod(test_file_out.bldpath(), self.generator.chmod)
+                os.chmod(test_file_out.abspath(), self.generator.chmod)
 
         result = self.run_cmd(cmd)
 
@@ -141,6 +146,7 @@ class BasicRunner(Task.Task):
             testlock.release()
 
     def run_cmd(self, cmd):
+
         Logs.debug("wr: running %r", cmd)
 
         proc = Utils.subprocess.Popen(
@@ -148,6 +154,7 @@ class BasicRunner(Task.Task):
             cwd=self.inputs[0].parent.abspath(),
             stderr=Utils.subprocess.PIPE,
             stdout=Utils.subprocess.PIPE)
+
         (stdout, stderr) = proc.communicate()
 
         result =  {'cmd': cmd, 'return_code': proc.returncode,
