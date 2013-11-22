@@ -60,11 +60,19 @@ class BasicRunner(Task.Task):
 
         if bld.has_tool_option('run_cmd'):
             testcmd = bld.get_tool_option('run_cmd')
-            cmd = testcmd % executable
-        else:
-            cmd = executable
 
-        return cmd
+            # Split the arguments BEFORE substituting the executable path
+            args = testcmd.split(' ')
+
+            # Substitute the path to the relevant element
+            for i in xrange(len(args)):
+                if '%s' in args[i]:
+                    args[i] = args[i] % executable
+
+        else:
+            args = [executable]
+
+        return args
 
     def run(self):
         """
@@ -75,14 +83,9 @@ class BasicRunner(Task.Task):
         """
         bld = self.generator.bld
 
-        # It is enough to use the basename of the binary, because it is always
-        # executed in its parent folder
-        binary = self.inputs[0].name
-        # Prefix the binary with ./ if the platform is not Windows
-        if not bld.is_mkspec_platform('windows'):
-            binary = './' + binary
         # Then command string can be safely split into a list of strings
-        cmd = self.format_command(binary).split(' ')
+        binary = self.inputs[0].abspath()
+        cmd = self.format_command(binary)
 
         # If this is a benchmark and we need to retrieve the result file
         if bld.has_tool_option('run_benchmark') and \
