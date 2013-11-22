@@ -79,7 +79,7 @@ class BasicRunner(Task.Task):
         # executed in its parent folder
         binary = self.inputs[0].name
         # Prefix the binary with ./ if the platform is not Windows
-        if platform != 'win32':
+        if not bld.is_mkspec_platform('windows'):
             binary = './' + binary
         # Then command string can be safely split into a list of strings
         cmd = self.format_command(binary).split(' ')
