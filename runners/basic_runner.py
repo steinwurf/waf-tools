@@ -76,7 +76,7 @@ class BasicRunner(Task.Task):
         bld = self.generator.bld
 
         # split the command string into a list of strings
-        cmd = self.format_command(self.inputs[0].bld_path()).split(' ')
+        cmd = self.format_command(self.inputs[0].bldpath()).split(' ')
 
         # If this is a benchmark and we need to retrieve the result file
         if  bld.has_tool_option('run_benchmark') and \
@@ -87,16 +87,16 @@ class BasicRunner(Task.Task):
         # First check whether we require any test files
         for t in self.test_inputs:
 
-            filename = os.path.basename(t.bld_path())
+            filename = os.path.basename(t.bldpath())
 
             test_file_out = self.inputs[0].parent.find_or_declare(filename)
 
             Logs.debug("wr: test file {0} -> {1}".format(
-                t.bld_path(), test_file_out.bld_path()))
+                t.bldpath(), test_file_out.bldpath()))
 
             test_file_out.write(t.read('rb'), 'wb')
             if hasattr(self.generator, 'chmod'):
-                os.chmod(test_file_out.bld_path(), self.generator.chmod)
+                os.chmod(test_file_out.bldpath(), self.generator.chmod)
 
         result = self.run_cmd(cmd)
 

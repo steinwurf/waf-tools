@@ -33,11 +33,11 @@ class SSHRunner(BasicRunner):
         scp_cmd = ['scp'] + scp_options
 
         # Enumerate the test files
-        file_list = [test_input.bld_path() for test_input in self.test_inputs]
+        file_list = [test_input.bldpath() for test_input in self.test_inputs]
 
         # Add the binary
         binary = self.inputs[0]
-        file_list.append(binary.bld_path())
+        file_list.append(binary.bldpath())
 
         # Copy all files in file_list
         result = self.run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
