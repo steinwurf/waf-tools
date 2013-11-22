@@ -33,11 +33,11 @@ class SSHRunner(BasicRunner):
         scp_cmd = ['scp'] + scp_options
 
         # Enumerate the test files
-        file_list = [test_input.nice_path() for test_input in self.test_inputs]
+        file_list = [test_input.bld_path() for test_input in self.test_inputs]
 
         # Add the binary
         binary = self.inputs[0]
-        file_list.append(binary.nice_path())
+        file_list.append(binary.bld_path())
 
         # Copy all files in file_list
         result = self.run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
@@ -50,8 +50,8 @@ class SSHRunner(BasicRunner):
         run_binary_cmd = "./{}".format(binary)
 
         # If this is a benchmark and we need to retrieve the result file
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
             # Add the benchmark python result output filename option
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
@@ -93,17 +93,17 @@ class SSHRunner(BasicRunner):
             return
 
         # Everything seems to be fine, lets pull the output file if needed
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
             output_file = bld.get_tool_option("python_result")
 
             # Remove the old benchmark if it exists
             self.run_cmd(["rm", "-f", output_file])
 
-            benchmark_result = os.path.join(dest_dir,output_file)
+            benchmark_result = os.path.join(dest_dir, output_file)
 
-            result = self.run_cmd(scp_cmd + \
-                ['{0}:{1}'.format(ssh_target,benchmark_result), '.'])
+            result = self.run_cmd(
+                scp_cmd + ['{0}:{1}'.format(ssh_target, benchmark_result), '.'])
             results.append(result)
 
             if result['return_code'] != 0:
