@@ -9,6 +9,7 @@ from basic_runner import BasicRunner
 
 class AndroidRunner(BasicRunner):
     def run(self):
+
         bld = self.generator.bld
 
         adb = bld.env['ADB']
@@ -49,9 +50,7 @@ class AndroidRunner(BasicRunner):
 
         # Push the binary
         binary = str(self.inputs[0])
-        adb_push_bin = adb_push + [
-            self.inputs[0].abspath(),
-            dest_dir + binary]
+        adb_push_bin = adb_push + [self.inputs[0].abspath(), dest_dir + binary]
 
         result = self.run_cmd(adb_push_bin)
         results.append(result)
@@ -60,11 +59,11 @@ class AndroidRunner(BasicRunner):
             self.save_result(results)
             return
 
-        run_binary_cmd = "./{}".format(binary)
+        run_binary_cmd = "./{0}".format(binary)
 
         # If this is a benchmark and we need to retrieve the result file
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
             # Add the benchmark python result output filename option
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
@@ -106,8 +105,8 @@ class AndroidRunner(BasicRunner):
             return
 
         # Everything seems to be fine, lets pull the output file if needed
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
 
             adb_pull = [adb]
 

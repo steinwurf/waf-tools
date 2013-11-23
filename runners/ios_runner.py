@@ -47,7 +47,7 @@ class IOSRunner(BasicRunner):
 
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
-        
+
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
 
@@ -62,12 +62,12 @@ class IOSRunner(BasicRunner):
         if result['return_code'] != 0:
             self.save_result(results, usbmux_proc)
             return
-                  
-        run_binary_cmd = "./{}".format(binary)
+
+        run_binary_cmd = "./{0}".format(binary)
 
         # if this is a benchmark and we need to retrieve the result file
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if  bld.has_tool_option('run_benchmark') and \
+            bld.has_tool_option('python_result'):
             # Add the benchmark python result output filename option
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
@@ -109,21 +109,21 @@ class IOSRunner(BasicRunner):
             return
 
         # Everything seems to be fine, lets pull the output file if needed
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if  bld.has_tool_option('run_benchmark') and \
+            bld.has_tool_option('python_result'):
             output_file = bld.get_tool_option("python_result")
 
             # Remove the old benchmark if it exists
             self.run_cmd(["rm", "-f", output_file])
 
             benchmark_result = os.path.join(dest_dir,output_file)
-            
-            result = self.run_cmd(list(scp_cmd) + ['{0}:{1}'.format(
-                ssh_target,benchmark_result), '.'])
+
+            result = self.run_cmd(
+                scp_cmd + ['{0}:{1}'.format(ssh_target, benchmark_result), '.'])
             results.append(result)
 
             if result['return_code'] != 0:
-                self.save_result(results,usbmux_proc)
+                self.save_result(results, usbmux_proc)
                 return
 
         self.save_result(results, usbmux_proc)

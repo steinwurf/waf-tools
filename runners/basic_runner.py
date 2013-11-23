@@ -27,9 +27,9 @@ class BasicRunner(Task.Task):
         if self.outputs: sep = ' -> '
         else: sep = ''
 
-        if self.test_inputs: tst_str = 'test input:\n\t{}'.format(tst_str)
+        if self.test_inputs:
+            tst_str = 'test input:\n\t{}'.format(tst_str)
 
-        
         return '{name}: {source_str}{seperator}{target_str}{test_str}\n'.format(
             name = self.__class__.__name__.replace('_task', ''),
             source_str = self.format_command(src_str),
@@ -42,15 +42,17 @@ class BasicRunner(Task.Task):
         """
         Always execute the task if `waf --options=run_always` was used
         """
-
         ret = super(BasicRunner, self).runnable_status()
         if ret == Task.SKIP_ME:
             if self.generator.bld.has_tool_option('run_always'):
                 return Task.RUN_ME
+
         return ret
 
     def format_command(self, executable):
         """
+        Return a formatted command as a STRING
+
         We allow the user to 'modify' the command to be executed.
         E.g. by specifying --option=run_cmd='valgrind %s' this will
         replace %s with the executable name and thus run the executable
@@ -66,6 +68,32 @@ class BasicRunner(Task.Task):
 
         return cmd
 
+    def format_command_list(self, executable):
+        """
+        Return a formatted command as a LIST
+
+        We allow the user to 'modify' the command to be executed.
+        E.g. by specifying --option=run_cmd='valgrind %s' this will
+        replace %s with the executable name and thus run the executable
+        under valgrind
+        """
+        bld = self.generator.bld
+
+        if bld.has_tool_option('run_cmd'):
+            testcmd = bld.get_tool_option('run_cmd')
+            # Split the arguments BEFORE substituting the executable path
+            args = testcmd.split(' ')
+            # Substitute the path to the relevant element
+            for i in xrange(len(args)):
+                if '%s' in args[i]:
+                    args[i] = args[i] % executable
+                    break
+
+        else:
+            args = [executable]
+
+        return args
+
     def run(self):
         """
         Basic runner - simply spins a subprocess to run the executable.
@@ -75,14 +103,14 @@ class BasicRunner(Task.Task):
         """
         bld = self.generator.bld
 
-        # split the command string into a list of strings
-        cmd = self.format_command(self.inputs[0].abspath()).split(' ')
+        # Then command string can be safely split into a list of strings
+        binary = self.inputs[0].abspath()
+        cmd = self.format_command_list(binary)
 
         # If this is a benchmark and we need to retrieve the result file
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
-            cmd += ["--pyfile={}".format(bld.get_tool_option("python_result"))]
-
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
+            cmd += ["--pyfile={0}".format(bld.get_tool_option("python_result"))]
 
         # First check whether we require any test files
         for t in self.test_inputs:
@@ -141,6 +169,7 @@ class BasicRunner(Task.Task):
             testlock.release()
 
     def run_cmd(self, cmd):
+
         Logs.debug("wr: running %r", cmd)
 
         proc = Utils.subprocess.Popen(
@@ -148,6 +177,7 @@ class BasicRunner(Task.Task):
             cwd=self.inputs[0].parent.abspath(),
             stderr=Utils.subprocess.PIPE,
             stdout=Utils.subprocess.PIPE)
+
         (stdout, stderr) = proc.communicate()
 
         result =  {'cmd': cmd, 'return_code': proc.returncode,

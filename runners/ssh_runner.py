@@ -8,6 +8,7 @@ from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner
 
 class SSHRunner(BasicRunner):
+
     def run(self):
 
         bld = self.generator.bld
@@ -47,11 +48,11 @@ class SSHRunner(BasicRunner):
             self.save_result(results)
             return
 
-        run_binary_cmd = "./{}".format(binary)
+        run_binary_cmd = "./{0}".format(binary)
 
         # If this is a benchmark and we need to retrieve the result file
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
             # Add the benchmark python result output filename option
             run_binary_cmd += " --pyfile={}".format(
                 bld.get_tool_option("python_result"))
@@ -93,17 +94,17 @@ class SSHRunner(BasicRunner):
             return
 
         # Everything seems to be fine, lets pull the output file if needed
-        if  bld.has_tool_option('run_benchmark') \
-        and bld.has_tool_option('python_result'):
+        if bld.has_tool_option('run_benchmark') and \
+           bld.has_tool_option('python_result'):
             output_file = bld.get_tool_option("python_result")
 
             # Remove the old benchmark if it exists
             self.run_cmd(["rm", "-f", output_file])
 
-            benchmark_result = os.path.join(dest_dir,output_file)
+            benchmark_result = os.path.join(dest_dir, output_file)
 
-            result = self.run_cmd(scp_cmd + \
-                ['{0}:{1}'.format(ssh_target,benchmark_result), '.'])
+            result = self.run_cmd(
+                scp_cmd + ['{0}:{1}'.format(ssh_target, benchmark_result), '.'])
             results.append(result)
 
             if result['return_code'] != 0:
