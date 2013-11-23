@@ -51,6 +51,8 @@ class BasicRunner(Task.Task):
 
     def format_command(self, executable):
         """
+        Return a formatted command as a STRING
+
         We allow the user to 'modify' the command to be executed.
         E.g. by specifying --option=run_cmd='valgrind %s' this will
         replace %s with the executable name and thus run the executable
@@ -60,14 +62,32 @@ class BasicRunner(Task.Task):
 
         if bld.has_tool_option('run_cmd'):
             testcmd = bld.get_tool_option('run_cmd')
+            cmd = testcmd % executable
+        else:
+            cmd  = executable
 
+        return cmd
+
+    def format_command_list(self, executable):
+        """
+        Return a formatted command as a LIST
+
+        We allow the user to 'modify' the command to be executed.
+        E.g. by specifying --option=run_cmd='valgrind %s' this will
+        replace %s with the executable name and thus run the executable
+        under valgrind
+        """
+        bld = self.generator.bld
+
+        if bld.has_tool_option('run_cmd'):
+            testcmd = bld.get_tool_option('run_cmd')
             # Split the arguments BEFORE substituting the executable path
             args = testcmd.split(' ')
-
             # Substitute the path to the relevant element
             for i in xrange(len(args)):
                 if '%s' in args[i]:
                     args[i] = args[i] % executable
+                    break
 
         else:
             args = [executable]
@@ -85,7 +105,7 @@ class BasicRunner(Task.Task):
 
         # Then command string can be safely split into a list of strings
         binary = self.inputs[0].abspath()
-        cmd = self.format_command(binary)
+        cmd = self.format_command_list(binary)
 
         # If this is a benchmark and we need to retrieve the result file
         if bld.has_tool_option('run_benchmark') and \
