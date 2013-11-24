@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.16.2
+------
+* Bugfix: Support spaces in paths in basic_runner.
+
 2.16.1
 ------
 * Bugfix: Remove added quotes from ssh_options and scp_options.
