@@ -119,7 +119,7 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
 
     ios_flags = \
     [
-        "-ccc-host-triple", triple, "-integrated-as",
+        "-target", triple, "-integrated-as",
         "-isysroot", sdk,
         "-miphoneos-version-min={}".format(min_ios_version)
     ]
