@@ -4,6 +4,11 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.17.0
+------
+* Minor: Add cxx_ios50_apple_llvm50_armv7 makespec.
+* Minor: Remove obsolete -s linker flag on Mac OSX
+
 2.16.2
 ------
 * Bugfix: Support spaces in paths in basic_runner.
