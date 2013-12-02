@@ -82,7 +82,7 @@ def mkspec_set_gxx_cxxflags(conf):
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']
-    else:
+    elif not conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['LINKFLAGS'] += ['-s']
 
     # Use the more restrictive c++0x option for linux
