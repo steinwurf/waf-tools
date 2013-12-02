@@ -125,6 +125,13 @@ def cxx_ios50_apple_llvm42_armv7(conf):
     conf.mkspec_clang_ios_configure(4, 2, '5.0', 'armv7')
 
 """
+Detect and setup the Apple LLVM 5.0 compiler for iOS 5.0 armv7
+"""
+@conf
+def cxx_ios50_apple_llvm50_armv7(conf):
+    conf.mkspec_clang_ios_configure(5, 0, '5.0', 'armv7')
+
+"""
 Detect and setup the clang 3.2 compiler for iOS 5.0 armv7
 """
 @conf
