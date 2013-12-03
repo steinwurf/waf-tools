@@ -4,6 +4,10 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.17.1
+------
+* Bugfix: Use target option instead of ccc-host-triple in iOS builds
+
 2.17.0
 ------
 * Minor: Add cxx_ios50_apple_llvm50_armv7 makespec.
