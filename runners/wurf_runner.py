@@ -113,6 +113,16 @@ def make_run(taskgen, run_type):
         test_files = getattr(taskgen, 'test_files', [])
         task.test_inputs = taskgen.to_nodes(test_files)
 
+        # Check if the executable requires any kernel modules
+        kernel_modules = getattr(taskgen, 'kernel_modules', [])
+        if kernel_modules:
+            task.kernel_objects = []
+            for module in kernel_modules:
+                # Find the task that builds the module
+                module_task = taskgen.bld.get_tgen_by_name(module).tasks[0]
+                # Get the first target of the task (i.e. the kernel object)
+                task.kernel_objects.append(module_task.outputs[0])
+
     # We are creating a new task which should run an executable after
     # a build finishes. Here we add two functions to the BuildContext
     # which prints a summary and ensures that the build fails if the
