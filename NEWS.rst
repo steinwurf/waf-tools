@@ -4,6 +4,11 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.18.0
+------
+* Minor: Add support for testing Linux kernel modules with the basic_runner and
+  the SSH runner.
+
 2.17.1
 ------
 * Bugfix: Use target option instead of ccc-host-triple in iOS builds
