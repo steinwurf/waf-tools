@@ -9,6 +9,17 @@ from basic_runner import BasicRunner
 
 class SSHRunner(BasicRunner):
 
+    def save_result(self, results, ssh_cmd):
+        # Override save_result to ensure that the kernel objects are removed
+
+        # Unload the required kernel objects with rmmod (in reverse order)
+        # Note: you have to SSH with the ROOT user!
+        for ko in reversed(self.kernel_objects):
+            result = self.run_cmd(ssh_cmd + ['rmmod', ko.name])
+            results.append(result)
+
+        super(SSHRunner, self).save_result(results)
+
     def run(self):
 
         bld = self.generator.bld
@@ -36,6 +47,10 @@ class SSHRunner(BasicRunner):
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
 
+        # Add the required kernel objects
+        for ko in self.kernel_objects:
+            file_list.append(ko.abspath())
+
         # Add the binary
         binary = self.inputs[0]
         file_list.append(binary.abspath())
@@ -45,8 +60,17 @@ class SSHRunner(BasicRunner):
         results.append(result)
 
         if result['return_code'] != 0:
-            self.save_result(results)
+            self.save_result(results, ssh_cmd)
             return
+
+        # Load the required kernel objects with insmod (in the original order)
+        # Note: you have to SSH with the ROOT user!
+        for ko in self.kernel_objects:
+            result = self.run_cmd(ssh_cmd + ['insmod', ko.name])
+            results.append(result)
+            if result['return_code'] != 0:
+                self.save_result(results, ssh_cmd)
+                return
 
         run_binary_cmd = "./{0}".format(binary)
 
@@ -68,7 +92,7 @@ class SSHRunner(BasicRunner):
         results.append(result)
 
         if result['return_code'] != 0:
-            self.save_result(results)
+            self.save_result(results, ssh_cmd)
             return
 
         # Almost done. Look for the exit code in the output
@@ -80,7 +104,7 @@ class SSHRunner(BasicRunner):
                        'stdout': '', 'stderr': 'Failed to find exitcode'}
 
             results.append(result)
-            self.save_result(results)
+            self.save_result(results, ssh_cmd)
             return
 
         if match.group(1) != "0":
@@ -90,10 +114,10 @@ class SSHRunner(BasicRunner):
                        'stderr': 'Exit code was %s' % match.group(1)}
 
             results.append(result)
-            self.save_result(results)
+            self.save_result(results, ssh_cmd)
             return
 
-        # Everything seems to be fine, lets pull the output file if needed
+        # Everything seems to be fine, pull the output file if needed
         if bld.has_tool_option('run_benchmark') and \
            bld.has_tool_option('python_result'):
             output_file = bld.get_tool_option("python_result")
@@ -108,7 +132,7 @@ class SSHRunner(BasicRunner):
             results.append(result)
 
             if result['return_code'] != 0:
-                self.save_result(results)
+                self.save_result(results, ssh_cmd)
                 return
 
-        self.save_result(results)
+        self.save_result(results, ssh_cmd)

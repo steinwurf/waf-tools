@@ -23,19 +23,27 @@ class BasicRunner(Task.Task):
         src_str = ' '.join([a.nice_path() for a in self.inputs])
         tgt_str = ' '.join([a.nice_path() for a in self.outputs])
         tst_str = '\n\t'.join([a.nice_path() for a in self.test_inputs])
+        kobj_str = '\n\t'.join([a.nice_path() for a in self.kernel_objects])
 
-        if self.outputs: sep = ' -> '
-        else: sep = ''
+        if self.outputs:
+            sep = ' -> '
+        else:
+            sep = ''
 
         if self.test_inputs:
-            tst_str = 'test input:\n\t{}'.format(tst_str)
+            tst_str = '\ntest inputs:\n\t{}'.format(tst_str)
 
-        return '{name}: {source_str}{seperator}{target_str}{test_str}\n'.format(
+        if self.kernel_objects:
+            kobj_str = '\nkernel objects:\n\t{}'.format(kobj_str)
+
+        return "{name}: {source_str}{separator}{target_str}" \
+            "{test_str}{kobj_str}\n".format(
             name = self.__class__.__name__.replace('_task', ''),
             source_str = self.format_command(src_str),
-            seperator = sep,
+            separator = sep,
             target_str = tgt_str,
-            test_str = tst_str)
+            test_str = tst_str,
+            kobj_str = kobj_str)
 
 
     def runnable_status(self):
@@ -106,6 +114,9 @@ class BasicRunner(Task.Task):
         # Then command string can be safely split into a list of strings
         binary = self.inputs[0].abspath()
         cmd = self.format_command_list(binary)
+        # If kernel objects are required, then run the test binary with sudo
+        if self.kernel_objects:
+            cmd.insert(0, 'sudo')
 
         # If this is a benchmark and we need to retrieve the result file
         if bld.has_tool_option('run_benchmark') and \
@@ -126,9 +137,24 @@ class BasicRunner(Task.Task):
             if hasattr(self.generator, 'chmod'):
                 os.chmod(test_file_out.abspath(), self.generator.chmod)
 
-        result = self.run_cmd(cmd)
+        results = []
 
-        self.save_result([result])
+        # Load the required kernel objects with insmod (in the original order)
+        for ko in self.kernel_objects:
+            filename = ko.abspath()
+            result = self.run_cmd(['sudo', 'insmod', filename])
+            results.append(result)
+
+        # Run the test binary
+        result = self.run_cmd(cmd)
+        results.append(result)
+
+        # Unload the required kernel objects with rmmod (in reverse order)
+        for ko in reversed(self.kernel_objects):
+            result = self.run_cmd(['sudo', 'rmmod', ko.name])
+            results.append(result)
+
+        self.save_result(results)
 
     def save_result(self, results):
         """
@@ -143,12 +169,13 @@ class BasicRunner(Task.Task):
             if not isinstance(cmd, str):
                 cmd = " ".join(cmd)
 
+            combined_stdout += 'Running: {0}\n'.format(cmd)
             if result["stdout"]:
-                combined_stdout += 'Running: {0}\n{1}'.format(
-                    cmd, result["stdout"].decode('utf-8'))
+                combined_stdout += result["stdout"].decode('utf-8')
+
             if result["stderr"]:
                 combined_stderr += 'Running: {0}\n{1}'.format(
-                        cmd, result["stderr"].decode('utf-8'))
+                    cmd, result["stderr"].decode('utf-8'))
             if result['return_code'] != 0: combined_return_code = -1
 
         combined_result = (
