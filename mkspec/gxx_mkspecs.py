@@ -13,6 +13,13 @@ def cxx_android_gxx46_arm(conf):
     conf.mkspec_gxx_android_configure(4, 6, 'arm-linux-androideabi')
 
 """
+Detect and setup the Android g++ 4.8 compiler for ARM
+"""
+@conf
+def cxx_android_gxx48_arm(conf):
+    conf.mkspec_gxx_android_configure(4, 8, 'arm-linux-androideabi')
+
+"""
 Detect and setup the g++ 4.6 cross-compiler for ARM 32-bit Linux
 """
 @conf
