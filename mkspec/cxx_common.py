@@ -61,11 +61,12 @@ def mkspec_get_toolchain_paths(conf):
         path_list += ['/opt/local/bin']
 
     if conf.is_mkspec_platform('android'):
-        ndk = conf.get_tool_option('android_ndk_dir')
-        ndk = abspath(expanduser(ndk))
-        ndk_path = [ndk, os.path.join(ndk,'bin')]
-
-        return ndk_path
+        # If specified, the android_ndk_dir option overrides the OS path
+        if conf.has_tool_option('android_ndk_dir'):
+            ndk = conf.get_tool_option('android_ndk_dir')
+            ndk = abspath(expanduser(ndk))
+            ndk_path = [ndk, os.path.join(ndk, 'bin')]
+            return ndk_path
 
     if conf.is_mkspec_platform('ios'):
         if conf.has_tool_option('ios_toolchain_dir'):
@@ -82,11 +83,14 @@ def mkspec_get_toolchain_paths(conf):
 
 @conf
 def mkspec_set_android_options(conf):
-    sdk = conf.get_tool_option('android_sdk_dir')
-    sdk = abspath(expanduser(sdk))
-    sdk_path = [sdk, os.path.join(sdk,'platform-tools')]
-
-    conf.find_program('adb', path_list = sdk_path, var='ADB')
+    # The android_sdk_dir option is optional, if adb is in the OS path
+    if conf.has_tool_option('android_sdk_dir'):
+        sdk = conf.get_tool_option('android_sdk_dir')
+        sdk = abspath(expanduser(sdk))
+        sdk_path = [sdk, os.path.join(sdk,'platform-tools')]
+        conf.find_program('adb', path_list = sdk_path, var='ADB')
+    else:
+        conf.find_program('adb', var='ADB')
 
     # Set the android define - some libraries rely on this define being present
     conf.env.DEFINES += ['ANDROID']
@@ -96,7 +100,6 @@ def mkspec_set_android_options(conf):
     # No need to specify 'gnustl_static' or 'gnustl_shared'
     # The Android toolchain will select the appropriate standard library
     #conf.env.LIB_ANDROID = ['gnustl_static']
-
 
 @conf
 def mkspec_set_ios_options(conf, min_ios_version, cpu):

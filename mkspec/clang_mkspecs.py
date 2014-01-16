@@ -118,6 +118,22 @@ def cxx_clang33_x86(conf):
     conf.mkspec_add_common_flag('-m32')
 
 """
+Detect and setup the clang 3.4 compiler for 64 bit
+"""
+@conf
+def cxx_clang34_x64(conf):
+    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_add_common_flag('-m64')
+
+"""
+Detect and setup the clang 3.4 compiler for 32 bit
+"""
+@conf
+def cxx_clang34_x86(conf):
+    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_add_common_flag('-m32')
+
+"""
 Detect and setup the Apple LLVM 4.2 compiler for iOS 5.0 armv7
 """
 @conf
