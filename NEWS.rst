@@ -4,6 +4,14 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+2.19.0
+------
+* Minor: cxx_default explicitly reports all configuration errors.
+* Minor: The android_sdk_dir and android_ndk_dir options are not necessary if
+  adb and the Android toolchain binaries are in the PATH.
+* Minor: Add cxx_android_gxx48_arm makespec.
+* Minor: Add cxx_clang34_x86 and cxx_clang34_x64 makespecs.
+
 2.18.0
 ------
 * Minor: Add support for testing Linux kernel modules with the basic_runner and
