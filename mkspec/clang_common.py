@@ -12,8 +12,12 @@ from os.path import abspath, expanduser
 import cxx_common
 
 @conf
-def mkspec_clang_configure(conf, major, minor):
-
+def mkspec_clang_configure(conf, major, minor, minimum = False):
+    """
+    :param major:   The major version number of the compiler, e.g. 3
+    :param minor:   The minor version number of the compiler, e.g. 3
+    :param minimum: Only check for a minimum compiler version, if true
+    """
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
 
@@ -25,7 +29,10 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
     # waf's gxx tool for checking version number might also work for clang
     # TODO: write a proper tool for this
-    conf.mkspec_check_cc_version(cxx, major, minor)
+    if minimum:
+        conf.mkspec_check_minimum_cc_version(cxx, major, minor)
+    else:
+        conf.mkspec_check_cc_version(cxx, major, minor)
 
     # Find clang as the C compiler
     cc = conf.find_program('clang', path_list = paths)
@@ -33,7 +40,10 @@ def mkspec_clang_configure(conf, major, minor):
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
     # TODO: write a proper tool for this
-    conf.mkspec_check_cc_version(cc, major, minor)
+    if minimum:
+        conf.mkspec_check_minimum_cc_version(cc, major, minor)
+    else:
+        conf.mkspec_check_cc_version(cc, major, minor)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name()

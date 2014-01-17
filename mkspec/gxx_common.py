@@ -12,26 +12,39 @@ from os.path import abspath, expanduser
 import cxx_common
 
 @conf
-def mkspec_gxx_configure(conf, major, minor, prefix = None):
-
-    # Where to look
+def mkspec_gxx_configure(conf, major, minor, prefix = None, minimum = False):
+    """
+    :param major:   The major version number of the compiler, e.g. 4
+    :param minor:   The minor version number of the compiler, e.g. 6
+    :param prefix:  Prefix to the compiler name, e.g. 'arm-linux-androideabi'
+    :param minimum: Only check for a minimum compiler version, if true
+    """
+    # Where to look for the compiler
     paths = conf.mkspec_get_toolchain_paths()
 
     # Find g++ first
     gxx_names = conf.mkspec_get_gnu_binary_name('g++', major, minor, prefix)
+    if minimum: gxx_names = 'g++'
     cxx = conf.find_program(gxx_names, path_list = paths)
     cxx = conf.cmd_to_list(cxx)
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
-    conf.mkspec_check_cc_version(cxx, major, minor)
+    if minimum:
+        conf.mkspec_check_minimum_cc_version(cxx, major, minor)
+    else:
+        conf.mkspec_check_cc_version(cxx, major, minor)
 
     # Also find gcc
     gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor, prefix)
+    if minimum: gcc_names = 'gcc'
     cc = conf.find_program(gcc_names, path_list = paths)
     cc = conf.cmd_to_list(cc)
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
-    conf.mkspec_check_cc_version(cc, major, minor)
+    if minimum:
+        conf.mkspec_check_minimum_cc_version(cc, major, minor)
+    else:
+        conf.mkspec_check_cc_version(cc, major, minor)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name(prefix)

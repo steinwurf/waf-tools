@@ -12,40 +12,16 @@ import clang_common
 import gxx_common
 import msvc_common
 
-def check_minimum_cc_versions(conf, major, minor):
-    # Enforce minimum version for C++ compiler
-    CXX = conf.cmd_to_list(conf.env['CXX'])
-    conf.mkspec_check_minimum_cc_version(CXX, major, minor)
-    # Enforce minimum version for C compiler
-    CC = conf.cmd_to_list(conf.env['CC'])
-    conf.mkspec_check_minimum_cc_version(CC, major, minor)
 
 def load_compiler(conf, compiler):
 
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in compiler:
-        # Set the CXX and CC variables manually if needed
-        if not conf.env['CXX']: conf.env['CXX'] = 'clang++'
-        if not conf.env['CC']: conf.env['CC'] = 'clang'
-        # Use the g++ waf tool to load clang
-        # as there is no tool for clang
-        conf.load('g++')
-        # Also load 'clang' as a C compiler using the gcc tool
-        conf.load('gcc')
+        conf.mkspec_clang_configure(3, 0, minimum = True)
 
-        # Enforce minimum version for compilers
-        check_minimum_cc_versions(conf, 3, 0)
-        conf.mkspec_set_clang_cxxflags()
-        conf.mkspec_set_clang_ccflags()
     elif 'g++' in compiler:
-        conf.load('g++')
-        # Also load 'gcc' as a C compiler
-        conf.load('gcc')
+        conf.mkspec_gxx_configure(4, 6, minimum = True)
 
-        # Enforce minimum version for compilers
-        check_minimum_cc_versions(conf, 4, 6)
-        conf.mkspec_set_gxx_cxxflags()
-        conf.mkspec_set_gcc_ccflags()
     elif 'msvc' in compiler or 'CL.exe' in compiler or 'cl.exe' in compiler:
         conf.load('msvc')
         # Note: the waf msvc tool also load msvc as a C compiler
@@ -78,7 +54,7 @@ def configure(conf):
     cxx_compilers = \
     {
         'win32':  ['msvc', 'g++'],
-        'linux':  ['g++'],
+        'linux':  ['g++', 'clang++'],
         'darwin': ['clang++', 'g++'],
         'cygwin': ['g++'],
         'default': ['g++']
@@ -100,7 +76,7 @@ def configure(conf):
             load_compiler(conf, compiler)
         except conf.errors.ConfigurationError as e:
             conf.env.revert()
-            conf.end_msg(False)
+            conf.end_msg(e, color='YELLOW')
             Logs.debug('cxx_default: %r' % e)
         else:
             if conf.env['CXX']:
