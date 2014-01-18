@@ -92,7 +92,7 @@ class BasicRunner(Task.Task):
             # Split the arguments BEFORE substituting the executable path
             args = testcmd.split(' ')
             # Substitute the path to the relevant element
-            for i in xrange(len(args)):
+            for i in range(len(args)):
                 if '%s' in args[i]:
                     args[i] = args[i] % executable
                     break
