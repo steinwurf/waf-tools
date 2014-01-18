@@ -6,7 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
 
+2.19.1
+------
 * Bug: Changed use of ``xrange`` to ``range`` to support python 3.x.
 
 2.19.0
