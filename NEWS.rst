@@ -4,6 +4,11 @@ News for external-waf-tools
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
 
+Latest
+------
+
+* Bug: Changed use of ``xrange`` to ``range`` to support python 3.x.
+
 2.19.0
 ------
 * Minor: cxx_default explicitly reports all configuration errors.
