@@ -73,18 +73,11 @@ def make_test(self):
 @feature('benchmark')
 @after_method('apply_link')
 def make_benchmark(self):
-    if self.bld.has_tool_option('run_benchmarks'):
-        make_run(self, "benchmark")
-    elif hasattr(self, 'link_task'):
+    if hasattr(self, 'link_task'):
         if self.bld.has_tool_option('run_benchmark'):
             if self.bld.get_tool_option("run_benchmark") == \
                self.link_task.outputs[0].name:
                 make_run(self, "benchmark")
-
-        if self.bld.has_tool_option('print_benchmark_paths'):
-            print(self.link_task.outputs[0].relpath())
-        if self.bld.has_tool_option('print_benchmarks'):
-            print(self.link_task.outputs[0].name)
 
 def make_run(taskgen, run_type):
     """
