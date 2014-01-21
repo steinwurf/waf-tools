@@ -166,7 +166,7 @@ def cxx_clang34_thread_sanitizer_x86(conf):
     conf.mkspec_add_common_flag('-m32')
 
     if not conf.has_tool_option('cxx_debug'):
-            conf.mkspec_add_common_flag('-g')
+        conf.mkspec_add_common_flag('-g')
 
     conf.mkspec_add_common_flag('-fsanitize=thread')
 
@@ -206,6 +206,8 @@ def cxx_clang34_memory_sanitizer_x86(conf):
         conf.mkspec_add_common_flag('-g')
 
     conf.mkspec_add_common_flag('-fsanitize=memory')
+    conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
+    conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
 
 """
 Detect and setup the clang 3.4 compiler for 64 bit and use memory sanitizer
@@ -224,9 +226,11 @@ def cxx_clang34_memory_sanitizer_x64(conf):
     conf.mkspec_add_common_flag('-m64')
 
     if not conf.has_tool_option('cxx_debug'):
-        conf.mkspec_add_common_flag('g')
+        conf.mkspec_add_common_flag('-g')
 
     conf.mkspec_add_common_flag('-fsanitize=memory')
+    conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
+    conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
 
 """
 Detect and setup the clang 3.4 compiler for 32 bit and use address sanitizer
@@ -248,6 +252,8 @@ def cxx_clang34_address_sanitizer_x86(conf):
         conf.mkspec_add_common_flag('-g')
 
     conf.mkspec_add_common_flag('-fsanitize=address')
+    conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
+    conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
 
 """
 Detect and setup the clang 3.4 compiler for 64 bit and use address sanitizer
@@ -269,3 +275,5 @@ def cxx_clang34_address_sanitizer_x64(conf):
         conf.mkspec_add_common_flag('-g')
 
     conf.mkspec_add_common_flag('-fsanitize=address')
+    conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
+    conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
