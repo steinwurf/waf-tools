@@ -153,3 +153,119 @@ Detect and setup the clang 3.2 compiler for iOS 5.0 armv7
 @conf
 def cxx_ios50_clang32_armv7(conf):
     conf.mkspec_clang_ios_configure(3, 2, '5.0', 'armv7')
+
+"""
+Detect and setup the clang 3.5 compiler for 32 bit and use thread sanitizer
+"""
+@conf
+def cxx_clang35_thread_sanitizer_x86(conf):
+    """
+    http://clang.llvm.org/docs/ThreadSanitizer.html
+    """
+    conf.mkspec_clang_configure(3,5)
+    conf.mkspec_add_common_flag('-m32')
+
+    if not conf.has_tool_option('cxx_debug'):
+        conf.env['CFLAGS'] += ['-g']
+
+    conf.env['CFLAGS'] += ['-fsanitize=thread']
+
+"""
+Detect and setup the clang 3.5 compiler for 64 bit and use thread sanitizer
+"""
+@conf
+def cxx_clang35_thread_sanitizer_x64(conf):
+    """
+    http://clang.llvm.org/docs/ThreadSanitizer.html
+    """
+    conf.mkspec_clang_configure(3,5)
+    conf.mkspec_add_common_flag('-m64')
+
+    if not conf.has_tool_option('cxx_debug'):
+        conf.env['CFLAGS'] += ['-g']
+
+    conf.env['CFLAGS'] += ['-fsanitize=thread']
+
+"""
+Detect and setup the clang 3.5 compiler for 32 bit and use memory sanitizer
+"""
+@conf
+def cxx_clang35_memory_sanitizer_x86(conf):
+    """
+    To get a reasonable performance add -O1 or higher. To get meaningful
+    stack traces in error messages add -fno-omit-frame-pointer. To get perfect
+    stack traces you may need to disable inlining (just use -O1) and tail call
+    elimination (-fno-optimize-sibling-calls).
+    http://clang.llvm.org/docs/MemorySanitizer.html
+    """
+
+    conf.mkspec_clang_configure(3,5)
+    conf.mkspec_add_common_flag('-m32')
+
+    if not conf.has_tool_option('cxx_debug'):
+        conf.env['CFLAGS'] += ['-g']
+
+    conf.env['CFLAGS'] += ['-fsanitize=memory']
+
+"""
+Detect and setup the clang 3.5 compiler for 64 bit and use memory sanitizer
+"""
+@conf
+def cxx_clang35_memory_sanitizer_x64(conf):
+    """
+    To get a reasonable performance add -O1 or higher. To get meaningful
+    stack traces in error messages add -fno-omit-frame-pointer. To get perfect
+    stack traces you may need to disable inlining (just use -O1) and tail call
+    elimination (-fno-optimize-sibling-calls).
+    http://clang.llvm.org/docs/MemorySanitizer.html
+    """
+
+    conf.mkspec_clang_configure(3,5)
+    conf.mkspec_add_common_flag('-m64')
+
+    if not conf.has_tool_option('cxx_debug'):
+        conf.env['CFLAGS'] += ['-g']
+
+    conf.env['CFLAGS'] += ['-fsanitize=memory']
+
+"""
+Detect and setup the clang 3.5 compiler for 32 bit and use address sanitizer
+"""
+@conf
+def cxx_clang35_address_sanitizer_x86(conf):
+    """
+    To get a reasonable performance add -O1 or higher. To get nicer stack traces
+    in error messages add -fno-omit-frame-pointer. To get perfect stack traces
+    you may need to disable inlining (just use -O1) and tail call elimination
+    (-fno-optimize-sibling-calls).
+    http://clang.llvm.org/docs/AddressSanitizer.html
+    """
+
+    conf.mkspec_clang_configure(3,5)
+    conf.mkspec_add_common_flag('-m32')
+
+    if not conf.has_tool_option('cxx_debug'):
+        conf.env['CFLAGS'] += ['-g']
+
+    conf.env['CFLAGS'] += ['-fsanitize=address']
+
+"""
+Detect and setup the clang 3.5 compiler for 64 bit and use address sanitizer
+"""
+@conf
+def cxx_clang35_address_sanitizer_x64(conf):
+    """
+    To get a reasonable performance add -O1 or higher. To get nicer stack traces
+    in error messages add -fno-omit-frame-pointer. To get perfect stack traces
+    you may need to disable inlining (just use -O1) and tail call elimination
+    (-fno-optimize-sibling-calls).
+    http://clang.llvm.org/docs/AddressSanitizer.html
+    """
+
+    conf.mkspec_clang_configure(3,5)
+    conf.mkspec_add_common_flag('-m64')
+
+    if not conf.has_tool_option('cxx_debug'):
+        conf.env['CFLAGS'] += ['-g']
+
+    conf.env['CFLAGS'] += ['-fsanitize=address']

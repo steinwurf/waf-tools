@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Added clang sanitizers (thread, memory, and address).
 
 2.19.1
 ------
