@@ -166,9 +166,9 @@ def cxx_clang34_thread_sanitizer_x86(conf):
     conf.mkspec_add_common_flag('-m32')
 
     if not conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g']
 
-    conf.env['CFLAGS'] += ['-fsanitize=thread']
+    conf.env['CXXFLAGS'] += ['-fsanitize=thread']
 
 """
 Detect and setup the clang 3.4 compiler for 64 bit and use thread sanitizer
@@ -182,9 +182,9 @@ def cxx_clang34_thread_sanitizer_x64(conf):
     conf.mkspec_add_common_flag('-m64')
 
     if not conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g']
 
-    conf.env['CFLAGS'] += ['-fsanitize=thread']
+    conf.env['CXXFLAGS'] += ['-fsanitize=thread']
 
 """
 Detect and setup the clang 3.4 compiler for 32 bit and use memory sanitizer
@@ -203,9 +203,9 @@ def cxx_clang34_memory_sanitizer_x86(conf):
     conf.mkspec_add_common_flag('-m32')
 
     if not conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g']
 
-    conf.env['CFLAGS'] += ['-fsanitize=memory']
+    conf.env['CXXFLAGS'] += ['-fsanitize=memory']
 
 """
 Detect and setup the clang 3.4 compiler for 64 bit and use memory sanitizer
@@ -224,9 +224,9 @@ def cxx_clang34_memory_sanitizer_x64(conf):
     conf.mkspec_add_common_flag('-m64')
 
     if not conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g']
 
-    conf.env['CFLAGS'] += ['-fsanitize=memory']
+    conf.env['CXXFLAGS'] += ['-fsanitize=memory']
 
 """
 Detect and setup the clang 3.4 compiler for 32 bit and use address sanitizer
@@ -245,9 +245,9 @@ def cxx_clang34_address_sanitizer_x86(conf):
     conf.mkspec_add_common_flag('-m32')
 
     if not conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g']
 
-    conf.env['CFLAGS'] += ['-fsanitize=address']
+    conf.env['CXXFLAGS'] += ['-fsanitize=address']
 
 """
 Detect and setup the clang 3.4 compiler for 64 bit and use address sanitizer
@@ -266,6 +266,6 @@ def cxx_clang34_address_sanitizer_x64(conf):
     conf.mkspec_add_common_flag('-m64')
 
     if not conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g']
 
-    conf.env['CFLAGS'] += ['-fsanitize=address']
+    conf.env['CXXFLAGS'] += ['-fsanitize=address']
