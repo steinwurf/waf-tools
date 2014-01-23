@@ -209,7 +209,11 @@ def cxx_clang34_memory_sanitizer_x86(conf):
     if not conf.has_tool_option('cxx_debug'):
         conf.mkspec_add_common_flag('-g')
 
+    if '-s' in conf.env['LINKFLAGS']:
+        conf.env['LINKFLAGS'].remove('-s')
+
     conf.mkspec_add_common_flag('-fsanitize=memory')
+    conf.mkspec_add_common_flag('-fsanitize-memory-track-origins')
     conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
     conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
 
@@ -234,7 +238,11 @@ def cxx_clang34_memory_sanitizer_x64(conf):
     if not conf.has_tool_option('cxx_debug'):
         conf.mkspec_add_common_flag('-g')
 
+    if '-s' in conf.env['LINKFLAGS']:
+        conf.env['LINKFLAGS'].remove('-s')
+
     conf.mkspec_add_common_flag('-fsanitize=memory')
+    conf.mkspec_add_common_flag('-fsanitize-memory-track-origins')
     conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
     conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
 
