@@ -92,7 +92,8 @@ def mkspec_set_android_options(conf):
     else:
         conf.find_program('adb', var='ADB')
 
-    # Set the android define - some libraries rely on this define being present
+    # Set the android define - some libraries rely on this define
+    # being present
     conf.env.DEFINES += ['ANDROID']
 
     # Add common libraries for Android here
@@ -107,16 +108,18 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     sdk = abspath(expanduser(sdk))
     include_dir = sdk + '/usr/include'
 
-    # Set the IPHONE define - some libraries rely on this define being present
+    # Set the IPHONE define - some libraries rely on this define being
+    # present
     conf.env.DEFINES += ['IPHONE']
 
     # Add common libraries for iOS here
     conf.env['LINKFLAGS'] += ['-lSystem'] # links with libSystem.dylib
 
-    # Define what are the necessary common compiler and linker options to build
-    # for the iOS platform. Here, tell the ARM cross-compiler to target the
-    # specified arm-apple-ios platform triplet, specify the location of the iOS SDK,
-    # use the compiler's integrated assembler and set the minimal supported iOS version
+    # Define what are the necessary common compiler and linker options
+    # to build for the iOS platform. Here, tell the ARM cross-compiler
+    # to target the specified arm-apple-ios platform triplet, specify
+    # the location of the iOS SDK, use the compiler's integrated
+    # assembler and set the minimal supported iOS version
 
     triple = "{}-apple-ios{}.0".format(cpu, min_ios_version)
 
