@@ -6,7 +6,17 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* TBD
+
+2.21.0
+------
+* Minor: Add mkspecs for Visual Studio 2013: cxx_msvc12_x86 and cxx_msvc12_x64.
+
+2.20.0
+------
+* Minor: Add makespecs for clang address, memory and thread sanitizers.
+* Bugfix: Statically link GCC libraries to support C++ exceptions with the
+  OpenWrt toolchain (cxx_crosslinux_gxx46_arm mkspec).
 
 2.19.1
 ------
