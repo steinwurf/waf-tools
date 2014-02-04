@@ -8,6 +8,10 @@ Latest
 ------
 * TBD
 
+2.21.0
+------
+* Minor: Add mkspecs for Visual Studio 2013: cxx_msvc12_x86 and cxx_msvc12_x64.
+
 2.20.0
 ------
 * Minor: Add makespecs for clang address, memory and thread sanitizers.
