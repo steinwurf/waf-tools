@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* TBD
+* Minor: Added mkspec for MSVC 12.0.
 
 2.20.0
 ------
@@ -218,6 +218,3 @@ Latest
 1.0.0
 -----
 * Initial release.
-
-
-
