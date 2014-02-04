@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* Added clang sanitizers (thread, memory, and address).
+* Minor: Added clang sanitizers (thread, memory, and address).
+* Minor: Added mkspec for MSVC 12.
 
 2.19.1
 ------
