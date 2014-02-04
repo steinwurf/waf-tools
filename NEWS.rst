@@ -6,8 +6,13 @@ of every change, see the Git log.
 
 Latest
 ------
-* Minor: Added clang sanitizers (thread, memory, and address).
-* Minor: Added mkspec for MSVC 12.
+* Minor: Added mkspec for MSVC 12.0.
+
+2.20.0
+------
+* Minor: Add makespecs for clang address, memory and thread sanitizers.
+* Bugfix: Statically link GCC libraries to support C++ exceptions with the
+  OpenWrt toolchain (cxx_crosslinux_gxx46_arm mkspec).
 
 2.19.1
 ------
@@ -213,6 +218,3 @@ Latest
 1.0.0
 -----
 * Initial release.
-
-
-
