@@ -168,14 +168,8 @@ def cxx_clang34_address_sanitizer_x86(conf):
     http://clang.llvm.org/docs/AddressSanitizer.html
     """
 
-    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_clang_configure(3, 4, force_debug=True)
     conf.mkspec_add_common_flag('-m32')
-
-    if not conf.has_tool_option('cxx_debug'):
-        conf.mkspec_add_common_flag('-g')
-
-    if '-s' in conf.env['LINKFLAGS']:
-        conf.env['LINKFLAGS'].remove('-s')
 
     conf.mkspec_add_common_flag('-fsanitize=address')
     conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
@@ -195,14 +189,8 @@ def cxx_clang34_address_sanitizer_x64(conf):
     http://clang.llvm.org/docs/AddressSanitizer.html
     """
 
-    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_clang_configure(3, 4, force_debug=True)
     conf.mkspec_add_common_flag('-m64')
-
-    if not conf.has_tool_option('cxx_debug'):
-        conf.mkspec_add_common_flag('-g')
-
-    if '-s' in conf.env['LINKFLAGS']:
-        conf.env['LINKFLAGS'].remove('-s')
 
     conf.mkspec_add_common_flag('-fsanitize=address')
     conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
@@ -223,14 +211,8 @@ def cxx_clang34_memory_sanitizer_x86(conf):
     http://clang.llvm.org/docs/MemorySanitizer.html
     """
 
-    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_clang_configure(3, 4, force_debug=True)
     conf.mkspec_add_common_flag('-m32')
-
-    if not conf.has_tool_option('cxx_debug'):
-        conf.mkspec_add_common_flag('-g')
-
-    if '-s' in conf.env['LINKFLAGS']:
-        conf.env['LINKFLAGS'].remove('-s')
 
     conf.mkspec_add_common_flag('-fsanitize=memory')
     conf.mkspec_add_common_flag('-fsanitize-memory-track-origins')
@@ -252,14 +234,8 @@ def cxx_clang34_memory_sanitizer_x64(conf):
     http://clang.llvm.org/docs/MemorySanitizer.html
     """
 
-    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_clang_configure(3, 4, force_debug=True)
     conf.mkspec_add_common_flag('-m64')
-
-    if not conf.has_tool_option('cxx_debug'):
-        conf.mkspec_add_common_flag('-g')
-
-    if '-s' in conf.env['LINKFLAGS']:
-        conf.env['LINKFLAGS'].remove('-s')
 
     conf.mkspec_add_common_flag('-fsanitize=memory')
     conf.mkspec_add_common_flag('-fsanitize-memory-track-origins')
@@ -275,14 +251,8 @@ def cxx_clang34_thread_sanitizer_x86(conf):
     """
     http://clang.llvm.org/docs/ThreadSanitizer.html
     """
-    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_clang_configure(3, 4, force_debug=True)
     conf.mkspec_add_common_flag('-m32')
-
-    if not conf.has_tool_option('cxx_debug'):
-        conf.mkspec_add_common_flag('-g')
-
-    if '-s' in conf.env['LINKFLAGS']:
-        conf.env['LINKFLAGS'].remove('-s')
 
     conf.mkspec_add_common_flag('-fsanitize=thread')
 
@@ -295,13 +265,7 @@ def cxx_clang34_thread_sanitizer_x64(conf):
     """
     http://clang.llvm.org/docs/ThreadSanitizer.html
     """
-    conf.mkspec_clang_configure(3,4)
+    conf.mkspec_clang_configure(3, 4, force_debug=True)
     conf.mkspec_add_common_flag('-m64')
-
-    if not conf.has_tool_option('cxx_debug'):
-        conf.mkspec_add_common_flag('-g')
-
-    if '-s' in conf.env['LINKFLAGS']:
-        conf.env['LINKFLAGS'].remove('-s')
 
     conf.mkspec_add_common_flag('-fsanitize=thread')
