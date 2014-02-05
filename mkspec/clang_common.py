@@ -12,11 +12,13 @@ from os.path import abspath, expanduser
 import cxx_common
 
 @conf
-def mkspec_clang_configure(conf, major, minor, minimum = False):
+def mkspec_clang_configure(conf, major, minor, minimum = False,
+                           force_debug = False):
     """
-    :param major:   The major version number of the compiler, e.g. 3
-    :param minor:   The minor version number of the compiler, e.g. 3
-    :param minimum: Only check for a minimum compiler version, if true
+    :param major:       The major version number of the compiler, e.g. 3
+    :param minor:       The minor version number of the compiler, e.g. 4
+    :param minimum:     Only check for a minimum compiler version, if true
+    :param force_debug: Always compile with debugging flags, if true
     """
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
@@ -66,9 +68,9 @@ def mkspec_clang_configure(conf, major, minor, minimum = False):
     conf.link_add_flags()
 
     # Add our own cxx flags
-    conf.mkspec_set_clang_cxxflags()
+    conf.mkspec_set_clang_cxxflags(force_debug)
     # Add our own cc flags
-    conf.mkspec_set_clang_ccflags()
+    conf.mkspec_set_clang_ccflags(force_debug)
 
 @conf
 def mkspec_clang_android_configure(conf, major, minor):
@@ -83,19 +85,27 @@ def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
     conf.mkspec_set_ios_options(min_ios_version, cpu)
 
 @conf
-def mkspec_set_clang_ccflags(conf):
+def mkspec_set_clang_ccflags(conf, force_debug = False):
 
-    conf.env['CFLAGS'] += ['-O2', '-Wextra', '-Wall']
+    optflag = '-O2'
+    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
+    # code on this platform
+    if conf.get_mkspec_platform() == 'ios': optflag = '-Os'
+    conf.env['CFLAGS'] += [optflag, '-Wextra', '-Wall']
 
-    if conf.has_tool_option('cxx_debug'):
+    if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CFLAGS'] += ['-g']
 
 @conf
-def mkspec_set_clang_cxxflags(conf):
+def mkspec_set_clang_cxxflags(conf, force_debug = False):
 
-    conf.env['CXXFLAGS'] += ['-O2', '-Wextra', '-Wall']
+    optflag = '-O2'
+    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
+    # code on this platform
+    if conf.get_mkspec_platform() == 'ios': optflag = '-Os'
+    conf.env['CXXFLAGS'] += [optflag, '-Wextra', '-Wall']
 
-    if conf.has_tool_option('cxx_debug'):
+    if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CXXFLAGS'] += ['-g']
     elif not conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['LINKFLAGS'] += ['-s']
