@@ -8,6 +8,13 @@ Latest
 ------
 * TBD
 
+2.22.0
+------
+* Bugfix: Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
+  code on this platform
+* Minor: Introduce force_debug parameter in mkspec_clang_configure to make the
+  clang sanitizer mkspecs simpler
+
 2.21.0
 ------
 * Minor: Add mkspecs for Visual Studio 2013: cxx_msvc12_x86 and cxx_msvc12_x64.
