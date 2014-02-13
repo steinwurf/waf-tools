@@ -17,6 +17,36 @@ def mkspec_add_common_flag(conf, flag):
     conf.env['LINKFLAGS'] += [flag]
 
 @conf
+def mkspec_try_flags(conf, flagtype, flaglist):
+    """
+    Tries the given list of compiler/linker flags if they are supported by the
+    current compiler, and returns the list of supported flags
+
+    :param flagtype: The flag type, cflags, cxxflags or linkflags
+    :param flaglist: The list of flags to be checked
+
+    :return: The list of supported flags
+    """
+    ret = []
+
+    for flag in flaglist:
+        conf.start_msg('Checking for %s: %s' % (flagtype, flag))
+        try:
+            if flagtype == 'cflags':
+                conf.check_cc(cflags=flag)
+            elif flagtype == 'cxxflags':
+                conf.check_cxx(cxxflags=flag)
+            elif flagtype == 'linkflags':
+                conf.check_cxx(linkflags=flag)
+        except conf.errors.ConfigurationError:
+            conf.end_msg('no', color='YELLOW')
+        else:
+            conf.end_msg('yes')
+            ret.append(flag)
+
+    return ret
+
+@conf
 def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
     """
     :param major: The major version number, e.g. 4
