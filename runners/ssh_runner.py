@@ -87,7 +87,7 @@ class SSHRunner(BasicRunner):
         # Echo the exit code after the shell command
         result = self.run_cmd(
             ssh_cmd + \
-            ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
+            ["'cd {0};{1};echo shellexit:$?'".format(dest_dir, run_binary_cmd)])
 
         results.append(result)
 
