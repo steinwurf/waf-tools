@@ -43,7 +43,7 @@ class IOSRunner(BasicRunner):
 
         usbmux_cmd = [usbmux, '22:{}'.format(localport)]
         scp_cmd = ['scp', '-P', localport]
-        ssh_cmd = ['ssh', '-t', '-t', '-p', localport, ssh_target]
+        ssh_cmd = ['ssh', '-t', '-p', localport, ssh_target]
 
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         usbmux_proc = start_proc(usbmux_cmd)
@@ -78,7 +78,7 @@ class IOSRunner(BasicRunner):
         # Echo the exit code after the shell command
         result = self.run_cmd(
             ssh_cmd + \
-            ["'cd {0};{1};echo shellexit:$?'".format(dest_dir, run_binary_cmd)])
+            ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
         results.append(result)
 

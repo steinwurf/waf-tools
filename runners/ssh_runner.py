@@ -41,7 +41,7 @@ class SSHRunner(BasicRunner):
             scp_options = \
                 bld.get_tool_option('scp_options').replace('"','').split(' ')
 
-        ssh_cmd = ['ssh', '-t', '-t'] + ssh_options + [ssh_target]
+        ssh_cmd = ['ssh', '-t'] + ssh_options + [ssh_target]
         scp_cmd = ['scp'] + scp_options
 
         # Enumerate the test files
@@ -87,7 +87,7 @@ class SSHRunner(BasicRunner):
         # Echo the exit code after the shell command
         result = self.run_cmd(
             ssh_cmd + \
-            ["'cd {0};{1};echo shellexit:$?'".format(dest_dir, run_binary_cmd)])
+            ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
         results.append(result)
 
