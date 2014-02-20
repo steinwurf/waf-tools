@@ -13,7 +13,7 @@ class IOSRunner(SSHRunner):
 
         # Kill the usbmux process
         if self.usbmux_proc != None:
-            usbmux_proc.kill()
+            self.usbmux_proc.kill()
 
         super(IOSRunner, self).save_result(results, ssh_cmd)
 
