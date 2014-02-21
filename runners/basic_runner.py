@@ -202,6 +202,7 @@ class BasicRunner(Task.Task):
         proc = Utils.subprocess.Popen(
             cmd,
             cwd=self.inputs[0].parent.abspath(),
+            stdin=Utils.subprocess.PIPE,
             stderr=Utils.subprocess.PIPE,
             stdout=Utils.subprocess.PIPE)
 

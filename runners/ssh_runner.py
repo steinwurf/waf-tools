@@ -9,6 +9,36 @@ from basic_runner import BasicRunner
 
 class SSHRunner(BasicRunner):
 
+    def run_cmd(self, cmd):
+
+        Logs.debug("wr: running %r", cmd)
+
+        # The pty module only works on Unix systems
+        stdin_target = Utils.subprocess.PIPE
+        if sys.platform != 'win32':
+            import pty
+            # subprocess.Popen() does not allocate a terminal for new processes.
+            # We allocate a pseudo-terminal with pty.openpty() and connect it
+            # to stdin. This is required if SSH is invoked with the -t flag,
+            # which ensures that the remote process is terminated when the SSH
+            # process is killed on the host.
+            (master, slave) = pty.openpty()
+            stdin_target = slave
+
+        proc = Utils.subprocess.Popen(
+            cmd,
+            cwd = self.inputs[0].parent.abspath(),
+            stdin = stdin_target,
+            stderr = Utils.subprocess.PIPE,
+            stdout = Utils.subprocess.PIPE)
+
+        (stdout, stderr) = proc.communicate()
+
+        result =  {'cmd': cmd, 'return_code': proc.returncode,
+                   'stdout': stdout, 'stderr': stderr}
+
+        return result
+
     def save_result(self, results, ssh_cmd):
         # Override save_result to ensure that the kernel objects are removed
 
@@ -23,8 +53,6 @@ class SSHRunner(BasicRunner):
     def run(self):
 
         bld = self.generator.bld
-
-        results = []
 
         dest_dir = bld.get_tool_option('ssh_dest_dir')
         ssh_host = bld.get_tool_option('ssh_host')
@@ -43,6 +71,14 @@ class SSHRunner(BasicRunner):
 
         ssh_cmd = ['ssh', '-t'] + ssh_options + [ssh_target]
         scp_cmd = ['scp'] + scp_options
+
+        self.run_ssh(ssh_cmd, scp_cmd, ssh_target, dest_dir)
+
+    def run_ssh(self, ssh_cmd, scp_cmd, ssh_target, dest_dir):
+
+        bld = self.generator.bld
+
+        results = []
 
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
