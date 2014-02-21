@@ -8,6 +8,13 @@ Latest
 ------
 * TBD
 
+2.23.0
+------
+* Minor: The SSH commands are invoked with the -t flag, which ensures that the
+  remote process is terminated when the SSH process is killed on the host.
+* Minor: IOSRunner class is derived from SSHRunner to enhance code reuse
+* Minor: Add mkspec_try_flags function to check for available compiler flags
+
 2.22.0
 ------
 * Bugfix: Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
