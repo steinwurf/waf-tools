@@ -96,6 +96,9 @@ def mkspec_set_clang_ccflags(conf, force_debug = False):
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CFLAGS'] += ['-g']
 
+    if conf.has_tool_option('cxx_nodebug'):
+        conf.env['DEFINES'] += ['NDEBUG']
+
 @conf
 def mkspec_set_clang_cxxflags(conf, force_debug = False):
 
@@ -109,6 +112,9 @@ def mkspec_set_clang_cxxflags(conf, force_debug = False):
         conf.env['CXXFLAGS'] += ['-g']
     elif not conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['LINKFLAGS'] += ['-s']
+
+    if conf.has_tool_option('cxx_nodebug'):
+        conf.env['DEFINES'] += ['NDEBUG']
 
     # Use the more restrictive c++0x option for linux
     if conf.is_mkspec_platform('linux'):

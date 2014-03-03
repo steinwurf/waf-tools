@@ -51,6 +51,9 @@ def mkspec_set_msvc_flags(conf):
         # Use the multithread, release version of the run-time library
         conf.env['CXXFLAGS'] += ['/MT', '/D_CRT_SECURE_NO_WARNINGS']
 
+    if conf.has_tool_option('cxx_nodebug'):
+        conf.env['DEFINES'] += ['NDEBUG']
+
     # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target)
     # to suppress warnings in boost asio
     # Disable warning C4345 which only states that msvc follows the
