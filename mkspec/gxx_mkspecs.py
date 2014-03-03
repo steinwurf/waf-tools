@@ -33,6 +33,21 @@ def cxx_crosslinux_gxx46_arm(conf):
     conf.env['STLIB'] += ['gcc_eh']
 
 """
+Detect and setup the g++ 4.8 cross-compiler for ARM 32-bit Linux
+"""
+@conf
+def cxx_crosslinux_gxx48_arm(conf):
+    conf.mkspec_gxx_configure(4, 8, 'arm-openwrt-linux')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link the GCC runtime and the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libgcc', '-static-libstdc++']
+    # The GCC runtime does not contain the C++ exception handling functions,
+    # so libgcc_eh.a should also be statically linked
+    conf.env['STLIB'] += ['gcc_eh']
+    # Use VFP register arguments (compile for hardware FPU)
+    conf.mkspec_add_common_flag('-mfloat-abi=hard')
+
+"""
 Detect and setup the g++ 4.6 cross-compiler for 64-bit Linux
 """
 @conf
