@@ -52,6 +52,9 @@ Detect and setup the g++ 4.6 cross-compiler for 64-bit Linux
 def cxx_crosslinux_gxx46_x64(conf):
     conf.mkspec_gxx_configure(4, 6, 'crosslinux-gxx46-x64')
     conf.mkspec_add_common_flag('-m64')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link the GCC runtime and the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libgcc', '-static-libstdc++']
 
 """
 Detect and setup the g++ 4.6 cross-compiler for 32-bit Linux
@@ -60,6 +63,9 @@ Detect and setup the g++ 4.6 cross-compiler for 32-bit Linux
 def cxx_crosslinux_gxx46_x86(conf):
     conf.mkspec_gxx_configure(4, 6, 'crosslinux-gxx46-x86')
     conf.mkspec_add_common_flag('-m32')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link the GCC runtime and the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libgcc', '-static-libstdc++']
 
 """
 Detect and setup the g++ 4.7 cross-compiler for MIPS 32-bit Linux
