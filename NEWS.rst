@@ -8,6 +8,11 @@ Latest
 ------
 * TBD
 
+2.24.0
+------
+* Minor: Add makespec for new OpenWrt toolchain (cxx_crosslinux_gxx47_arm)
+* Minor: Add 'cxx_nodebug' option which defines NDEBUG to disable assertions
+
 2.23.0
 ------
 * Minor: The SSH commands are invoked with the -t flag, which ensures that the
