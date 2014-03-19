@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os, sys, re
+import os
 import time
-from waflib.TaskGen import feature, after_method
-from waflib import Utils, Task, Logs, Options
+from waflib import Utils, Logs
 from ssh_runner import SSHRunner
+
 
 class IOSRunner(SSHRunner):
 
     def save_result(self, results, ssh_cmd):
 
         # Kill the usbmux process
-        if self.usbmux_proc != None:
+        if self.usbmux_proc is None:
             self.usbmux_proc.kill()
 
         super(IOSRunner, self).save_result(results, ssh_cmd)

@@ -15,10 +15,9 @@ A simple tool to integrate protocol buffers into your build system.
 
 """
 
-import platform, os
-from waflib.TaskGen import extension
 from waflib.Configure import conf
 from waflib import Task, Utils
+
 
 def configure(conf):
     # Get the compiler
@@ -30,7 +29,7 @@ def configure(conf):
 def check_protobuf(conf):
     # We'll need the library too
     conf.check_cfg(package="protobuf", uselib_store="PROTOBUF",
-            args=['--cflags', '--libs'])
+                   args=['--cflags', '--libs'])
 
 
 class protoc(Task.Task):
@@ -38,7 +37,6 @@ class protoc(Task.Task):
     ext_out = ['.h', 'pb.cc']
 
     def run(self):
-        bld = self.generator.bld
         cmd = Utils.subst_vars('${PROTOC} ${PROTOC_FLAGS} ' +
                                '${PROTOC_ST:INCPATHS}', self.env).split()
         cmd.extend([a.abspath() for a in self.inputs])

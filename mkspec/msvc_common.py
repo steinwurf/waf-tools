@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from waflib import Utils
 from waflib.Configure import conf
 from waflib.Logs import debug
-from os.path import abspath, expanduser
-import os
+
 
 @conf
 def mkspec_check_minimum_msvc_version(conf, minimum):
@@ -16,6 +14,7 @@ def mkspec_check_minimum_msvc_version(conf, minimum):
         conf.fatal("Compiler version: {0}, "
                    "required minimum: {1}"
                    .format(conf.env['MSVC_VERSION'], minimum))
+
 
 @conf
 def mkspec_msvc_configure(conf, version):
@@ -36,6 +35,7 @@ def mkspec_msvc_configure(conf, version):
         conf.end_msg(conf.env.get_flat('CXX'))
         conf.end_msg(False)
         conf.mkspec_set_msvc_flags()
+
 
 @conf
 def mkspec_set_msvc_flags(conf):
@@ -60,10 +60,9 @@ def mkspec_set_msvc_flags(conf):
     # C++ standard for initializing POD types when the () form is used
     # Treat C4100 unreferenced parameter warning as Level 3
     # instead of Level 4 to better match g++ warnings
-    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100', '/EHs',
-        '/D_WIN32_WINNT=0x0501']
+    conf.env[
+        'CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100', '/EHs',
+                        '/D_WIN32_WINNT=0x0501']
     # Disable LNK4221 linker warning for empty object files
     conf.env['LINKFLAGS'] += ['/ignore:4221']  # used for LINK.exe
-    conf.env['ARFLAGS'] +=   ['/ignore:4221']  # used for LIB.exe
-
-
+    conf.env['ARFLAGS'] += ['/ignore:4221']  # used for LIB.exe

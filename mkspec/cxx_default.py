@@ -4,23 +4,18 @@
 import os
 
 from waflib import Utils
-from waflib.Configure import conf
 from waflib import Logs
 from waflib import Errors
-
-import clang_common
-import gxx_common
-import msvc_common
 
 
 def load_compiler(conf, compiler):
 
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in compiler:
-        conf.mkspec_clang_configure(3, 0, minimum = True)
+        conf.mkspec_clang_configure(3, 0, minimum=True)
 
     elif 'g++' in compiler:
-        conf.mkspec_gxx_configure(4, 6, minimum = True)
+        conf.mkspec_gxx_configure(4, 6, minimum=True)
 
     elif 'msvc' in compiler or 'CL.exe' in compiler or 'cl.exe' in compiler:
         conf.load('msvc')
@@ -33,6 +28,8 @@ def load_compiler(conf, compiler):
 """
 Detect and setup the default compiler for the platform
 """
+
+
 def configure(conf):
 
     # If the user-defined CXX variable is set
@@ -44,7 +41,7 @@ def configure(conf):
         if conf.env['CXX']:
             conf.end_msg(conf.env.get_flat('CXX'))
             conf.env['COMPILER_CXX'] = compiler
-            return # Compiler configured successfully
+            return  # Compiler configured successfully
         else:
             conf.end_msg(False)
             conf.fatal('Could not configure a C++ compiler!')
@@ -52,13 +49,13 @@ def configure(conf):
     # Otherwise we try to find a compiler on the current host
     # based on the following compiler list
     cxx_compilers = \
-    {
-        'win32':  ['msvc', 'g++'],
-        'linux':  ['g++', 'clang++'],
-        'darwin': ['clang++', 'g++'],
-        'cygwin': ['g++'],
-        'default': ['g++']
-    }
+        {
+            'win32':  ['msvc', 'g++'],
+            'linux':  ['g++', 'clang++'],
+            'darwin': ['clang++', 'g++'],
+            'cygwin': ['g++'],
+            'default': ['g++']
+        }
 
     sys_platform = Utils.unversioned_sys_platform()
     platform = 'default'
@@ -82,7 +79,7 @@ def configure(conf):
             if conf.env['CXX']:
                 conf.end_msg(conf.env.get_flat('CXX'))
                 conf.env['COMPILER_CXX'] = compiler
-                break # Break from the for-cycle
+                break  # Break from the for-cycle
             conf.end_msg(False)
     else:
         conf.fatal('Could not configure a C++ compiler!')

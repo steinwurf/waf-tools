@@ -2,14 +2,13 @@
 # encoding: utf-8
 # Matt Clarkson, 2012
 
-
-import platform, os
 from waflib.TaskGen import extension
 from waflib.Configure import conf
 
 
 def configure(conf):
     conf.load_external_tool('protobuf', 'wurf_protoc')
+
 
 @conf
 def protobuf_disable_warnings(conf):
@@ -21,24 +20,24 @@ def protobuf_disable_warnings(conf):
     if conf.env.CXX_NAME == 'msvc':
         # conversion from 'type1' to 'type2', possible loss of data
         # http://msdn.microsoft.com/en-us/library/3hca13eh
-        self.env.append_unique('CXXFLAGS', ['/wd4242'])
+        conf.env.append_unique('CXXFLAGS', ['/wd4242'])
         # conversion from 'type1' to 'type2', possible loss of data
         # http://msdn.microsoft.com/en-us/library/2d7604yb
-        self.env.append_unique('CXXFLAGS', ['/wd4244'])
+        conf.env.append_unique('CXXFLAGS', ['/wd4244'])
         # conversion from 'type_1' to 'type_2', signed/unsigned mismatch
         # http://msdn.microsoft.com/en-us/library/ms173683
-        self.env.append_unique('CXXFLAGS', ['/wd4365'])
+        conf.env.append_unique('CXXFLAGS', ['/wd4365'])
         # conversion from 'size_t' to 'type', possible loss of data
         # http://msdn.microsoft.com/en-us/library/6kck0s93
-        self.env.append_unique('CXXFLAGS', ['/wd4267'])
+        conf.env.append_unique('CXXFLAGS', ['/wd4267'])
         # copy constructor could not be generated because a base class copy
         # constructor is inaccessible
         # http://msdn.microsoft.com/en-us/library/306zwa5e
-        self.env.append_unique('CXXFLAGS', ['/wd4625'])
+        conf.env.append_unique('CXXFLAGS', ['/wd4625'])
         # assignment operator could not be generated because a base class
         # assignment operator is inaccessible
         # http://msdn.microsoft.com/en-US/library/6ay4xcyd
-        self.env.append_unique('CXXFLAGS', ['/wd4626'])
+        conf.env.append_unique('CXXFLAGS', ['/wd4626'])
 
 
 @extension('.proto')
@@ -61,4 +60,3 @@ def process_protoc(self, node):
         if meth not in self.meths:
             self.meths.append(meth)
     self.get_hook(cpp_node)(self, cpp_node)
-

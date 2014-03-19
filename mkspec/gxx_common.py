@@ -3,16 +3,11 @@
 
 import os
 
-from waflib import Utils
 from waflib.Configure import conf
-import waflib.Tools.gxx as gxx
-import waflib.Tools.gcc as gcc
-from os.path import abspath, expanduser
 
-import cxx_common
 
 @conf
-def mkspec_gxx_configure(conf, major, minor, prefix = None, minimum = False):
+def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
     """
     :param major:   The major version number of the compiler, e.g. 4
     :param minor:   The minor version number of the compiler, e.g. 6
@@ -24,8 +19,9 @@ def mkspec_gxx_configure(conf, major, minor, prefix = None, minimum = False):
 
     # Find g++ first
     gxx_names = conf.mkspec_get_gnu_binary_name('g++', major, minor, prefix)
-    if minimum: gxx_names = 'g++'
-    cxx = conf.find_program(gxx_names, path_list = paths)
+    if minimum:
+        gxx_names = 'g++'
+    cxx = conf.find_program(gxx_names, path_list=paths)
     cxx = conf.cmd_to_list(cxx)
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
@@ -36,8 +32,9 @@ def mkspec_gxx_configure(conf, major, minor, prefix = None, minimum = False):
 
     # Also find gcc
     gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor, prefix)
-    if minimum: gcc_names = 'gcc'
-    cc = conf.find_program(gcc_names, path_list = paths)
+    if minimum:
+        gcc_names = 'gcc'
+    cc = conf.find_program(gcc_names, path_list=paths)
     cc = conf.cmd_to_list(cc)
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
@@ -48,7 +45,7 @@ def mkspec_gxx_configure(conf, major, minor, prefix = None, minimum = False):
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name(prefix)
-    conf.find_program(ar, path_list = paths, var = 'AR')
+    conf.find_program(ar, path_list=paths, var='AR')
     conf.env.ARFLAGS = 'rcs'
 
     # Set up C++ tools and flags
@@ -80,10 +77,11 @@ def mkspec_gxx_android_configure(conf, major, minor, prefix):
     conf.mkspec_gxx_configure(major, minor, prefix)
     conf.mkspec_set_android_options()
 
+
 @conf
 def mkspec_set_gcc_ccflags(conf):
 
-    conf.env['CFLAGS'] += ['-O2','-ftree-vectorize','-Wextra','-Wall']
+    conf.env['CFLAGS'] += ['-O2', '-ftree-vectorize', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CFLAGS'] += ['-g']
@@ -91,10 +89,11 @@ def mkspec_set_gcc_ccflags(conf):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
+
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] += ['-O2','-ftree-vectorize','-Wextra','-Wall']
+    conf.env['CXXFLAGS'] += ['-O2', '-ftree-vectorize', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']
@@ -117,8 +116,9 @@ def mkspec_set_gxx_cxxflags(conf):
     # To enable the latest standard on g++ 4.7
     #conf.env['CXXFLAGS'] += ['-std=c++11']
 
+
 @conf
-def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix = None):
+def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix=None):
     """
     :param base:  'gcc' or 'g++'
     :param major: The major version number of the g++/gcc binary e.g. 4
@@ -131,7 +131,7 @@ def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix = None):
     # First the default case
     binary = ['{0}-{1}.{2}'.format(base, major, minor)]
 
-    if prefix != None:
+    if prefix is None:
         # Toolchains use a specific prefix
         return ['{0}-{1}'.format(prefix, base)]
 
@@ -147,7 +147,3 @@ def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix = None):
         return [base]
 
     return binary
-
-
-
-
