@@ -25,7 +25,7 @@ Detect and setup the Android g++ 4.8 compiler for ARMv7
 @conf
 def cxx_android_gxx48_armv7(conf):
     conf.mkspec_gxx_android_configure(4, 8, 'arm-linux-androideabi')
-    # Specify the ARMv7 architecture the softfp float ABI to compile for
+    # Specify the ARMv7 architecture and the 'softfp' float ABI to compile for
     # hardware FPU, but with software linkage (required for -mfpu=neon flag)
     flags = ['-march=armv7-a', '-mtune=generic-armv7-a', '-mfloat-abi=softfp']
     conf.env['CFLAGS'] += flags
