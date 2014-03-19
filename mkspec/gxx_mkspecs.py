@@ -20,6 +20,16 @@ def cxx_android_gxx48_arm(conf):
     conf.mkspec_gxx_android_configure(4, 8, 'arm-linux-androideabi')
 
 """
+Detect and setup the Android g++ 4.8 compiler for ARMv7
+"""
+@conf
+def cxx_android_gxx48_armv7(conf):
+    conf.mkspec_gxx_android_configure(4, 8, 'arm-linux-androideabi')
+    flags = ['-march=armv7-a', '-mtune=generic-armv7-a']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+
+"""
 Detect and setup the g++ 4.6 cross-compiler for ARM 32-bit Linux
 """
 @conf
