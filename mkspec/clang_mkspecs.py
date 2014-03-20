@@ -6,6 +6,25 @@ from waflib.Configure import conf
 import clang_common
 
 """
+Detect and setup the Android clang 3.4 compiler for ARM
+"""
+@conf
+def cxx_android_clang34_arm(conf):
+    conf.mkspec_gxx_android_configure(3, 4)
+
+"""
+Detect and setup the Android clang 3.4 compiler for ARMv7
+"""
+@conf
+def cxx_android_clang34_armv7(conf):
+    conf.mkspec_clang_android_configure(3, 4)
+    # Specify the ARMv7 architecture
+    flags = ['-target', 'armv7-linux-androideabi']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+    conf.env['LINKFLAGS'] += flags
+
+"""
 Detect and setup the 64-bit Apple llvm 4.2 compiler (clang 3.2)
 """
 @conf
