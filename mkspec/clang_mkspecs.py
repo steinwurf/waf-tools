@@ -10,7 +10,7 @@ Detect and setup the Android clang 3.4 compiler for ARM
 """
 @conf
 def cxx_android_clang34_arm(conf):
-    conf.mkspec_gxx_android_configure(3, 4)
+    conf.mkspec_clang_android_configure(3, 4)
 
 """
 Detect and setup the Android clang 3.4 compiler for ARMv7
