@@ -60,9 +60,9 @@ def mkspec_set_msvc_flags(conf):
     # C++ standard for initializing POD types when the () form is used
     # Treat C4100 unreferenced parameter warning as Level 3
     # instead of Level 4 to better match g++ warnings
-    conf.env[
-        'CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100', '/EHs',
-                        '/D_WIN32_WINNT=0x0501']
+    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100',
+                             '/EHs', '/D_WIN32_WINNT=0x0501']
+
     # Disable LNK4221 linker warning for empty object files
     conf.env['LINKFLAGS'] += ['/ignore:4221']  # used for LINK.exe
     conf.env['ARFLAGS'] += ['/ignore:4221']  # used for LIB.exe

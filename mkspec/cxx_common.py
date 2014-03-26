@@ -178,7 +178,7 @@ def mkspec_get_ar_binary_name(conf, prefix=None):
 
     binary = 'ar'
 
-    if prefix is None:
+    if prefix:
         # Toolchains use a specific prefix
         return ['{0}-{1}'.format(prefix, binary)]
 

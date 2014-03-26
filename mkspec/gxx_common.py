@@ -131,7 +131,7 @@ def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix=None):
     # First the default case
     binary = ['{0}-{1}.{2}'.format(base, major, minor)]
 
-    if prefix is None:
+    if prefix:
         # Toolchains use a specific prefix
         return ['{0}-{1}'.format(prefix, base)]
 
