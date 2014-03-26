@@ -17,15 +17,15 @@ def load_compiler(conf, compiler):
 
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in compiler:
-        conf.mkspec_clang_configure(3, 0, minimum = True)
+        conf.mkspec_clang_configure(3, 4, minimum = True)
 
     elif 'g++' in compiler:
-        conf.mkspec_gxx_configure(4, 6, minimum = True)
+        conf.mkspec_gxx_configure(4, 7, minimum = True)
 
     elif 'msvc' in compiler or 'CL.exe' in compiler or 'cl.exe' in compiler:
         conf.load('msvc')
         # Note: the waf msvc tool also load msvc as a C compiler
-        conf.mkspec_check_minimum_msvc_version(11.0)
+        conf.mkspec_check_minimum_msvc_version(12.0)
         conf.mkspec_set_msvc_flags()
     else:
         raise Errors.WafError('Unknown compiler: %s' % compiler)
