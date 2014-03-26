@@ -32,8 +32,7 @@ def mkspec_clang_configure(conf, major, minor, prefix = None, minimum = False,
     cxx = conf.cmd_to_list(cxx)
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
-    # waf's gxx tool for checking version number might also work for clang
-    # TODO: write a proper tool for this
+
     if minimum:
         conf.mkspec_check_minimum_cc_version(cxx, major, minor)
     else:
@@ -47,7 +46,7 @@ def mkspec_clang_configure(conf, major, minor, prefix = None, minimum = False,
     cc = conf.cmd_to_list(cc)
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
-    # TODO: write a proper tool for this
+
     if minimum:
         conf.mkspec_check_minimum_cc_version(cc, major, minor)
     else:
@@ -81,7 +80,7 @@ def mkspec_clang_configure(conf, major, minor, prefix = None, minimum = False,
 @conf
 def mkspec_clang_android_configure(conf, major, minor, prefix, target):
     conf.set_mkspec_platform('android')
-    conf.mkspec_clang_configure(major, minor)
+    conf.mkspec_clang_configure(major, minor, prefix)
     conf.mkspec_set_android_options()
 
     # Specify the target architecture as required by clang
