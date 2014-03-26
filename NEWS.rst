@@ -8,6 +8,10 @@ Latest
 ------
 * TBD
 
+2.25.0
+------
+* Minor: Add ARMv7 makespec for Android GCC (cxx_android_gxx48_armv7)
+
 2.24.0
 ------
 * Minor: Add makespec for new OpenWrt toolchain (cxx_crosslinux_gxx47_arm)
