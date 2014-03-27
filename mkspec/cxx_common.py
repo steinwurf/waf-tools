@@ -160,6 +160,7 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
         "-miphoneos-version-min={}".format(min_ios_version)
     ]
 
+    conf.env['CFLAGS'] += ios_flags
     conf.env['CXXFLAGS'] += ios_flags
     conf.env['LINKFLAGS'] += ios_flags
 

@@ -12,11 +12,12 @@ from os.path import abspath, expanduser
 import cxx_common
 
 @conf
-def mkspec_clang_configure(conf, major, minor, minimum = False,
+def mkspec_clang_configure(conf, major, minor, prefix = None, minimum = False,
                            force_debug = False):
     """
     :param major:       The major version number of the compiler, e.g. 3
     :param minor:       The minor version number of the compiler, e.g. 4
+    :param prefix:      Prefix to compiler name, e.g. 'arm-linux-androideabi'
     :param minimum:     Only check for a minimum compiler version, if true
     :param force_debug: Always compile with debugging flags, if true
     """
@@ -24,31 +25,35 @@ def mkspec_clang_configure(conf, major, minor, minimum = False,
     paths = conf.mkspec_get_toolchain_paths()
 
     # Find the clang++ compiler
-    #clang_names = conf.mkspec_get_clang_binary_name(major, minor)
-    cxx = conf.find_program('clang++', path_list = paths)
+    clangxx_names = conf.mkspec_get_clangxx_binary_name(major, minor)
+    if minimum:
+        clangxx_names = 'clang++'
+    cxx = conf.find_program(clangxx_names, path_list = paths)
     cxx = conf.cmd_to_list(cxx)
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
-    # waf's gxx tool for checking version number might also work for clang
-    # TODO: write a proper tool for this
+
     if minimum:
         conf.mkspec_check_minimum_cc_version(cxx, major, minor)
     else:
         conf.mkspec_check_cc_version(cxx, major, minor)
 
     # Find clang as the C compiler
-    cc = conf.find_program('clang', path_list = paths)
+    clang_names = conf.mkspec_get_clang_binary_name(major, minor)
+    if minimum:
+        clang_names = 'clang'
+    cc = conf.find_program(clang_names, path_list = paths)
     cc = conf.cmd_to_list(cc)
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
-    # TODO: write a proper tool for this
+
     if minimum:
         conf.mkspec_check_minimum_cc_version(cc, major, minor)
     else:
         conf.mkspec_check_cc_version(cc, major, minor)
 
     # Find the archiver
-    ar = conf.mkspec_get_ar_binary_name()
+    ar = conf.mkspec_get_ar_binary_name(prefix)
     conf.find_program(ar, path_list = paths, var = 'AR')
     conf.env.ARFLAGS = 'rcs'
 
@@ -73,10 +78,16 @@ def mkspec_clang_configure(conf, major, minor, minimum = False,
     conf.mkspec_set_clang_ccflags(force_debug)
 
 @conf
-def mkspec_clang_android_configure(conf, major, minor):
+def mkspec_clang_android_configure(conf, major, minor, prefix, target):
     conf.set_mkspec_platform('android')
-    conf.mkspec_clang_configure(major, minor)
+    conf.mkspec_clang_configure(major, minor, prefix)
     conf.mkspec_set_android_options()
+
+    # Specify the target architecture as required by clang
+    target_flags = ['-target', target]
+    conf.env['CFLAGS'] += target_flags
+    conf.env['CXXFLAGS'] += target_flags
+    conf.env['LINKFLAGS'] += target_flags
 
 @conf
 def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
@@ -136,15 +147,33 @@ def mkspec_set_clang_cxxflags(conf, force_debug = False):
         conf.env['LINKFLAGS'] += ['-lc++']
 
 @conf
-def mkspec_get_clang_binary_name(conf, major, minor):
+def mkspec_get_clangxx_binary_name(conf, major, minor):
     """
-    :param major: The major version number of the clang binary e.g. 3
-    :param minor: The minor version number of the clang binary e.g. 1
-    :return: A list with names of the g++ binary we are looking for
-             e.g. ['clang31++'] for clang++ version 3.1 on
-             android
+    :param major:  The major version number of the clang binary e.g. 3
+    :param minor:  The minor version number of the clang binary e.g. 4
+    :return:       A list with names of the clang++ binary we are looking for,
+                   e.g. ['clang34++'] for clang++ 3.4 on Android
     """
 
-    #return ['clang{0}{1}++'.format(major, minor), 'clang++']
+    if conf.is_mkspec_platform('android'):
+        # The numbered clang is the only real binary in the Android toolchain
+        return ['clang{0}{1}++'.format(major, minor)]
+
+    # The default case works fine on all other platforms
     return ['clang++']
 
+@conf
+def mkspec_get_clang_binary_name(conf, major, minor):
+    """
+    :param major:  The major version number of the clang binary e.g. 3
+    :param minor:  The minor version number of the clang binary e.g. 4
+    :return:       A list with names of the clang binary we are looking for,
+                   e.g. ['clang34'] for clang 3.4 on Android
+    """
+
+    if conf.is_mkspec_platform('android'):
+        # The numbered clang is the only real binary in the Android toolchain
+        return ['clang{0}{1}'.format(major, minor)]
+
+    # The default case works fine on all other platforms
+    return ['clang']
