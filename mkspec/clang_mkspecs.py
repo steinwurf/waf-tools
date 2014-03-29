@@ -3,6 +3,8 @@
 
 from waflib.Configure import conf
 
+import clang_common
+
 
 @conf
 def cxx_apple_llvm42_x64(conf):

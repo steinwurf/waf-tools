@@ -338,7 +338,6 @@ def compile_template(line):
         elif f.startswith('xml:'):
             app('lst.append(xml_escape(%s))' % f[4:])
         else:
-            #app('lst.append((%s) or "cannot find %s")' % (f, f))
             app('lst.append(%s)' % f)
 
     if extr:
@@ -346,7 +345,6 @@ def compile_template(line):
             app("lst.append(%r)" % params[-1])
 
     fun = COMPILE_TEMPLATE % "\n    ".join(buf)
-    # print(fun)
     return Task.funex(fun)
 
 

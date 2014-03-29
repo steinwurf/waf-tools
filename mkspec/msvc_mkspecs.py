@@ -3,6 +3,8 @@
 
 from waflib.Configure import conf
 
+import msvc_common
+
 
 @conf
 def cxx_msvc11_x64(conf):

@@ -4,6 +4,8 @@
 import os
 
 from waflib.Configure import conf
+import waflib.Tools.gcc
+import waflib.Tools.gxx
 
 
 @conf

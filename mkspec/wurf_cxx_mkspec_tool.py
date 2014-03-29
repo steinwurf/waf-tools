@@ -2,8 +2,11 @@
 # encoding: utf-8
 
 from waflib import Utils
-
 from waflib.Configure import conf
+
+import clang_mkspecs
+import gxx_mkspecs
+import msvc_mkspecs
 
 # Allows us to catch queries for platforms that we do not yet support
 mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios']

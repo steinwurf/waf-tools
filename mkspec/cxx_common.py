@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from waflib.Configure import conf
-#import waflib.Tools.gxx as gxx
-from os.path import abspath, expanduser
 import os
+
+from waflib.Configure import conf
 
 
 @conf
@@ -98,7 +97,7 @@ def mkspec_get_toolchain_paths(conf):
         # If specified, the android_ndk_dir option overrides the OS path
         if conf.has_tool_option('android_ndk_dir'):
             ndk = conf.get_tool_option('android_ndk_dir')
-            ndk = abspath(expanduser(ndk))
+            ndk = os.path.abspath(os.path.expanduser(ndk))
             ndk_path = [ndk, os.path.join(ndk, 'bin')]
             return ndk_path
 
@@ -108,7 +107,7 @@ def mkspec_get_toolchain_paths(conf):
         else:
             toolchain = "/Applications/Xcode.app/Contents/Developer/" \
                         "Toolchains/XcodeDefault.xctoolchain/usr/bin/"
-        toolchain = abspath(expanduser(toolchain))
+        toolchain = os.path.abspath(os.path.expanduser(toolchain))
         #toolchain_path = [toolchain, os.path.join(toolchain,'bin')]
 
         return toolchain
@@ -121,7 +120,7 @@ def mkspec_set_android_options(conf):
     # The android_sdk_dir option is optional, if adb is in the OS path
     if conf.has_tool_option('android_sdk_dir'):
         sdk = conf.get_tool_option('android_sdk_dir')
-        sdk = abspath(expanduser(sdk))
+        sdk = os.path.abspath(os.path.expanduser(sdk))
         sdk_path = [sdk, os.path.join(sdk, 'platform-tools')]
         conf.find_program('adb', path_list=sdk_path, var='ADB')
     else:
@@ -141,7 +140,7 @@ def mkspec_set_android_options(conf):
 @conf
 def mkspec_set_ios_options(conf, min_ios_version, cpu):
     sdk = conf.get_tool_option('ios_sdk_dir')
-    sdk = abspath(expanduser(sdk))
+    sdk = os.path.abspath(os.path.expanduser(sdk))
 
     # Set the IPHONE define - some libraries rely on this define being
     # present

@@ -3,6 +3,8 @@
 
 from waflib.Configure import conf
 
+import gxx_common
+
 
 @conf
 def cxx_android_gxx46_arm(conf):
