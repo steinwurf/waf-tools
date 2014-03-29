@@ -57,8 +57,14 @@ def build(bld):
 """
 
 import os
-from waflib.TaskGen import feature, after_method
+
 from waflib import Logs
+from waflib.TaskGen import feature, after_method
+
+from android_runner import AndroidRunner
+from basic_runner import BasicRunner
+from ios_runner import IOSRunner
+from ssh_runner import SSHRunner
 
 
 @feature('test')
