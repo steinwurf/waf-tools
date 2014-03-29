@@ -8,6 +8,12 @@ Latest
 ------
 * TBD
 
+2.26.0
+------
+* Minor: Add ARMv7 makespec for Android Clang (cxx_android_clang34_armv7)
+* Minor: Update minimum compiler versions in cxx_default (g++ 4.6, clang 3.4,
+  msvc 12.0)
+
 2.25.0
 ------
 * Minor: Add ARMv7 makespec for Android GCC (cxx_android_gxx48_armv7)

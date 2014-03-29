@@ -7,6 +7,16 @@ import clang_common
 
 
 @conf
+def cxx_android_clang34_armv7(conf):
+    """
+    Detect and setup the Android clang 3.4 compiler for ARMv7
+    """
+    conf.mkspec_clang_android_configure(3, 4, prefix='arm-linux-androideabi',
+                                        target='armv7-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
 def cxx_apple_llvm42_x64(conf):
     """
     Detect and setup the 64-bit Apple llvm 4.2 compiler (clang 3.2)
@@ -154,6 +164,7 @@ def cxx_ios50_apple_llvm42_armv7(conf):
     Detect and setup the Apple LLVM 4.2 compiler for iOS 5.0 armv7
     """
     conf.mkspec_clang_ios_configure(4, 2, '5.0', 'armv7')
+    conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
@@ -162,6 +173,7 @@ def cxx_ios50_apple_llvm50_armv7(conf):
     Detect and setup the Apple LLVM 5.0 compiler for iOS 5.0 armv7
     """
     conf.mkspec_clang_ios_configure(5, 0, '5.0', 'armv7')
+    conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
@@ -170,6 +182,7 @@ def cxx_ios50_clang32_armv7(conf):
     Detect and setup the clang 3.2 compiler for iOS 5.0 armv7
     """
     conf.mkspec_clang_ios_configure(3, 2, '5.0', 'armv7')
+    conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
