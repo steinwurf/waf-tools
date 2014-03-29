@@ -7,9 +7,9 @@ from waflib import Errors
 from waflib import Logs
 from waflib import Utils
 
-import clang_common
-import gxx_common
-import msvc_common
+import clang_mkspecs
+import gxx_mkspecs
+import msvc_mkspecs
 
 
 def load_compiler(conf, compiler):

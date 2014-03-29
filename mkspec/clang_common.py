@@ -3,10 +3,7 @@
 
 import os
 
-from waflib import Utils
 from waflib.Configure import conf
-import waflib.Tools.gcc
-import waflib.Tools.gxx
 
 import cxx_common
 
