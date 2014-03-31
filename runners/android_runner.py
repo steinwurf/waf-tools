@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os, sys, re
+import os
+import re
 
-from waflib.TaskGen import feature, after_method
-from waflib import Utils, Task, Logs, Options
 from basic_runner import BasicRunner
 
+
 class AndroidRunner(BasicRunner):
+
     def run(self):
 
         bld = self.generator.bld
@@ -47,7 +48,6 @@ class AndroidRunner(BasicRunner):
                 self.save_result(results)
                 return
 
-
         # Push the binary
         binary = str(self.inputs[0])
         adb_push_bin = adb_push + [self.inputs[0].abspath(), dest_dir + binary]
@@ -73,7 +73,7 @@ class AndroidRunner(BasicRunner):
 
         # Echo the exit code after the shell command
         result = self.run_cmd(
-            adb_shell + \
+            adb_shell +
             ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
         results.append(result)
@@ -87,18 +87,18 @@ class AndroidRunner(BasicRunner):
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
-            result =  {'cmd': 'Looking for shell exit', 'return_code': -1,
-                       'stdout': '', 'stderr': 'Failed to find exitcode'}
+            result = {'cmd': 'Looking for shell exit', 'return_code': -1,
+                      'stdout': '', 'stderr': 'Failed to find exitcode'}
 
             results.append(result)
             self.save_result(results)
             return
 
         if match.group(1) != "0":
-            result =  {'cmd': 'Shell exit indicates error',
-                       'return_code': match.group(1),
-                       'stdout': '',
-                       'stderr': 'Exit code was %s' % match.group(1)}
+            result = {'cmd': 'Shell exit indicates error',
+                      'return_code': match.group(1),
+                      'stdout': '',
+                      'stderr': 'Exit code was %s' % match.group(1)}
 
             results.append(result)
             self.save_result(results)
@@ -118,7 +118,7 @@ class AndroidRunner(BasicRunner):
             output_file = bld.get_tool_option("python_result")
 
             # This path is on android and not the host platform
-            benchmark_result  = dest_dir + output_file
+            benchmark_result = dest_dir + output_file
 
             # Remove the old benchmark if it exists
             self.run_cmd(["rm", "-f", output_file])

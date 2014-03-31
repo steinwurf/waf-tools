@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os, sys, re
-import time
-from waflib.TaskGen import feature, after_method
-from waflib import Utils, Task, Logs, Options
+import os
+import sys
+import re
+from waflib import Utils, Logs
 from basic_runner import BasicRunner
+
 
 class SSHRunner(BasicRunner):
 
@@ -17,25 +18,25 @@ class SSHRunner(BasicRunner):
         stdin_target = Utils.subprocess.PIPE
         if sys.platform != 'win32':
             import pty
-            # subprocess.Popen() does not allocate a terminal for new processes.
-            # We allocate a pseudo-terminal with pty.openpty() and connect it
-            # to stdin. This is required if SSH is invoked with the -t flag,
-            # which ensures that the remote process is terminated when the SSH
-            # process is killed on the host.
+            # subprocess.Popen() does not allocate a terminal for new
+            # processes. We allocate a pseudo-terminal with pty.openpty() and
+            # connect it to stdin. This is required if SSH is invoked with the
+            # -t flag, which ensures that the remote process is terminated when
+            # the SSH process is killed on the host.
             (master, slave) = pty.openpty()
             stdin_target = slave
 
         proc = Utils.subprocess.Popen(
             cmd,
-            cwd = self.inputs[0].parent.abspath(),
-            stdin = stdin_target,
-            stderr = Utils.subprocess.PIPE,
-            stdout = Utils.subprocess.PIPE)
+            cwd=self.inputs[0].parent.abspath(),
+            stdin=stdin_target,
+            stderr=Utils.subprocess.PIPE,
+            stdout=Utils.subprocess.PIPE)
 
         (stdout, stderr) = proc.communicate()
 
-        result =  {'cmd': cmd, 'return_code': proc.returncode,
-                   'stdout': stdout, 'stderr': stderr}
+        result = {'cmd': cmd, 'return_code': proc.returncode,
+                  'stdout': stdout, 'stderr': stderr}
 
         return result
 
@@ -62,12 +63,12 @@ class SSHRunner(BasicRunner):
         ssh_options = []
         if bld.has_tool_option('ssh_options'):
             ssh_options = \
-                bld.get_tool_option('ssh_options').replace('"','').split(' ')
+                bld.get_tool_option('ssh_options').replace('"', '').split(' ')
 
         scp_options = []
         if bld.has_tool_option('scp_options'):
             scp_options = \
-                bld.get_tool_option('scp_options').replace('"','').split(' ')
+                bld.get_tool_option('scp_options').replace('"', '').split(' ')
 
         ssh_cmd = ['ssh', '-t'] + ssh_options + [ssh_target]
         scp_cmd = ['scp'] + scp_options
@@ -92,7 +93,8 @@ class SSHRunner(BasicRunner):
         file_list.append(binary.abspath())
 
         # Copy all files in file_list
-        result = self.run_cmd(scp_cmd + file_list + [ssh_target+':'+dest_dir])
+        result = self.run_cmd(
+            scp_cmd + file_list + [ssh_target + ':' + dest_dir])
         results.append(result)
 
         if result['return_code'] != 0:
@@ -122,7 +124,7 @@ class SSHRunner(BasicRunner):
 
         # Echo the exit code after the shell command
         result = self.run_cmd(
-            ssh_cmd + \
+            ssh_cmd +
             ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
 
         results.append(result)
@@ -136,18 +138,18 @@ class SSHRunner(BasicRunner):
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
-            result =  {'cmd': 'Looking for shell exit', 'return_code': -1,
-                       'stdout': '', 'stderr': 'Failed to find exitcode'}
+            result = {'cmd': 'Looking for shell exit', 'return_code': -1,
+                      'stdout': '', 'stderr': 'Failed to find exitcode'}
 
             results.append(result)
             self.save_result(results, ssh_cmd)
             return
 
         if match.group(1) != "0":
-            result =  {'cmd': 'Shell exit indicates error',
-                       'return_code': match.group(1),
-                       'stdout': '',
-                       'stderr': 'Exit code was %s' % match.group(1)}
+            result = {'cmd': 'Shell exit indicates error',
+                      'return_code': match.group(1),
+                      'stdout': '',
+                      'stderr': 'Exit code was %s' % match.group(1)}
 
             results.append(result)
             self.save_result(results, ssh_cmd)
@@ -163,8 +165,8 @@ class SSHRunner(BasicRunner):
 
             benchmark_result = os.path.join(dest_dir, output_file)
 
-            result = self.run_cmd(
-                scp_cmd + ['{0}:{1}'.format(ssh_target, benchmark_result), '.'])
+            result = self.run_cmd(scp_cmd + ['{0}:{1}'.format(
+                ssh_target, benchmark_result), '.'])
             results.append(result)
 
             if result['return_code'] != 0:

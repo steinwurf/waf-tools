@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os, sys, re
-from waflib.TaskGen import feature, after_method
-from waflib import Utils, Task, Logs, Options
+import os
+from waflib import Utils, Task, Logs
 testlock = Utils.threading.Lock()
 
 
 class BasicRunner(Task.Task):
+
     """
     Execute a unit test
     """
@@ -19,7 +19,6 @@ class BasicRunner(Task.Task):
     def __str__(self):
         "string to display to the user"
 
-        env = self.env
         src_str = ' '.join([a.nice_path() for a in self.inputs])
         tgt_str = ' '.join([a.nice_path() for a in self.outputs])
         tst_str = '\n\t'.join([a.nice_path() for a in self.test_inputs])
@@ -38,13 +37,12 @@ class BasicRunner(Task.Task):
 
         return "{name}: {source_str}{separator}{target_str}" \
             "{test_str}{kobj_str}\n".format(
-            name = self.__class__.__name__.replace('_task', ''),
-            source_str = self.format_command(src_str),
-            separator = sep,
-            target_str = tgt_str,
-            test_str = tst_str,
-            kobj_str = kobj_str)
-
+                name=self.__class__.__name__.replace('_task', ''),
+                source_str=self.format_command(src_str),
+                separator=sep,
+                target_str=tgt_str,
+                test_str=tst_str,
+                kobj_str=kobj_str)
 
     def runnable_status(self):
         """
@@ -72,7 +70,7 @@ class BasicRunner(Task.Task):
             testcmd = bld.get_tool_option('run_cmd')
             cmd = testcmd % executable
         else:
-            cmd  = executable
+            cmd = executable
 
         return cmd
 
@@ -121,7 +119,8 @@ class BasicRunner(Task.Task):
         # If this is a benchmark and we need to retrieve the result file
         if bld.has_tool_option('run_benchmark') and \
            bld.has_tool_option('python_result'):
-            cmd += ["--pyfile={0}".format(bld.get_tool_option("python_result"))]
+            cmd += ["--pyfile={0}".format(
+                bld.get_tool_option("python_result"))]
 
         # First check whether we require any test files
         for t in self.test_inputs:
@@ -176,7 +175,8 @@ class BasicRunner(Task.Task):
             if result["stderr"]:
                 combined_stderr += 'Running: {0}\n{1}'.format(
                     cmd, result["stderr"].decode('utf-8'))
-            if result['return_code'] != 0: combined_return_code = -1
+            if result['return_code'] != 0:
+                combined_return_code = -1
 
         combined_result = (
             self.format_command(self.inputs[0]),
@@ -208,7 +208,7 @@ class BasicRunner(Task.Task):
 
         (stdout, stderr) = proc.communicate()
 
-        result =  {'cmd': cmd, 'return_code': proc.returncode,
-                   'stdout': stdout, 'stderr': stderr}
+        result = {'cmd': cmd, 'return_code': proc.returncode,
+                  'stdout': stdout, 'stderr': stderr}
 
         return result

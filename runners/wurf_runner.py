@@ -56,19 +56,23 @@ def build(bld):
 
 """
 
-import os, sys, re
+import os
+
+from waflib import Logs
 from waflib.TaskGen import feature, after_method
-from waflib import Utils, Task, Logs, Options
-from basic_runner import BasicRunner
+
 from android_runner import AndroidRunner
+from basic_runner import BasicRunner
 from ios_runner import IOSRunner
 from ssh_runner import SSHRunner
+
 
 @feature('test')
 @after_method('apply_link')
 def make_test(self):
     if self.bld.has_tool_option('run_tests'):
         make_run(self, "test")
+
 
 @feature('benchmark')
 @after_method('apply_link')
@@ -86,6 +90,7 @@ def make_benchmark(self):
         if self.bld.has_tool_option('print_benchmarks'):
             print(self.link_task.outputs[0].name)
 
+
 def make_run(taskgen, run_type):
     """
     Create the run task. There can be only one unit test
@@ -98,16 +103,16 @@ def make_run(taskgen, run_type):
         taskgen.bld.add_group()
         if taskgen.bld.has_tool_option('ssh_runner'):
             task = taskgen.create_task('SSHRunner',
-                taskgen.link_task.outputs)
+                                       taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('android'):
             task = taskgen.create_task('AndroidRunner',
-                taskgen.link_task.outputs)
+                                       taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('ios'):
             task = taskgen.create_task('IOSRunner',
-                taskgen.link_task.outputs)
+                                       taskgen.link_task.outputs)
         else:
             task = taskgen.create_task('BasicRunner',
-                taskgen.link_task.outputs)
+                                       taskgen.link_task.outputs)
 
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
@@ -138,7 +143,6 @@ def make_run(taskgen, run_type):
         taskgen.bld.add_post_fun(summary)
 
 
-
 def summary(bld):
     """
     Display an execution summary::
@@ -155,7 +159,7 @@ def summary(bld):
         total = len(lst)
         fail = len([x for x in lst if x[1]])
 
-        Logs.pprint('CYAN', '  successful runs %d/%d' % (total-fail, total))
+        Logs.pprint('CYAN', '  successful runs %d/%d' % (total - fail, total))
         for (filename, return_code, stdout, stderr) in lst:
             if return_code == 0:
                 Logs.pprint('CYAN', '    %s' % filename)
@@ -164,7 +168,8 @@ def summary(bld):
             Logs.pprint('CYAN', '  failed runs %d/%d' % (fail, total))
             for (filename, return_code, stdout, stderr) in lst:
                 if return_code != 0:
-                    Logs.pprint('CYAN', '     %s' % filname)
+                    Logs.pprint('CYAN', '     %s' % filename)
+
 
 def assemble_output(stdout, stderr):
     """Helper function to assemble output message from the test results"""
@@ -174,6 +179,7 @@ def assemble_output(stdout, stderr):
     if stderr:
         msg.append('\nstderr:\n\n{}'.format(stderr))
     return msg
+
 
 def set_exit_code(bld):
     """
@@ -195,4 +201,3 @@ def set_exit_code(bld):
         elif not bld.has_tool_option('run_silent'):
             msg = assemble_output(stdout, stderr)
             Logs.pprint('WHITE', os.linesep.join(msg))
-

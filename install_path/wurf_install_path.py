@@ -42,6 +42,7 @@ structure when installing e.g.:
 import os
 from waflib.TaskGen import feature, before_method, after_method
 
+
 @feature('cxxprogram', 'cprogram')
 @before_method('apply_link')
 def update_install_path(self):
@@ -66,8 +67,5 @@ def change_relative_path_option(self):
 
     install_relative = self.bld.has_tool_option('install_relative')
 
-    if getattr(self,'install_task',None):
+    if getattr(self, 'install_task', None):
         self.install_task.relative_trick = install_relative
-
-
-
