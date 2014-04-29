@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* TBD
+* Minor: Added mkspecs cxx_apple_llvm51_x86/64 for Apple LLVM 5.1 compiler.
 
 2.26.0
 ------
