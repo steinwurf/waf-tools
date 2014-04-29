@@ -203,6 +203,15 @@ def cxx_ios50_apple_llvm50_armv7(conf):
 
 
 @conf
+def cxx_ios50_apple_llvm51_armv7(conf):
+    """
+    Detect and setup the Apple LLVM 5.1 compiler for iOS 5.0 armv7
+    """
+    conf.mkspec_clang_ios_configure(5, 1, '5.0', 'armv7')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
 def cxx_ios50_clang32_armv7(conf):
     """
     Detect and setup the clang 3.2 compiler for iOS 5.0 armv7
