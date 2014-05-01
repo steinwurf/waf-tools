@@ -15,6 +15,11 @@ class AndroidRunner(BasicRunner):
 
         adb = bld.env['ADB']
 
+        # @TODO: Fix for supporting the new (1.8.x) and the old waf (1.7.x).
+        # Consider redoing when waf 1.8.x migration is complete.
+        if isinstance(adb, list):
+            adb = adb[0]
+
         results = []
 
         dest_dir = '/data/local/tmp/'
