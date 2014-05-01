@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.28.0
+------
+* Minor: Added fix for supporting waf 1.8.0pre1.
+
 2.27.0
 ------
 * Minor: Added mkspecs cxx_apple_llvm51_x86/64 for Apple LLVM 5.1 compiler.
