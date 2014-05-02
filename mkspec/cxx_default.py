@@ -28,13 +28,11 @@ def load_compiler(conf, compiler):
     else:
         raise Errors.WafError('Unknown compiler: %s' % compiler)
 
-"""
-Detect and setup the default compiler for the platform
-"""
-
 
 def configure(conf):
-
+    """
+    Detect and setup the default compiler for the platform
+    """
     # If the user-defined CXX variable is set
     # then use that compiler as the first option
     if 'CXX' in os.environ:
