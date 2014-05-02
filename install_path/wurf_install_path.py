@@ -43,7 +43,7 @@ import os
 from waflib.TaskGen import feature, before_method, after_method
 
 
-@feature('cxxprogram', 'cprogram')
+@feature('cxxprogram', 'cprogram', 'pyext')
 @before_method('apply_link')
 def update_install_path(self):
     """
@@ -57,7 +57,7 @@ def update_install_path(self):
         self.install_path = os.path.abspath(os.path.expanduser(install_path))
 
 
-@feature('cxxprogram', 'cprogram')
+@feature('cxxprogram', 'cprogram', 'pyext')
 @after_method('apply_link')
 def change_relative_path_option(self):
     """
