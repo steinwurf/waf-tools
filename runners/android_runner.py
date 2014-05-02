@@ -13,12 +13,7 @@ class AndroidRunner(BasicRunner):
 
         bld = self.generator.bld
 
-        adb = bld.env['ADB']
-
-        # @TODO: Fix for supporting the new (1.8.x) and the old waf (1.7.x).
-        # Consider redoing when waf 1.8.x migration is complete.
-        if isinstance(adb, list):
-            adb = adb[0]
+        adb = bld.env.get_flat('ADB')
 
         results = []
 
