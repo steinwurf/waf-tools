@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+2.29.0
+------
+* Minor: Simplify ADB variable in android_runner by using env.get_flat
+* Bugfix: Install path issue fixed for Python extensions (pyext)
+
 2.28.0
 ------
 * Minor: Added fix for supporting waf 1.8.0pre1.
