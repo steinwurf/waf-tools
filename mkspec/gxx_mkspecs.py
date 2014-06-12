@@ -98,6 +98,15 @@ def cxx_crosslinux_gxx47_mips(conf):
     # Statically link in the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
+@conf
+def cxx_crosslinux_gxx48_mips(conf):
+    """
+    Detect and setup the g++ 4.8 cross-compiler for MIPS 32-bit Linux
+    """
+    conf.mkspec_gxx_configure(4, 8, 'mips-openwrt-linux')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link the GCC runtime and the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libgcc', '-static-libstdc++']
 
 @conf
 def cxx_gxx46_x64(conf):
