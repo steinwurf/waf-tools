@@ -81,6 +81,12 @@ class SSHRunner(BasicRunner):
 
         results = []
 
+        # Delete all files from the destination folder if requested
+        if bld.has_tool_option('ssh_clean_dir'):
+            result = self.run_cmd(
+                ssh_cmd + ["rm", "-f", "{0}/*".format(dest_dir)])
+            results.append(result)
+
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
 
