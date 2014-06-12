@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.30.0
+------
+* Minor: Add makespec for MIPS OpenWrt toolchain (cxx_crosslinux_gxx48_mips)
+
 2.29.0
 ------
 * Minor: Simplify ADB variable in android_runner by using env.get_flat
