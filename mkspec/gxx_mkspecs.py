@@ -105,11 +105,8 @@ def cxx_crosslinux_gxx48_mips(conf):
     """
     conf.mkspec_gxx_configure(4, 8, 'mips-openwrt-linux')
     # Note: libstdc++ might not be available on the target platform
-    # Statically link the GCC runtime and the C++ standard library
-    conf.env['LINKFLAGS'] += ['-static-libgcc', '-static-libstdc++']
-    # The GCC runtime does not contain the C++ exception handling functions,
-    # so libgcc_eh.a should also be statically linked
-    conf.env['STLIB'] += ['gcc_eh']
+    # Statically link the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
 @conf
 def cxx_gxx46_x64(conf):
