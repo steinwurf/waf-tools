@@ -110,7 +110,8 @@ class SSHRunner(BasicRunner):
         # Load the required kernel objects with insmod (in the original order)
         # Note: you have to SSH with the ROOT user!
         for ko in self.kernel_objects:
-            result = self.run_cmd(ssh_cmd + ['insmod', ko.name])
+            result = self.run_cmd(
+                ssh_cmd + ['insmod', "{0}/{1}".format(dest_dir, ko.name)])
             results.append(result)
             if result['return_code'] != 0:
                 self.save_result(results, ssh_cmd)
@@ -129,9 +130,15 @@ class SSHRunner(BasicRunner):
         run_binary_cmd = self.format_command(run_binary_cmd)
 
         # Echo the exit code after the shell command
-        result = self.run_cmd(
-            ssh_cmd +
-            ["cd {0};{1};echo shellexit:$?".format(dest_dir, run_binary_cmd)])
+        if bld.has_tool_option('ssh_output_file'):
+            output_file = bld.get_tool_option('ssh_output_file')
+            result = self.run_cmd(
+                ssh_cmd + ["cd {0};{1} &> {2};echo shellexit:$?;cat {2}".format(
+                    dest_dir, run_binary_cmd, output_file)])
+        else:
+            result = self.run_cmd(
+                ssh_cmd + ["cd {0};{1};echo shellexit:$?".format(
+                    dest_dir, run_binary_cmd)])
 
         results.append(result)
 
