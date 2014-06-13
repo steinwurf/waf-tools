@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+2.31.0
+------
+* Minor: Add ssh_clean_dir option to delete all files from the target directory
+  before copying the new test binaries (to conserve free space)
+* Minor: Simplify flags for cxx_crosslinux_gxx48_mips mkspec
+
 2.30.0
 ------
 * Minor: Add makespec for MIPS OpenWrt toolchain (cxx_crosslinux_gxx48_mips)
