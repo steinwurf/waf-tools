@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+2.32.0
+------
+* Minor: Added ssh_output_file option to save the test output into a file
+  which is later copied to the host (to mitigate SSH truncating issues)
+* Bugfix: Linux kernel modules are loaded from the correct directory
+
 2.31.0
 ------
 * Minor: Add ssh_clean_dir option to delete all files from the target directory
