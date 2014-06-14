@@ -129,22 +129,43 @@ class SSHRunner(BasicRunner):
         # Add the given run command modifications
         run_binary_cmd = self.format_command(run_binary_cmd)
 
-        # Echo the exit code after the shell command
+        # Some SSH servers may truncate long outputs, so a workaround is used:
+        # the output is saved to a file on the target device, and this file is
+        # transferred to the host if the 'ssh_output_file' option is specified
         if bld.has_tool_option('ssh_output_file'):
+            # Run the target binary and capture its output
             output_file = bld.get_tool_option('ssh_output_file')
             result = self.run_cmd(
-                ssh_cmd + ["cd {0};{1} &> {2};echo shellexit:$?;cat {2}".format(
+                ssh_cmd + ["cd {0};{1} &> {2};echo shellexit:$?".format(
                     dest_dir, run_binary_cmd, output_file)])
+            results.append(result)
+            failed_run = (result['return_code'] != 0)
+
+            # Copy the output file to the host
+            scp_result = self.run_cmd(scp_cmd + [output_file, '.'])
+            results.append(scp_result)
+            failed_run = failed_run or (scp_result['return_code'] != 0)
+
+            # Print the contents of the output file to stdout
+            output_basename = os.path.basename(output_file)
+            cat_result = self.run_cmd(["cat", output_basename])
+            results.append(cat_result)
+            failed_run = failed_run or (cat_result['return_code'] != 0)
+
+            # Abort execution if any of the previous steps failed
+            if failed_run:
+                self.save_result(results, ssh_cmd)
+                return
         else:
+            # Echo the exit code after the shell command
             result = self.run_cmd(
                 ssh_cmd + ["cd {0};{1};echo shellexit:$?".format(
                     dest_dir, run_binary_cmd)])
+            results.append(result)
 
-        results.append(result)
-
-        if result['return_code'] != 0:
-            self.save_result(results, ssh_cmd)
-            return
+            if result['return_code'] != 0:
+                self.save_result(results, ssh_cmd)
+                return
 
         # Almost done. Look for the exit code in the output
         # and fail if non-zero
