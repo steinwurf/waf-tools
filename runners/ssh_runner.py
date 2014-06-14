@@ -142,7 +142,8 @@ class SSHRunner(BasicRunner):
             failed_run = (result['return_code'] != 0)
 
             # Copy the output file to the host
-            scp_result = self.run_cmd(scp_cmd + [output_file, '.'])
+            scp_result = self.run_cmd(
+                scp_cmd + ['{0}:{1}'.format(ssh_target, output_file), '.'])
             results.append(scp_result)
             failed_run = failed_run or (scp_result['return_code'] != 0)
 
