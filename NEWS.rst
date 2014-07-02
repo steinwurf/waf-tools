@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.32.1
+------
+* Bugfix: Fixed msvc .pdb file access issue with parallel compiler processes
+
 2.32.0
 ------
 * Minor: Added ssh_output_file option to save the test output into a file
