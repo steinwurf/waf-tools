@@ -41,10 +41,10 @@ def mkspec_msvc_configure(conf, version):
 def mkspec_set_msvc_flags(conf):
 
     if conf.has_tool_option('cxx_debug'):
-        # Produce full-symbolic debugging information in a .pdb file
+        # Generate complete debugging information in a .pdb file
         # Use the multithread, debug version of the run-time library
         conf.env['CXXFLAGS'] += ['/Zi', '/MTd']
-        # Force serialized  writes to the .pdb file (necessary when waf
+        # Force serialized writes to the .pdb file (necessary when waf
         # spawns parallel compiler processes)
         conf.env['CXXFLAGS'] += ['/FS']
 
@@ -53,10 +53,10 @@ def mkspec_set_msvc_flags(conf):
         # Use the multithread, release version of the run-time library
         conf.env['CXXFLAGS'] += ['/MT']
 
-    # Set _CRT_SECURE_NO_WARNINGS and _SCL_SECURE_NO_WARNINGS to suppress
+    # Define _CRT_SECURE_NO_WARNINGS and _SCL_SECURE_NO_WARNINGS to suppress
     # deprecation warnings for strcpy, sprintf, etc.
     conf.env['CXXFLAGS'] += \
-            ['/D_SCL_SECURE_NO_WARNINGS', '/D_CRT_SECURE_NO_WARNINGS']
+        ['/D_SCL_SECURE_NO_WARNINGS', '/D_CRT_SECURE_NO_WARNINGS']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
