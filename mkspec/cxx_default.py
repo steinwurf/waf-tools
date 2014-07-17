@@ -14,12 +14,6 @@ import msvc_mkspecs
 
 
 def load_compiler(conf, compiler, arch):
-    if ('clang' in compiler or 'g++' in compiler) and arch:
-        if arch == 'x86':
-            conf.mkspec_add_common_flag('-m32')
-        elif arch == 'x64':
-            conf.mkspec_add_common_flag('-m64')
-
     # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
     if 'clang' in compiler:
         conf.mkspec_clang_configure(3, 4, minimum=True)
@@ -38,6 +32,11 @@ def load_compiler(conf, compiler, arch):
     else:
         raise Errors.WafError('Unknown compiler: %s' % compiler)
 
+    if ('clang' in compiler or 'g++' in compiler) and arch:
+        if arch == 'x86':
+            conf.mkspec_add_common_flag('-m32')
+        elif arch == 'x64':
+            conf.mkspec_add_common_flag('-m64')
 
 @conf
 def cxx_default(conf, arch=None):
@@ -98,9 +97,9 @@ def cxx_default(conf, arch=None):
 
 @conf
 def cxx_default_x86(conf):
-    cxx_default(conf, 'x86')
+    conf.cxx_default('x86')
 
 
 @conf
 def cxx_default_x64(conf):
-    cxx_default(conf, 'x64')
+    conf.cxx_default('x64')
