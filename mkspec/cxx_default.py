@@ -97,9 +97,15 @@ def cxx_default(conf, arch=None):
 
 @conf
 def cxx_default_x86(conf):
+    """
+    Detect and setup the default compiler for 32-bit architecture.
+    """
     conf.cxx_default('x86')
 
 
 @conf
 def cxx_default_x64(conf):
+    """
+    Detect and setup the default compiler for 64-bit architecture.
+    """
     conf.cxx_default('x64')
