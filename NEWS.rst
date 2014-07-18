@@ -27,7 +27,7 @@ Latest
 
 2.30.0
 ------
-* Minor: Add makespec for MIPS OpenWrt toolchain (cxx_crosslinux_gxx48_mips)
+* Minor: Add mkspec for MIPS OpenWrt toolchain (cxx_crosslinux_gxx48_mips)
 
 2.29.0
 ------
@@ -41,21 +41,21 @@ Latest
 2.27.0
 ------
 * Minor: Added mkspecs cxx_apple_llvm51_x86/64 for Apple LLVM 5.1 compiler.
-* Minor: Add cxx_ios50_apple_llvm51_armv7 makespec.
+* Minor: Add cxx_ios50_apple_llvm51_armv7 mkspec.
 
 2.26.0
 ------
-* Minor: Add ARMv7 makespec for Android Clang (cxx_android_clang34_armv7)
+* Minor: Add ARMv7 mkspec for Android Clang (cxx_android_clang34_armv7)
 * Minor: Update minimum compiler versions in cxx_default (g++ 4.6, clang 3.4,
   msvc 12.0)
 
 2.25.0
 ------
-* Minor: Add ARMv7 makespec for Android GCC (cxx_android_gxx48_armv7)
+* Minor: Add ARMv7 mkspec for Android GCC (cxx_android_gxx48_armv7)
 
 2.24.0
 ------
-* Minor: Add makespec for new OpenWrt toolchain (cxx_crosslinux_gxx47_arm)
+* Minor: Add mkspec for new OpenWrt toolchain (cxx_crosslinux_gxx47_arm)
 * Minor: Add 'cxx_nodebug' option which defines NDEBUG to disable assertions
 
 2.23.0
@@ -78,7 +78,7 @@ Latest
 
 2.20.0
 ------
-* Minor: Add makespecs for clang address, memory and thread sanitizers.
+* Minor: Add mkspecs for clang address, memory and thread sanitizers.
 * Bugfix: Statically link GCC libraries to support C++ exceptions with the
   OpenWrt toolchain (cxx_crosslinux_gxx46_arm mkspec).
 
@@ -91,8 +91,8 @@ Latest
 * Minor: cxx_default explicitly reports all configuration errors.
 * Minor: The android_sdk_dir and android_ndk_dir options are not necessary if
   adb and the Android toolchain binaries are in the PATH.
-* Minor: Add cxx_android_gxx48_arm makespec.
-* Minor: Add cxx_clang34_x86 and cxx_clang34_x64 makespecs.
+* Minor: Add cxx_android_gxx48_arm mkspec.
+* Minor: Add cxx_clang34_x86 and cxx_clang34_x64 mkspecs.
 
 2.18.0
 ------
@@ -105,7 +105,7 @@ Latest
 
 2.17.0
 ------
-* Minor: Add cxx_ios50_apple_llvm50_armv7 makespec.
+* Minor: Add cxx_ios50_apple_llvm50_armv7 mkspec.
 * Minor: Remove obsolete -s linker flag on Mac OSX
 
 2.16.2
@@ -202,14 +202,14 @@ Latest
 -----
 * Minor: New mkspec for iOS 5.0 (cxx_ios50_apple_llvm42_armv7).
 * Minor: Added ios_runner for automated testing on iOS.
-* Minor: Makespecs for clang++ and Apple LLVM will also load clang as a C compiler.
+* Minor: mkspecs for clang++ and Apple LLVM will also load clang as a C compiler.
 
 2.0.0
 -----
-* Major: Makespecs restructured, common functions moved to modules in mkspec_common.
+* Major: mkspecs restructured, common functions moved to modules in mkspec_common.
 * Major: gxx45 and msvc10 mkspecs removed.
 * Major: Android mkspec renamed to cxx_android_gxx46_arm.
-* Minor: Loading g++ in a makespec will also load gcc to compile C code.
+* Minor: Loading g++ in a mkspec will also load gcc to compile C code.
 * Minor: mkspec added for Apple LLVM 4.2: cxx_apple_llvm42_x64.
 
 1.5.1
