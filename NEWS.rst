@@ -6,6 +6,11 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+
+2.33.0
+------
 * Minor: Added mkspecs to pick architecture without specifying compiler;
          cxx_default_x86 and cxx_default_x64.
 
