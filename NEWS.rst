@@ -6,8 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
-
+* Bugfix: Test files are now allowed to be in the source directory when using
+          the BasicRunner.
 
 2.33.0
 ------

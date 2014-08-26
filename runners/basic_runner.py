@@ -125,9 +125,7 @@ class BasicRunner(Task.Task):
         # First check whether we require any test files
         for t in self.test_inputs:
 
-            filename = os.path.basename(t.abspath())
-
-            test_file_out = self.inputs[0].parent.find_or_declare(filename)
+            test_file_out = self.inputs[0].parent.get_bld().make_node([t.name])
 
             Logs.debug("wr: test file {0} -> {1}".format(
                 t.abspath(), test_file_out.abspath()))
