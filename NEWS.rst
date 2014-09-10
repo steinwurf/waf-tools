@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+2.33.2
+------
+* Bugfix: The ssh-runner now makes sure that the destination directory
+  exists before running scp to copy the files.
+
 2.33.1
 ------
 * Bugfix: Test files are now allowed to be in the source directory when using
@@ -295,6 +300,3 @@ Latest
 1.0.0
 -----
 * Initial release.
-
-
-
