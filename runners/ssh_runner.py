@@ -87,6 +87,11 @@ class SSHRunner(BasicRunner):
                 ssh_cmd + ["rm", "-f", "{0}/*".format(dest_dir)])
             results.append(result)
 
+        # Make sure the destination folder exists
+        result = self.run_cmd(
+                ssh_cmd + ["mkdir", "-p", "{0}".format(dest_dir)])
+        results.append(result)
+
         # Enumerate the test files
         file_list = [test_input.abspath() for test_input in self.test_inputs]
 
