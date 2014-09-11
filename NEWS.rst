@@ -6,7 +6,9 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added mkspecs for g++ 4.9 and clang 3.5
+* Bugfix: Specify ARMv7 architecture in cxx_android_gxx48_armv7 LINKFLAGS to
+  avoid runtime issues with std threads and atomics
 
 2.33.2
 ------

@@ -35,7 +35,10 @@ def cxx_android_gxx48_armv7(conf):
     flags = ['-march=armv7-a', '-mtune=generic-armv7-a', '-mfloat-abi=softfp']
     conf.env['CFLAGS'] += flags
     conf.env['CXXFLAGS'] += flags
-
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
 
 @conf
 def cxx_crosslinux_gxx46_arm(conf):
