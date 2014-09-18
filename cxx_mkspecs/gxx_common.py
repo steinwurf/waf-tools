@@ -70,6 +70,7 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
     # Add our own cc flags
     conf.mkspec_set_gcc_ccflags()
 
+
 @conf
 def mkspec_gxx_android_configure(conf, major, minor, prefix):
     conf.set_mkspec_platform('android')

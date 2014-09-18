@@ -4,10 +4,10 @@
 from waflib import Utils
 from waflib.Configure import conf
 
-import cxx_default
-import clang_mkspecs
-import gxx_mkspecs
-import msvc_mkspecs
+import cxx_mkspecs.cxx_default
+import cxx_mkspecs.clang_mkspecs
+import cxx_mkspecs.gxx_mkspecs
+import cxx_mkspecs.msvc_mkspecs
 
 # Allows us to catch queries for platforms that we do not yet support
 mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios']
@@ -52,8 +52,8 @@ def configure(conf):
     # that simply fallbacks to use waf auto detect of compiler etc.
     mkspec = "cxx_default"
 
-    if conf.has_tool_option('cxx_mkspec'):
-        mkspec = conf.get_tool_option('cxx_mkspec')
+    if conf.has_tool_option('mkspec'):
+        mkspec = conf.get_tool_option('mkspec')
 
     conf.msg('Using the mkspec:', mkspec)
 

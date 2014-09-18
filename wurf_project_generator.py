@@ -25,4 +25,4 @@ Then you can invoke the tool together with configure:
 $ python waf configure msvs2012
 """
 
-import wurf_msvs
+import project_generators.msvs

@@ -38,6 +38,7 @@ def load_compiler(conf, compiler, arch):
         elif arch == 'x64':
             conf.mkspec_add_common_flag('-m64')
 
+
 @conf
 def cxx_default(conf, arch=None):
     """
