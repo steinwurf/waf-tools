@@ -35,7 +35,10 @@ def cxx_android_gxx48_armv7(conf):
     flags = ['-march=armv7-a', '-mtune=generic-armv7-a', '-mfloat-abi=softfp']
     conf.env['CFLAGS'] += flags
     conf.env['CXXFLAGS'] += flags
-
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
 
 @conf
 def cxx_crosslinux_gxx46_arm(conf):
@@ -98,7 +101,6 @@ def cxx_crosslinux_gxx47_mips(conf):
     # Statically link in the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
-
 @conf
 def cxx_crosslinux_gxx48_mips(conf):
     """
@@ -108,7 +110,6 @@ def cxx_crosslinux_gxx48_mips(conf):
     # Note: libstdc++ might not be available on the target platform
     # Statically link the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
-
 
 @conf
 def cxx_gxx46_x64(conf):
@@ -163,6 +164,21 @@ def cxx_gxx48_x86(conf):
     conf.mkspec_gxx_configure(4, 8)
     conf.mkspec_add_common_flag('-m32')
 
+@conf
+def cxx_gxx49_x64(conf):
+    """
+    Detect and setup the g++ 4.9 compiler for 64 bit
+    """
+    conf.mkspec_gxx_configure(4, 9)
+    conf.mkspec_add_common_flag('-m64')
+
+@conf
+def cxx_gxx49_x86(conf):
+    """
+    Detect and setup the g++ 4.9 compiler for 32 bit
+    """
+    conf.mkspec_gxx_configure(4, 9)
+    conf.mkspec_add_common_flag('-m32')
 
 @conf
 def cxx_raspberry_gxx47_arm(conf):

@@ -185,6 +185,24 @@ def cxx_clang34_x86(conf):
 
 
 @conf
+def cxx_clang35_x64(conf):
+    """
+    Detect and setup the clang 3.5 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(3, 5)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_clang35_x86(conf):
+    """
+    Detect and setup the clang 3.5 compiler for 32 bit
+    """
+    conf.mkspec_clang_configure(3, 5)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_ios50_apple_llvm42_armv7(conf):
     """
     Detect and setup the Apple LLVM 4.2 compiler for iOS 5.0 armv7
@@ -221,11 +239,7 @@ def cxx_ios50_clang32_armv7(conf):
 
 
 @conf
-def cxx_clang34_address_sanitizer_x86(conf):
-    """
-    Detect and setup the clang 3.4 compiler for 32 bit and use address
-    sanitizer
-    """
+def mkspec_setup_clang_address_sanitizer(conf, major, minor, arch):
     """
     To get a reasonable performance add -O1 or higher. To get nicer
     stack traces in error messages add -fno-omit-frame-pointer. To get
@@ -233,9 +247,8 @@ def cxx_clang34_address_sanitizer_x86(conf):
     -O1) and tail call elimination (-fno-optimize-sibling-calls).
     http://clang.llvm.org/docs/AddressSanitizer.html
     """
-
-    conf.mkspec_clang_configure(3, 4, force_debug=True)
-    conf.mkspec_add_common_flag('-m32')
+    conf.mkspec_clang_configure(major, minor, force_debug=True)
+    conf.mkspec_add_common_flag(arch)
 
     conf.mkspec_add_common_flag('-fsanitize=address')
     conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
@@ -245,30 +258,37 @@ def cxx_clang34_address_sanitizer_x86(conf):
 @conf
 def cxx_clang34_address_sanitizer_x64(conf):
     """
-    Detect and setup the clang 3.4 compiler for 64 bit and use address
-    sanitizer
+    Configure clang 3.4 (64-bit) using the address sanitizer
     """
-    """
-    To get a reasonable performance add -O1 or higher. To get nicer
-    stack traces in error messages add -fno-omit-frame-pointer. To get
-    perfect stack traces you may need to disable inlining (just use
-    -O1) and tail call elimination (-fno-optimize-sibling-calls).
-    http://clang.llvm.org/docs/AddressSanitizer.html
-    """
-
-    conf.mkspec_clang_configure(3, 4, force_debug=True)
-    conf.mkspec_add_common_flag('-m64')
-
-    conf.mkspec_add_common_flag('-fsanitize=address')
-    conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
-    conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
+    conf.mkspec_setup_clang_address_sanitizer(3, 4, '-m64')
 
 
 @conf
-def cxx_clang34_memory_sanitizer_x86(conf):
+def cxx_clang34_address_sanitizer_x86(conf):
     """
-    Detect and setup the clang 3.4 compiler for 32 bit and use memory sanitizer
+    Configure clang 3.4 (32-bit) using the address sanitizer
     """
+    conf.mkspec_setup_clang_address_sanitizer(3, 4, '-m32')
+
+
+@conf
+def cxx_clang35_address_sanitizer_x64(conf):
+    """
+    Configure clang 3.5 (64-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 5, '-m64')
+
+
+@conf
+def cxx_clang35_address_sanitizer_x86(conf):
+    """
+    Configure clang 3.5 (32-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 5, '-m32')
+
+
+@conf
+def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch):
     """
     To get a reasonable performance add -O1 or higher. To get
     meaningful stack traces in error messages add
@@ -278,8 +298,8 @@ def cxx_clang34_memory_sanitizer_x86(conf):
     http://clang.llvm.org/docs/MemorySanitizer.html
     """
 
-    conf.mkspec_clang_configure(3, 4, force_debug=True)
-    conf.mkspec_add_common_flag('-m32')
+    conf.mkspec_clang_configure(major, minor, force_debug=True)
+    conf.mkspec_add_common_flag(arch)
 
     conf.mkspec_add_common_flag('-fsanitize=memory')
     conf.mkspec_add_common_flag('-fsanitize-memory-track-origins')
@@ -290,36 +310,42 @@ def cxx_clang34_memory_sanitizer_x86(conf):
 @conf
 def cxx_clang34_memory_sanitizer_x64(conf):
     """
-    Detect and setup the clang 3.4 compiler for 64 bit and use memory sanitizer
+    Configure clang 3.4 (64-bit) using the memory sanitizer
     """
-    """
-    To get a reasonable performance add -O1 or higher. To get
-    meaningful stack traces in error messages add
-    -fno-omit-frame-pointer. To get perfect stack traces you may need
-    to disable inlining (just use -O1) and tail call elimination
-    (-fno-optimize-sibling-calls).
-    http://clang.llvm.org/docs/MemorySanitizer.html
-    """
-
-    conf.mkspec_clang_configure(3, 4, force_debug=True)
-    conf.mkspec_add_common_flag('-m64')
-
-    conf.mkspec_add_common_flag('-fsanitize=memory')
-    conf.mkspec_add_common_flag('-fsanitize-memory-track-origins')
-    conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
-    conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
+    conf.mkspec_setup_clang_memory_sanitizer(3, 4, '-m64')
 
 
 @conf
-def cxx_clang34_thread_sanitizer_x86(conf):
+def cxx_clang34_memory_sanitizer_x86(conf):
     """
-    Detect and setup the clang 3.4 compiler for 32 bit and use thread sanitizer
+    Configure clang 3.4 (32-bit) using the memory sanitizer
     """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 4, '-m32')
+
+
+@conf
+def cxx_clang35_memory_sanitizer_x64(conf):
+    """
+    Configure clang 3.5 (64-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 5, '-m64')
+
+
+@conf
+def cxx_clang35_memory_sanitizer_x86(conf):
+    """
+    Configure clang 3.5 (32-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 5, '-m32')
+
+
+@conf
+def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch):
     """
     http://clang.llvm.org/docs/ThreadSanitizer.html
     """
-    conf.mkspec_clang_configure(3, 4, force_debug=True)
-    conf.mkspec_add_common_flag('-m32')
+    conf.mkspec_clang_configure(major, minor, force_debug=True)
+    conf.mkspec_add_common_flag(arch)
 
     conf.mkspec_add_common_flag('-fsanitize=thread')
 
@@ -327,12 +353,30 @@ def cxx_clang34_thread_sanitizer_x86(conf):
 @conf
 def cxx_clang34_thread_sanitizer_x64(conf):
     """
-    Detect and setup the clang 3.4 compiler for 64 bit and use thread sanitizer
+    Configure clang 3.4 (64-bit) using the thread sanitizer
     """
-    """
-    http://clang.llvm.org/docs/ThreadSanitizer.html
-    """
-    conf.mkspec_clang_configure(3, 4, force_debug=True)
-    conf.mkspec_add_common_flag('-m64')
+    conf.mkspec_setup_clang_thread_sanitizer(3, 4, '-m64')
 
-    conf.mkspec_add_common_flag('-fsanitize=thread')
+
+@conf
+def cxx_clang34_thread_sanitizer_x86(conf):
+    """
+    Configure clang 3.4 (32-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 4, '-m32')
+
+
+@conf
+def cxx_clang35_thread_sanitizer_x64(conf):
+    """
+    Configure clang 3.5 (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 5, '-m64')
+
+
+@conf
+def cxx_clang35_thread_sanitizer_x86(conf):
+    """
+    Configure clang 3.5 (32-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 5, '-m32')
