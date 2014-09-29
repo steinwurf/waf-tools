@@ -99,10 +99,36 @@ def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
 def mkspec_set_clang_ccflags(conf, force_debug=False):
 
     optflag = '-O2'
-    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
-    # code on this platform
-    if conf.get_mkspec_platform() == 'ios':
+    # Use -Os (optimize for size) flag on iOS or OS X,
+    # because -O2 produces unstable code on these platforms. We were
+    # unable to diagnose exactly the root cause of these
+    # problems. However, for the desktop compiling with -O2 cause the
+    # compiler to eat up all RAM and eventually slow down to a crawl
+    # as it starting to use the swap storage. This made it impossible
+    # to complete a build.
+    #
+    # So far the problem was experienced on:
+    #
+    #    Apple LLVM version 5.1 (clang-503.0.40) (based on LLVM
+    #    3.4svn)
+    #    Target: x86_64-apple-darwin13.3.0
+    #    Thread model: posix
+    #
+    #    Apple LLVM version 6.0 (clang-600.0.51) (based on LLVM 3.5svn)
+    #    Target: x86_64-apple-darwin13.4.0
+    #    Thread model: posix
+    #
+    # Run clang++ --version to see this information. If you have a
+    # newer version please try out the -O2 flag to see whether the
+    # problem has been fixed.
+    #
+    # We did not experience the problem on other versions of clang (Linux).
+
+    platform = conf.get_mkspec_platform()
+
+    if platform == 'ios' or platform == 'mac':
         optflag = '-Os'
+
     conf.env['CFLAGS'] += [optflag, '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
