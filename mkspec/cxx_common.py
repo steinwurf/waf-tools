@@ -108,7 +108,6 @@ def mkspec_get_toolchain_paths(conf):
             toolchain = "/Applications/Xcode.app/Contents/Developer/" \
                         "Toolchains/XcodeDefault.xctoolchain/usr/bin/"
         toolchain = os.path.abspath(os.path.expanduser(toolchain))
-        #toolchain_path = [toolchain, os.path.join(toolchain,'bin')]
 
         return toolchain
 
@@ -139,7 +138,13 @@ def mkspec_set_android_options(conf):
 
 @conf
 def mkspec_set_ios_options(conf, min_ios_version, cpu):
-    sdk = conf.get_tool_option('ios_sdk_dir')
+
+    if conf.has_tool_option('ios_sdk_dir'):
+        sdk = conf.get_tool_option('ios_sdk_dir')
+    else:
+        # Use the standard location of the iOS SDK
+        sdk = "/Applications/Xcode.app/Contents/Developer/" \
+              "/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk"
     sdk = os.path.abspath(os.path.expanduser(sdk))
 
     # Set the IPHONE define - some libraries rely on this define being
