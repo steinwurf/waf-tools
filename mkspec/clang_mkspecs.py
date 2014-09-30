@@ -19,7 +19,7 @@ def cxx_android_clang34_armv7(conf):
 @conf
 def cxx_apple_llvm42_x64(conf):
     """
-    Detect and setup the 64-bit Apple llvm 4.2 compiler (clang 3.2)
+    Detect and setup the 64-bit Apple LLVM 4.2 compiler (clang 3.2)
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(4, 2)
@@ -32,7 +32,7 @@ def cxx_apple_llvm42_x64(conf):
 @conf
 def cxx_apple_llvm42_x86(conf):
     """
-    Detect and setup the 32-bit Apple llvm 4.2 compiler (clang 3.2)
+    Detect and setup the 32-bit Apple LLVM 4.2 compiler (clang 3.2)
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(4, 2)
@@ -45,7 +45,7 @@ def cxx_apple_llvm42_x86(conf):
 @conf
 def cxx_apple_llvm50_x64(conf):
     """
-    Detect and setup the 64-bit Apple llvm 5.0 compiler (clang 3.3)
+    Detect and setup the 64-bit Apple LLVM 5.0 compiler (clang 3.3)
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(5, 0)
@@ -58,7 +58,7 @@ def cxx_apple_llvm50_x64(conf):
 @conf
 def cxx_apple_llvm50_x86(conf):
     """
-    Detect and setup the 32-bit Apple llvm 5.0 compiler (clang 3.3)
+    Detect and setup the 32-bit Apple LLVM 5.0 compiler (clang 3.3)
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(5, 0)
@@ -71,7 +71,7 @@ def cxx_apple_llvm50_x86(conf):
 @conf
 def cxx_apple_llvm51_x64(conf):
     """
-    Detect and setup the 64-bit Apple llvm 5.1 compiler (clang 3.4)
+    Detect and setup the 64-bit Apple LLVM 5.1 compiler (clang 3.4)
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(5, 1)
@@ -84,11 +84,23 @@ def cxx_apple_llvm51_x64(conf):
 @conf
 def cxx_apple_llvm51_x86(conf):
     """
-    Detect and setup the 32-bit Apple llvm 5.1 compiler (clang 3.4)
+    Detect and setup the 32-bit Apple LLVM 5.1 compiler (clang 3.4)
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(5, 1)
         conf.mkspec_add_common_flag('-m32')
+    else:
+        conf.fatal("This mkspec is not supported on {0}.".format(
+            conf.get_mkspec_platform()))
+
+@conf
+def cxx_apple_llvm60_x64(conf):
+    """
+    Detect and setup the 64-bit Apple LLVM 6.0 compiler (clang 3.5)
+    """
+    if conf.is_mkspec_platform('mac'):
+        conf.mkspec_clang_configure(6, 0)
+        conf.mkspec_add_common_flag('-m64')
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
@@ -226,6 +238,15 @@ def cxx_ios50_apple_llvm51_armv7(conf):
     Detect and setup the Apple LLVM 5.1 compiler for iOS 5.0 armv7
     """
     conf.mkspec_clang_ios_configure(5, 1, '5.0', 'armv7')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_ios50_apple_llvm60_armv7(conf):
+    """
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 5.0 armv7
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '5.0', 'armv7')
     conf.env['DEST_CPU'] = 'arm'
 
 

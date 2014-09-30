@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Patch: Changed the optimizer flag for clang on OS X from -O2 to -Os,
+  since -O2 cause excessive memory consumption.
 
 2.34.0
 ------
