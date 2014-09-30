@@ -6,8 +6,15 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+2.35.0
+------
+* Minor: Added mkspecs cxx_apple_llvm60_x64 and cxx_ios50_apple_llvm60_armv7
+* Minor: Make ios_sdk_dir an optional parameter for iOS mkspecs, since the
+  standard location of the iOS SDK does not include a version number
 * Patch: Changed the optimizer flag for clang on OS X from -O2 to -Os,
-  since -O2 cause excessive memory consumption.
+  since -O2 causes excessive memory consumption.
 
 2.34.0
 ------
