@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+2.36.0
+------
+* Minor: The generated C and C++ static libraries are now copied to the given
+  install_path to facilitate integration with other build systems
+
 2.35.0
 ------
 * Minor: Added mkspecs cxx_apple_llvm60_x64 and cxx_ios50_apple_llvm60_armv7
