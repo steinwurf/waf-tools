@@ -4,7 +4,7 @@
 """
 Copies chosen targets to a specific location.
 
-This tool is available in the external-waf-tools repository, so we have
+This tool is available in the waf-tools repository, so we have
 to load it:
 
 def options(opt):
@@ -15,7 +15,7 @@ def options(opt):
     bundle.add_dependency(opt,
         resolve.ResolveGitMajorVersion(
             name='waf-tools',
-            git_repository='git://github.com/steinwurf/external-waf-tools.git',
+            git_repository='git://github.com/steinwurf/waf-tools.git',
             major_version=1))
 
     opt.load('wurf_dependency_bundle')
@@ -31,19 +31,26 @@ def configure(conf):
 
 
 The install path may now be updated by passing the install_path options. E.g.
-./waf --options=install_path=~/my_binaries
+python waf --options=install_path="~/my_binaries"
 
 If you also pass the install_relative option waf will preserve the folder
 structure when installing e.g.:
-    ./waf --options=install_path=~/my_binaries,install_relative
+    python waf --options=install_path="~/my_binaries",install_relative
 
 """
 
 import os
 from waflib.TaskGen import feature, before_method, after_method
 
+# Also install the C and C++ static libraries to facilitate the integration
+# with other build systems
+from waflib.Tools.c import cstlib
+from waflib.Tools.cxx import cxxstlib
+cstlib.inst_to = '${LIBDIR}'
+cxxstlib.inst_to = '${LIBDIR}'
 
-@feature('cxxprogram', 'cprogram', 'pyext')
+
+@feature('cxxprogram', 'cprogram', 'pyext', 'cstlib', 'cxxstlib')
 @before_method('apply_link')
 def update_install_path(self):
     """
