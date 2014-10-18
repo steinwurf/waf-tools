@@ -128,7 +128,8 @@ def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix=None):
                     mac/darwin
     """
 
-    # First the default case
+    # The first option is a binary that includes the version number
+    # (this is available on Debian and Ubuntu)
     binary = ['{0}-{1}.{2}'.format(base, major, minor)]
 
     if prefix:
@@ -140,10 +141,6 @@ def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix=None):
         # If the compiler is installed using macports
         return binary + ['{0}-mp-{1}.{2}'.format(base, major, minor)]
 
-    if conf.is_mkspec_platform('windows'):
-
-        # On Windows, all binaries are named the same
-        # for all g++ versions
-        return [base]
-
-    return binary
+    # The default binary should be available on all platforms, which should
+    # be the second candidate after the versioned name
+    return binary + [base]
