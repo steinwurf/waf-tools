@@ -11,6 +11,7 @@ from waflib.Configure import conf
 import clang_mkspecs
 import gxx_mkspecs
 import msvc_mkspecs
+import emscripten_common
 
 
 def load_compiler(conf, compiler, arch):
@@ -29,6 +30,8 @@ def load_compiler(conf, compiler, arch):
         # Note: the waf msvc tool also load msvc as a C compiler
         conf.mkspec_check_minimum_msvc_version(12.0)
         conf.mkspec_set_msvc_flags()
+    elif any(c in compiler for c in ['emcc', 'em++']):
+        conf.mkspec_emscripten_configure()
     else:
         raise Errors.WafError('Unknown compiler: %s' % compiler)
 
