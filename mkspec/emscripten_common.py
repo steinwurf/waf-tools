@@ -16,6 +16,8 @@ def mkspec_emscripten_configure(conf, force_debug=False):
     # Where to look
     paths = conf.get_tool_option('emscripten_path')
 
+    conf.find_program('nodejs', var='NODEJS')
+
     # Find the clang++ compiler
     cxx = conf.find_program(['em++'], path_list=paths)
     cxx = conf.cmd_to_list(cxx)
@@ -71,3 +73,7 @@ def mkspec_emscripten_configure(conf, force_debug=False):
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
+
+    conf.env['cprogram_PATTERN'] = conf.env['cxxprogram_PATTERN'] = '%s.js'
+
+    conf.set_mkspec_platform('browser')
