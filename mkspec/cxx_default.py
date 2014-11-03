@@ -11,11 +11,11 @@ from waflib.Configure import conf
 import clang_mkspecs
 import gxx_mkspecs
 import msvc_mkspecs
-import emscripten_common
 
 
 def load_compiler(conf, compiler, arch):
-    # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
+    # Note clang goes first otherwise 'g++' will be in 'clang++'
+    #                                  ~~~                  ~~~
     if 'clang' in compiler:
         conf.mkspec_clang_configure(3, 4, minimum=True)
     elif 'g++' in compiler:
@@ -30,8 +30,6 @@ def load_compiler(conf, compiler, arch):
         # Note: the waf msvc tool also load msvc as a C compiler
         conf.mkspec_check_minimum_msvc_version(12.0)
         conf.mkspec_set_msvc_flags()
-    elif any(c in compiler for c in ['emcc', 'em++']):
-        conf.mkspec_emscripten_configure()
     else:
         raise Errors.WafError('Unknown compiler: %s' % compiler)
 
@@ -40,6 +38,7 @@ def load_compiler(conf, compiler, arch):
             conf.mkspec_add_common_flag('-m32')
         elif arch == 'x64':
             conf.mkspec_add_common_flag('-m64')
+
 
 @conf
 def cxx_default(conf, arch=None):

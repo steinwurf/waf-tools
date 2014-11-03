@@ -8,6 +8,7 @@ import cxx_default
 import clang_mkspecs
 import gxx_mkspecs
 import msvc_mkspecs
+import emscripten_mkspecs
 
 # Allows us to catch queries for platforms that we do not yet support
 mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios', 'browser']
