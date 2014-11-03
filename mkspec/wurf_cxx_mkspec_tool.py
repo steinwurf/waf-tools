@@ -19,7 +19,6 @@ def get_mkspec_platform(conf):
     # If the MKSPEC_PLATFORM is not set, we auto detect it.
     if not conf.env['MKSPEC_PLATFORM']:
         platform = Utils.unversioned_sys_platform()
-        print platform
         if platform == 'win32':
             platform = 'windows'
         elif platform == 'darwin':
