@@ -78,7 +78,7 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
 
     conf.env['cprogram_PATTERN'] = conf.env['cxxprogram_PATTERN'] = '%s.js'
 
-    conf.set_mkspec_platform('browser')
+    conf.set_mkspec_platform('emscripten')
 
 
 @conf
