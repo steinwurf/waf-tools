@@ -111,7 +111,7 @@ def make_run(taskgen, run_type):
         elif taskgen.bld.is_mkspec_platform('ios'):
             task = taskgen.create_task('IOSRunner',
                                        taskgen.link_task.outputs)
-        elif taskgen.bld.is_mkspec_platform('browser'):
+        elif taskgen.bld.is_mkspec_platform('emscripten'):
             task = taskgen.create_task('EmscriptenRunner',
                                        taskgen.link_task.outputs)
         else:

@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import os
+import sys
 
 from waflib.Utils import subprocess
 from waflib.Configure import conf
@@ -15,10 +16,14 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
     """
     :param force_debug: Always compile with debugging flags, if true
     """
-    # Where to look
+    # The path to the emscripten compiler
     paths = conf.get_tool_option('emscripten_path')
 
-    conf.find_program('nodejs', var='NODEJS')
+    # The node.js binary is called "nodejs" on Linux
+    if "linux" in sys.platform:
+        conf.find_program('nodejs', var='NODEJS')
+    else:
+        conf.find_program('node', var='NODEJS')
 
     # Find the clang++ compiler
     cxx = conf.find_program(['em++'], path_list=paths)
