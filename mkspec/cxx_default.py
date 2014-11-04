@@ -14,7 +14,8 @@ import msvc_mkspecs
 
 
 def load_compiler(conf, compiler, arch):
-    # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
+    # Note clang goes first otherwise 'g++' will be in 'clang++'
+    #                                  ¯¯¯                  ¯¯¯
     if 'clang' in compiler:
         conf.mkspec_clang_configure(3, 4, minimum=True)
     elif 'g++' in compiler:
@@ -37,6 +38,7 @@ def load_compiler(conf, compiler, arch):
             conf.mkspec_add_common_flag('-m32')
         elif arch == 'x64':
             conf.mkspec_add_common_flag('-m64')
+
 
 @conf
 def cxx_default(conf, arch=None):
