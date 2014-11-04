@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+2.37.0
+------
 * Minor: Added support for the emscripten compiler.
 * Minor: Added emscripten mkspecs: cxx_emscripten126 and cxx_emscripten125.
 
