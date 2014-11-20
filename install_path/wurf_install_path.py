@@ -42,15 +42,24 @@ structure when installing e.g.:
 import os
 from waflib.TaskGen import feature, before_method, after_method
 
-# Also install the C and C++ static libraries to facilitate the integration
-# with other build systems
-from waflib.Tools.c import cstlib
-from waflib.Tools.cxx import cxxstlib
-cstlib.inst_to = '${LIBDIR}'
-cxxstlib.inst_to = '${LIBDIR}'
+
+@feature('cstlib', 'cxxstlib')
+@before_method('apply_link')
+def update_stlib_install_path(self):
+    """
+    Sets the install_path attribute of static library task generators before
+    executing the apply_link method. This enables the installation of the
+    compiled C and C++ static libraries to facilitate the integration
+    with other build systems.
+    """
+
+    if self.bld.has_tool_option('install_path') and \
+       self.bld.has_tool_option('install_static_libs'):
+        install_path = self.bld.get_tool_option('install_path')
+        self.install_path = os.path.abspath(os.path.expanduser(install_path))
 
 
-@feature('cxxprogram', 'cprogram', 'pyext', 'cstlib', 'cxxstlib')
+@feature('cxxprogram', 'cprogram', 'pyext')
 @before_method('apply_link')
 def update_install_path(self):
     """
