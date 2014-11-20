@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.38.0
+------
+* Minor: Only install static libs if the install_static_libs option is used.
+
 2.37.0
 ------
 * Minor: Added support for the emscripten compiler.
