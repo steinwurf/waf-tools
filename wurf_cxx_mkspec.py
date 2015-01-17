@@ -8,9 +8,10 @@ import cxx_mkspecs.cxx_default
 import cxx_mkspecs.clang_mkspecs
 import cxx_mkspecs.gxx_mkspecs
 import cxx_mkspecs.msvc_mkspecs
+import cxx_mkspecs.emscripten_mkspecs
 
 # Allows us to catch queries for platforms that we do not yet support
-mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios']
+mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios', 'emscripten']
 
 
 @conf
@@ -52,8 +53,8 @@ def configure(conf):
     # that simply fallbacks to use waf auto detect of compiler etc.
     mkspec = "cxx_default"
 
-    if conf.has_tool_option('mkspec'):
-        mkspec = conf.get_tool_option('mkspec')
+    if conf.has_tool_option('cxx_mkspec'):
+        mkspec = conf.get_tool_option('cxx_mkspec')
 
     conf.msg('Using the mkspec:', mkspec)
 

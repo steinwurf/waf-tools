@@ -4,7 +4,7 @@
 """
 Copies chosen targets to a specific location.
 
-This tool is available in the external-waf-tools repository, so we have
+This tool is available in the waf-tools repository, so we have
 to load it:
 
 def options(opt):
@@ -15,7 +15,7 @@ def options(opt):
     bundle.add_dependency(opt,
         resolve.ResolveGitMajorVersion(
             name='waf-tools',
-            git_repository='git://github.com/steinwurf/external-waf-tools.git',
+            git_repository='git://github.com/steinwurf/waf-tools.git',
             major_version=1))
 
     opt.load('wurf_dependency_bundle')
@@ -31,16 +31,32 @@ def configure(conf):
 
 
 The install path may now be updated by passing the install_path options. E.g.
-./waf --options=install_path=~/my_binaries
+python waf --options=install_path="~/my_binaries"
 
 If you also pass the install_relative option waf will preserve the folder
 structure when installing e.g.:
-    ./waf --options=install_path=~/my_binaries,install_relative
+    python waf --options=install_path="~/my_binaries",install_relative
 
 """
 
 import os
 from waflib.TaskGen import feature, before_method, after_method
+
+
+@feature('cstlib', 'cxxstlib')
+@before_method('apply_link')
+def update_stlib_install_path(self):
+    """
+    Sets the install_path attribute of static library task generators before
+    executing the apply_link method. This enables the installation of the
+    compiled C and C++ static libraries to facilitate the integration
+    with other build systems.
+    """
+
+    if self.bld.has_tool_option('install_path') and \
+       self.bld.has_tool_option('install_static_libs'):
+        install_path = self.bld.get_tool_option('install_path')
+        self.install_path = os.path.abspath(os.path.expanduser(install_path))
 
 
 @feature('cxxprogram', 'cprogram', 'pyext')

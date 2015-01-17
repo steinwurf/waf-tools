@@ -14,7 +14,8 @@ import msvc_mkspecs
 
 
 def load_compiler(conf, compiler, arch):
-    # Note clang goes first otherwise 'g++' will be in 'clang(g++)'
+    # Note clang goes first otherwise 'g++' will be in 'clang++'
+    #                                  ¯¯¯                  ¯¯¯
     if 'clang' in compiler:
         conf.mkspec_clang_configure(3, 4, minimum=True)
     elif 'g++' in compiler:

@@ -65,6 +65,7 @@ from runners.android_runner import AndroidRunner
 from runners.basic_runner import BasicRunner
 from runners.ios_runner import IOSRunner
 from runners.ssh_runner import SSHRunner
+from runners.emscripten_runner import EmscriptenRunner
 
 
 @feature('test')
@@ -109,6 +110,9 @@ def make_run(taskgen, run_type):
                                        taskgen.link_task.outputs)
         elif taskgen.bld.is_mkspec_platform('ios'):
             task = taskgen.create_task('IOSRunner',
+                                       taskgen.link_task.outputs)
+        elif taskgen.bld.is_mkspec_platform('emscripten'):
+            task = taskgen.create_task('EmscriptenRunner',
                                        taskgen.link_task.outputs)
         else:
             task = taskgen.create_task('BasicRunner',

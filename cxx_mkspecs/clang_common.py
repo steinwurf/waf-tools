@@ -99,10 +99,11 @@ def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
 def mkspec_set_clang_ccflags(conf, force_debug=False):
 
     optflag = '-O2'
-    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
-    # code on this platform
-    if conf.get_mkspec_platform() == 'ios':
+
+    # Use -Os (optimize for size) flag on iOS and OSX (explanation below)
+    if conf.get_mkspec_platform() in ['mac', 'ios']:
         optflag = '-Os'
+
     conf.env['CFLAGS'] += [optflag, '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
@@ -116,10 +117,20 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
 def mkspec_set_clang_cxxflags(conf, force_debug=False):
 
     optflag = '-O2'
-    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
-    # code on this platform
-    if conf.get_mkspec_platform() == 'ios':
+
+    # Use -Os (optimize for size) flag on iOS and OSX, because -O2 might
+    # produce unstable code on the these platforms. The compiler can eat up
+    # all RAM and come to a deadlock if -O2 is used to optimize large stacks.
+    # The problem occurs with these compiler versions:
+    #    Apple LLVM version 5.1 (clang-503.0.40) (based on LLVM 3.4svn)
+    #    Apple LLVM version 6.0 (clang-600.0.51) (based on LLVM 3.5svn)
+    # However, clang on Linux can compile with -O2 without any issues.
+    #
+    # IMPORTANT: -Os produces 15x slower code for the Binary field, so
+    # -O2 should enabled again when Apple fixes this bug!
+    if conf.get_mkspec_platform() in ['mac', 'ios']:
         optflag = '-Os'
+
     conf.env['CXXFLAGS'] += [optflag, '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:

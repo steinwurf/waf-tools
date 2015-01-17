@@ -8,36 +8,64 @@ Latest
 ------
 * tbd
 
+2.38.0
+------
+* Minor: Only install static libs if the install_static_libs option is used.
+
+2.37.0
+------
+* Minor: Added support for the emscripten compiler.
+* Minor: Added emscripten mkspecs: cxx_emscripten126 and cxx_emscripten125.
+
+2.36.1
+------
+* Patch: The default binary names, g++ and gcc are added as secondary options
+  in the gxx mkspecs (the versioned compiler binaries are not available on
+  certain Linux systems, such as ArchLinux and Fedora)
+
+2.36.0
+------
+* Minor: The generated C and C++ static libraries are now copied to the given
+  install_path to facilitate integration with other build systems
+
+2.35.0
+------
+* Minor: Added mkspecs cxx_apple_llvm60_x64 and cxx_ios50_apple_llvm60_armv7
+* Minor: Make ios_sdk_dir an optional parameter for iOS mkspecs, since the
+  standard location of the iOS SDK does not include a version number
+* Patch: Changed the optimizer flag for clang on OS X from -O2 to -Os,
+  since -O2 causes excessive memory consumption.
+
 2.34.0
 ------
 * Minor: Added mkspecs for g++ 4.9 and clang 3.5
-* Bugfix: Specify ARMv7 architecture in cxx_android_gxx48_armv7 LINKFLAGS to
+* Patch: Specify ARMv7 architecture in cxx_android_gxx48_armv7 LINKFLAGS to
   avoid runtime issues with std threads and atomics
 
 2.33.2
 ------
-* Bugfix: The ssh-runner now makes sure that the destination directory
+* Patch: The ssh-runner now makes sure that the destination directory
   exists before running scp to copy the files.
 
 2.33.1
 ------
-* Bugfix: Test files are now allowed to be in the source directory when using
-          the BasicRunner.
+* Patch: Test files are now allowed to be in the source directory when using
+  the BasicRunner.
 
 2.33.0
 ------
 * Minor: Added mkspecs to pick architecture without specifying compiler;
-         cxx_default_x86 and cxx_default_x64.
+  cxx_default_x86 and cxx_default_x64.
 
 2.32.1
 ------
-* Bugfix: Fixed msvc .pdb file access issue with parallel compiler processes
+* Patch: Fixed msvc .pdb file access issue with parallel compiler processes
 
 2.32.0
 ------
 * Minor: Added ssh_output_file option to save the test output into a file
   which is later copied to the host (to mitigate SSH truncating issues)
-* Bugfix: Linux kernel modules are loaded from the correct directory
+* Patch: Linux kernel modules are loaded from the correct directory
 
 2.31.0
 ------
@@ -52,7 +80,7 @@ Latest
 2.29.0
 ------
 * Minor: Simplify ADB variable in android_runner by using env.get_flat
-* Bugfix: Install path issue fixed for Python extensions (pyext)
+* Patch: Install path issue fixed for Python extensions (pyext)
 
 2.28.0
 ------
@@ -87,7 +115,7 @@ Latest
 
 2.22.0
 ------
-* Bugfix: Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
+* Patch: Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
   code on this platform
 * Minor: Introduce force_debug parameter in mkspec_clang_configure to make the
   clang sanitizer mkspecs simpler
@@ -99,12 +127,12 @@ Latest
 2.20.0
 ------
 * Minor: Add mkspecs for clang address, memory and thread sanitizers.
-* Bugfix: Statically link GCC libraries to support C++ exceptions with the
+* Patch: Statically link GCC libraries to support C++ exceptions with the
   OpenWrt toolchain (cxx_crosslinux_gxx46_arm mkspec).
 
 2.19.1
 ------
-* Bug: Changed use of ``xrange`` to ``range`` to support python 3.x.
+* Patch: Changed use of ``xrange`` to ``range`` to support python 3.x.
 
 2.19.0
 ------
@@ -121,7 +149,7 @@ Latest
 
 2.17.1
 ------
-* Bugfix: Use target option instead of ccc-host-triple in iOS builds
+* Patch: Use target option instead of ccc-host-triple in iOS builds
 
 2.17.0
 ------
@@ -130,11 +158,11 @@ Latest
 
 2.16.2
 ------
-* Bugfix: Support spaces in paths in basic_runner.
+* Patch: Support spaces in paths in basic_runner.
 
 2.16.1
 ------
-* Bugfix: Remove added quotes from ssh_options and scp_options.
+* Patch: Remove added quotes from ssh_options and scp_options.
 
 2.16.0
 ------
@@ -166,7 +194,7 @@ Latest
 
 2.10.1
 ------
-* Bug: Fixed pull command bug in the android runner.
+* Patch: Fixed pull command bug in the android runner.
 
 2.10.0
 ------
@@ -215,7 +243,7 @@ Latest
 
 2.1.1
 -----
-* Bugfix: Android and iOS runners will remove all previous test files
+* Patch: Android and iOS runners will remove all previous test files
           from the device before running a new test.
 
 2.1.0

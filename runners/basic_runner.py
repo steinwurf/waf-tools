@@ -64,14 +64,7 @@ class BasicRunner(Task.Task):
         replace %s with the executable name and thus run the executable
         under valgrind
         """
-        bld = self.generator.bld
-
-        if bld.has_tool_option('run_cmd'):
-            testcmd = bld.get_tool_option('run_cmd')
-            cmd = testcmd % executable
-        else:
-            cmd = executable
-
+        cmd = ' '.join(self.format_command_list(executable))
         return cmd
 
     def format_command_list(self, executable):
@@ -83,8 +76,8 @@ class BasicRunner(Task.Task):
         replace %s with the executable name and thus run the executable
         under valgrind
         """
+        executable = str(executable)
         bld = self.generator.bld
-
         if bld.has_tool_option('run_cmd'):
             testcmd = bld.get_tool_option('run_cmd')
             # Split the arguments BEFORE substituting the executable path

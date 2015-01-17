@@ -9,6 +9,8 @@ from waflib.Configure import conf
 @conf
 def mkspec_add_common_flag(conf, flag):
     """
+    Add common flags.
+
     :param flag: The flag to be set for C/C++ compiler and linker
     """
     conf.env['CFLAGS'] += [flag]
@@ -19,8 +21,7 @@ def mkspec_add_common_flag(conf, flag):
 @conf
 def mkspec_try_flags(conf, flagtype, flaglist):
     """
-    Tries the given list of compiler/linker flags if they are supported by the
-    current compiler, and returns the list of supported flags
+    Check support of the given list of compiler/linker flags.
 
     :param flagtype: The flag type, cflags, cxxflags or linkflags
     :param flaglist: The list of flags to be checked
@@ -50,6 +51,8 @@ def mkspec_try_flags(conf, flagtype, flaglist):
 @conf
 def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
     """
+    Check the minimum CC version.
+
     :param major: The major version number, e.g. 4
     :param minor: The minor version number, e.g. 6
     """
@@ -58,8 +61,10 @@ def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])
 
-    if ((cc_major < int(major)) or
-       (cc_major == int(major) and cc_minor < int(minor))):
+    major = int(major)
+    minor = int(minor)
+
+    if cc_major < major or (cc_major == major and cc_minor < minor):
         conf.fatal("Compiler version: {0}, "
                    "required minimum: major={1} and minor={2}."
                    .format(conf.env['CC_VERSION'], major, minor))
@@ -68,13 +73,20 @@ def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
 @conf
 def mkspec_check_cc_version(conf, compiler, major, minor):
     """
+    Check the exact CC version.
+
     :param major: The major version number of the g++ binary e.g. 4
     :param minor: The minor version number of the g++ binary e.g. 6
     """
     conf.get_cc_version(compiler, gcc=True)
 
-    if (int(conf.env['CC_VERSION'][0]) != int(major) or
-            int(conf.env['CC_VERSION'][1]) != int(minor)):
+    cc_major = int(conf.env['CC_VERSION'][0])
+    cc_minor = int(conf.env['CC_VERSION'][1])
+
+    major = int(major)
+    minor = int(minor)
+
+    if cc_major != major or cc_minor != minor:
         conf.fatal("Wrong version number: {0}, "
                    "expected major={1} and minor={2}."
                    .format(conf.env['CC_VERSION'], major, minor))
@@ -83,6 +95,8 @@ def mkspec_check_cc_version(conf, compiler, major, minor):
 @conf
 def mkspec_get_toolchain_paths(conf):
     """
+    Return the common paths where the g++ binaries are located.
+
     :return: the common paths where we may find the g++ binary
     """
     # The default path to search
@@ -108,7 +122,6 @@ def mkspec_get_toolchain_paths(conf):
             toolchain = "/Applications/Xcode.app/Contents/Developer/" \
                         "Toolchains/XcodeDefault.xctoolchain/usr/bin/"
         toolchain = os.path.abspath(os.path.expanduser(toolchain))
-        #toolchain_path = [toolchain, os.path.join(toolchain,'bin')]
 
         return toolchain
 
@@ -139,7 +152,13 @@ def mkspec_set_android_options(conf):
 
 @conf
 def mkspec_set_ios_options(conf, min_ios_version, cpu):
-    sdk = conf.get_tool_option('ios_sdk_dir')
+
+    if conf.has_tool_option('ios_sdk_dir'):
+        sdk = conf.get_tool_option('ios_sdk_dir')
+    else:
+        # Use the standard location of the iOS SDK
+        sdk = "/Applications/Xcode.app/Contents/Developer/" \
+              "/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk"
     sdk = os.path.abspath(os.path.expanduser(sdk))
 
     # Set the IPHONE define - some libraries rely on this define being
