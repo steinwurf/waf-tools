@@ -44,7 +44,7 @@ def cxx_clang35_x86(conf):
     Detect and setup the clang 3.5 compiler for 32 bit
     """
     conf.mkspec_clang_configure(3, 5)
-   conf.mkspec_add_common_flag('-m32')
+    conf.mkspec_add_common_flag('-m32')
 
 
 @conf

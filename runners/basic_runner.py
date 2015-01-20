@@ -5,6 +5,13 @@ import os
 from waflib import Utils, Task, Logs
 testlock = Utils.threading.Lock()
 
+def nice_path(node):
+    """
+    Return the path seen from the launch directory.
+    Can be used for opening files easily (copy-paste in the console).
+    """
+    return node.path_from(node.ctx.launch_node())
+
 
 class BasicRunner(Task.Task):
 
@@ -19,10 +26,10 @@ class BasicRunner(Task.Task):
     def __str__(self):
         "string to display to the user"
 
-        src_str = ' '.join([a.nice_path() for a in self.inputs])
-        tgt_str = ' '.join([a.nice_path() for a in self.outputs])
-        tst_str = '\n\t'.join([a.nice_path() for a in self.test_inputs])
-        kobj_str = '\n\t'.join([a.nice_path() for a in self.kernel_objects])
+        src_str = ' '.join([nice_path(a) for a in self.inputs])
+        tgt_str = ' '.join([nice_path(a) for a in self.outputs])
+        tst_str = '\n\t'.join([nice_path(a) for a in self.test_inputs])
+        kobj_str = '\n\t'.join([nice_path(a) for a in self.kernel_objects])
 
         if self.outputs:
             sep = ' -> '
