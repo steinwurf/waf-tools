@@ -153,12 +153,20 @@ def mkspec_set_android_options(conf):
 @conf
 def mkspec_set_ios_options(conf, min_ios_version, cpu):
 
+    # using_simulator = bool(cpu == 'i386')
+
+    build = 'iPhoneOS'
+
+    # if cpu is i386 we are building for the iOS simulator
+    # if using_simulator:
+        # build = 'iPhoneSimulator'
+
     if conf.has_tool_option('ios_sdk_dir'):
         sdk = conf.get_tool_option('ios_sdk_dir')
     else:
         # Use the standard location of the iOS SDK
-        sdk = "/Applications/Xcode.app/Contents/Developer/" \
-              "/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk"
+        sdk = "/Applications/Xcode.app/Contents/Developer/Platforms" \
+              "/{}.platform/Developer/SDKs/{}.sdk".format(build,build)
     sdk = os.path.abspath(os.path.expanduser(sdk))
 
     # Set the IPHONE define - some libraries rely on this define being
@@ -176,11 +184,16 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
 
     triple = "{}-apple-ios{}.0".format(cpu, min_ios_version)
 
+
+    ios_version_arg = '-miphoneos-version-min={}'
+    # if using_simulator:
+        # ios_version_arg = '-mios-simulator-version-min={}'
+
     ios_flags = \
         [
             "-target", triple, "-integrated-as",
             "-isysroot", sdk,
-            "-miphoneos-version-min={}".format(min_ios_version)
+            ios_version_arg.format(min_ios_version)
         ]
 
     conf.env['CFLAGS'] += ios_flags
