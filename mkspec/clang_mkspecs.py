@@ -93,6 +93,7 @@ def cxx_apple_llvm51_x86(conf):
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
 
+
 @conf
 def cxx_apple_llvm60_x64(conf):
     """
