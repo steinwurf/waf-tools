@@ -43,6 +43,22 @@ import os
 from waflib.TaskGen import feature, before_method, after_method
 
 
+@feature('cshlib', 'cxxshlib')
+@before_method('apply_link')
+def update_shlib_install_path(self):
+    """
+    Sets the install_path attribute of shared library task generators before
+    executing the apply_link method. This enables the installation of the
+    compiled C and C++ shared libraries to facilitate the integration
+    with other build systems.
+    """
+
+    if self.bld.has_tool_option('install_path') and \
+       self.bld.has_tool_option('install_shared_libs'):
+        install_path = self.bld.get_tool_option('install_path')
+        self.install_path = os.path.abspath(os.path.expanduser(install_path))
+
+
 @feature('cstlib', 'cxxstlib')
 @before_method('apply_link')
 def update_stlib_install_path(self):

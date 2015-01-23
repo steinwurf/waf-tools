@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added install_shared_libs option to enable installation of shared libs.
 
 2.38.0
 ------
