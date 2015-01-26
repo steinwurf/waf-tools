@@ -156,8 +156,8 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     using_simulator = bool(cpu == 'i386')
 
     sdk_type = 'iPhoneOS'
-    
-    # if cpu is i386 we are building for the iOS simulator
+
+    # If cpu is 'i386', then we are building for the iOS simulator
     if using_simulator:
         sdk_type = 'iPhoneSimulator'
 
@@ -177,25 +177,24 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     conf.env['LINKFLAGS'] += ['-lSystem']  # links with libSystem.dylib
 
     # Define what are the necessary common compiler and linker options
-    # to build for the iOS platform. Here, tell the ARM cross-compiler
+    # to build for the iOS platform. We tell the ARM cross-compiler
     # to target the specified arm-apple-ios platform triplet, specify
     # the location of the iOS SDK, use the compiler's integrated
     # assembler and set the minimal supported iOS version
 
     triple = "{}-apple-ios{}.0".format(cpu, min_ios_version)
 
-
     ios_version_arg = '-miphoneos-version-min={}'
     if using_simulator:
         ios_version_arg = '-mios-simulator-version-min={}'
 
     ios_flags = \
-        [
-            "-target", triple,
-            "-integrated-as",
-            "-isysroot", sdk,
-            ios_version_arg.format(min_ios_version)
-        ]
+    [
+        "-target", triple,
+        "-integrated-as",
+        "-isysroot", sdk,
+        ios_version_arg.format(min_ios_version)
+    ]
 
     conf.env['CFLAGS'] += ios_flags
     conf.env['CXXFLAGS'] += ios_flags
