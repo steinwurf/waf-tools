@@ -6,7 +6,14 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+2.39.0
+------
 * Minor: Added install_shared_libs option to enable installation of shared libs.
+* Minor: Added iOS mkspecs: cxx_ios70_apple_llvm60_armv7,
+  cxx_ios70_apple_llvm60_armv7s, cxx_ios70_apple_llvm60_arm64 and
+  cxx_ios70_apple_llvm60_i386.
 
 2.38.0
 ------
