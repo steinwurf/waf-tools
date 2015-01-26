@@ -35,7 +35,7 @@ def set_mkspec_platform(conf, platform):
                    "already set to {1}.".format(
                        platform, conf.env['MKSPEC_PLATFORM']))
 
-    if not platform in mkspec_platforms:
+    if platform not in mkspec_platforms:
         conf.fatal("The mkspec platform {0} is not supported."
                    " Current platform is {1}".format(
                        platform, conf.env['MKSPEC_PLATFORM']))
