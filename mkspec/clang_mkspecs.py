@@ -280,15 +280,15 @@ def cxx_ios70_apple_llvm60_arm64(conf):
     """
     Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 armv7
     """
-    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'armv64')
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'arm64')
     conf.env['DEST_CPU'] = 'arm'
 
-# @conf
-# def cxx_ios70_apple_llvm60_i386(conf):
-#     """
-#     Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 i386 (simulator)
-#     """
-#     conf.mkspec_clang_ios_configure(6, 0, '7.0', 'i386')
+@conf
+def cxx_ios70_apple_llvm60_i386(conf):
+    """
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 i386 (simulator)
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'i386')
 
 
 
