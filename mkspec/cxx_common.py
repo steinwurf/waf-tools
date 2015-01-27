@@ -153,7 +153,7 @@ def mkspec_set_android_options(conf):
 @conf
 def mkspec_set_ios_options(conf, min_ios_version, cpu):
 
-    using_simulator = bool(cpu == 'i386')
+    using_simulator = bool(cpu in ['i386', 'x86_64'])
 
     sdk_type = 'iPhoneOS'
 

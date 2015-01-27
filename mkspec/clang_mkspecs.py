@@ -294,6 +294,12 @@ def cxx_ios70_apple_llvm60_i386(conf):
     """
     conf.mkspec_clang_ios_configure(6, 0, '7.0', 'i386')
 
+@conf
+def cxx_ios70_apple_llvm60_x86_64(conf):
+    """                                                                                                                     
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 x86_64 (simulator)                                               
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'x86_64')
 
 @conf
 def mkspec_setup_clang_address_sanitizer(conf, major, minor, arch):
