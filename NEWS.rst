@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.40.0
+------
+* Minor: Added iOS mkspec for 64-bit simulator: cxx_ios70_apple_llvm60_x86_64
+
 2.39.0
 ------
 * Minor: Added install_shared_libs option to enable installation of shared libs.
