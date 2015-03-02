@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Patch: Allow the user to override the compiler with the CXX environment
+  variable.
 
 2.40.0
 ------

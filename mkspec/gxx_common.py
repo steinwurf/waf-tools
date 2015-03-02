@@ -6,6 +6,7 @@ import os
 from waflib.Configure import conf
 import waflib.Tools.gcc
 import waflib.Tools.gxx
+import waflib.Utils
 
 
 @conf
@@ -16,15 +17,26 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
     :param prefix:  Prefix to the compiler name, e.g. 'arm-linux-androideabi'
     :param minimum: Only check for a minimum compiler version, if true
     """
+
     # Where to look for the compiler
     paths = conf.mkspec_get_toolchain_paths()
 
-    # Find g++ first
-    gxx_names = conf.mkspec_get_gnu_binary_name('g++', major, minor, prefix)
-    if minimum:
-        gxx_names = 'g++'
-    cxx = conf.find_program(gxx_names, path_list=paths)
-    cxx = conf.cmd_to_list(cxx)
+    # If the user-defined CXX variable is set
+    # then use that compiler
+    if 'CXX' in os.environ:
+        cxx = waflib.Utils.to_list(os.environ['CXX'])
+
+    else:
+
+        # Find g++ first
+        gxx_names = conf.mkspec_get_gnu_binary_name('g++', major, minor, prefix)
+        if minimum:
+            gxx_names = 'g++'
+
+
+        cxx = conf.find_program(gxx_names, path_list=paths)
+        cxx = conf.cmd_to_list(cxx)
+
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
     if minimum:
