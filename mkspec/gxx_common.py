@@ -25,7 +25,7 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
     # then use that compiler
     if 'CXX' in os.environ:
         cxx = waflib.Utils.to_list(os.environ['CXX'])
-
+        conf.to_log('Using user defined environment variable CXX=%r' % cxx)
     else:
 
         # Find g++ first
@@ -39,17 +39,26 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
 
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
+
     if minimum:
         conf.mkspec_check_minimum_cc_version(cxx, major, minor)
     else:
         conf.mkspec_check_cc_version(cxx, major, minor)
 
-    # Also find gcc
-    gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor, prefix)
-    if minimum:
-        gcc_names = 'gcc'
-    cc = conf.find_program(gcc_names, path_list=paths)
-    cc = conf.cmd_to_list(cc)
+    # If the user-defined CC variable is set
+    # then use that compiler
+    if 'CC' in os.environ:
+        cc = waflib.Utils.to_list(os.environ['CC'])
+        conf.to_log('Using user defined environment variable CC=%r' % cc)
+    else:
+
+        # Also find gcc
+        gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor, prefix)
+        if minimum:
+            gcc_names = 'gcc'
+        cc = conf.find_program(gcc_names, path_list=paths)
+        cc = conf.cmd_to_list(cc)
+
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
     if minimum:
