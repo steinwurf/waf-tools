@@ -6,8 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* Patch: Allow the user to override the compiler with the CXX environment
-  variable.
+* Patch: Allow the user to override the compiler with the CXX/CC environment
+  variables.
 
 2.40.0
 ------
