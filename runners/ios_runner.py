@@ -34,16 +34,18 @@ class IOSRunner(SSHRunner):
                 cmd,
                 stderr=Utils.subprocess.PIPE,
                 stdout=Utils.subprocess.PIPE)
-            # Wait for a second so that the process can start
-            time.sleep(2.0)
+            # Wait for 3 seconds so that the process can start properly
+            # If the device was idle for a long time, then the connection
+            # might not start for the first try
+            time.sleep(3.0)
 
             return proc
 
         usbmux_dir = bld.get_tool_option('usbmux_dir')
 
         usbmux = os.path.join(usbmux_dir, 'tcprelay.py')
-
-        usbmux_cmd = [usbmux, '22:{}'.format(localport)]
+        # Use usbmux in threaded mode to handle multiple connections at once
+        usbmux_cmd = [usbmux, '--threaded', '22:{}'.format(localport)]
         scp_cmd = ['scp', '-P', localport]
         ssh_cmd = ['ssh', '-t', '-p', localport, ssh_target]
 
