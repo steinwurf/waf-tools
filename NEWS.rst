@@ -1,5 +1,5 @@
-News for external-waf-tools
-===========================
+News for waf-tools
+==================
 
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
@@ -7,6 +7,11 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+2.40.2
+------
+* Patch: Use the threaded mode of usbmux in IOSRunner to mitigate the
+  connection startup problems on idle iOS devices.
 
 2.40.1
 ------
