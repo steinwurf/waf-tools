@@ -4,6 +4,7 @@
 import os
 
 from waflib.Configure import conf
+import waflib.Utils
 
 import cxx_common
 
@@ -21,12 +22,20 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
 
-    # Find the clang++ compiler
-    clangxx_names = conf.mkspec_get_clangxx_binary_name(major, minor)
-    if minimum:
-        clangxx_names = 'clang++'
-    cxx = conf.find_program(clangxx_names, path_list=paths)
-    cxx = conf.cmd_to_list(cxx)
+    # If the user-defined CXX variable is set
+    # then use that compiler
+    if 'CXX' in os.environ:
+        cxx = waflib.Utils.to_list(os.environ['CXX'])
+        conf.to_log('Using user defined environment variable CXX=%r' % cxx)
+    else:
+
+        # Find the clang++ compiler
+        clangxx_names = conf.mkspec_get_clangxx_binary_name(major, minor)
+        if minimum:
+            clangxx_names = 'clang++'
+        cxx = conf.find_program(clangxx_names, path_list=paths)
+        cxx = conf.cmd_to_list(cxx)
+
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
 
@@ -35,12 +44,20 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
     else:
         conf.mkspec_check_cc_version(cxx, major, minor, clang=True)
 
-    # Find clang as the C compiler
-    clang_names = conf.mkspec_get_clang_binary_name(major, minor)
-    if minimum:
-        clang_names = 'clang'
-    cc = conf.find_program(clang_names, path_list=paths)
-    cc = conf.cmd_to_list(cc)
+    # If the user-defined CC variable is set
+    # then use that compiler
+    if 'CC' in os.environ:
+        cc = waflib.Utils.to_list(os.environ['CC'])
+        conf.to_log('Using user defined environment variable CC=%r' % cc)
+    else:
+
+        # Find clang as the C compiler
+        clang_names = conf.mkspec_get_clang_binary_name(major, minor)
+        if minimum:
+            clang_names = 'clang'
+        cc = conf.find_program(clang_names, path_list=paths)
+        cc = conf.cmd_to_list(cc)
+
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
 
