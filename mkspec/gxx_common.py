@@ -28,9 +28,9 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
     if minimum:
-        conf.mkspec_check_minimum_cc_version(cxx, major, minor)
+        conf.mkspec_check_minimum_cc_version(cxx, major, minor, gcc=True)
     else:
-        conf.mkspec_check_cc_version(cxx, major, minor)
+        conf.mkspec_check_cc_version(cxx, major, minor, gcc=True)
 
     # Also find gcc
     gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor, prefix)
@@ -41,9 +41,9 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
     if minimum:
-        conf.mkspec_check_minimum_cc_version(cc, major, minor)
+        conf.mkspec_check_minimum_cc_version(cc, major, minor, gcc=True)
     else:
-        conf.mkspec_check_cc_version(cc, major, minor)
+        conf.mkspec_check_cc_version(cc, major, minor, gcc=True)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name(prefix)

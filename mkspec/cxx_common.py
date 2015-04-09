@@ -49,14 +49,17 @@ def mkspec_try_flags(conf, flagtype, flaglist):
 
 
 @conf
-def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
+def mkspec_check_minimum_cc_version(conf, compiler, major, minor, gcc=False,
+                                    clang=False):
     """
     Check the minimum CC version.
 
     :param major: The major version number, e.g. 4
     :param minor: The minor version number, e.g. 6
+    :param gcc: boolean determing if the check is for gcc
+    :param clang: boolean determing if the check is for clang
     """
-    conf.get_cc_version(compiler, gcc=True, clang=True)
+    conf.get_cc_version(cc=compiler, gcc=gcc, clang=clang)
 
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])
@@ -71,14 +74,17 @@ def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
 
 
 @conf
-def mkspec_check_cc_version(conf, compiler, major, minor):
+def mkspec_check_cc_version(conf, compiler, major, minor, gcc=False,
+                            clang=False):
     """
     Check the exact CC version.
 
     :param major: The major version number of the g++ binary e.g. 4
     :param minor: The minor version number of the g++ binary e.g. 6
+    :param gcc: boolean determing if the check is for gcc
+    :param clang: boolean determing if the check is for clang
     """
-    conf.get_cc_version(compiler, gcc=True, clang=True)
+    conf.get_cc_version(cc=compiler, gcc=gcc, clang=clang)
 
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])

@@ -31,9 +31,9 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
 
     if minimum:
-        conf.mkspec_check_minimum_cc_version(cxx, major, minor)
+        conf.mkspec_check_minimum_cc_version(cxx, major, minor, clang=True)
     else:
-        conf.mkspec_check_cc_version(cxx, major, minor)
+        conf.mkspec_check_cc_version(cxx, major, minor, clang=True)
 
     # Find clang as the C compiler
     clang_names = conf.mkspec_get_clang_binary_name(major, minor)
@@ -45,9 +45,9 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
 
     if minimum:
-        conf.mkspec_check_minimum_cc_version(cc, major, minor)
+        conf.mkspec_check_minimum_cc_version(cc, major, minor, clang=True)
     else:
-        conf.mkspec_check_cc_version(cc, major, minor)
+        conf.mkspec_check_cc_version(cc, major, minor, clang=True)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name(prefix)
