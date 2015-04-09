@@ -114,7 +114,7 @@ def mkspec_set_gxx_cxxflags(conf):
         conf.env['CXXFLAGS'] += ['-std=gnu++0x']
 
     # To enable the latest standard on g++ 4.7
-    #conf.env['CXXFLAGS'] += ['-std=c++11']
+    # conf.env['CXXFLAGS'] += ['-std=c++11']
 
 
 @conf

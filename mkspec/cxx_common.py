@@ -153,7 +153,7 @@ def mkspec_set_android_options(conf):
     conf.env['LINKFLAGS'] += ['-llog']
     # No need to specify 'gnustl_static' or 'gnustl_shared'
     # The Android toolchain will select the appropriate standard library
-    #conf.env.LIB_ANDROID = ['gnustl_static']
+    # conf.env.LIB_ANDROID = ['gnustl_static']
 
 
 @conf
@@ -194,8 +194,7 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     if using_simulator:
         ios_version_arg = '-mios-simulator-version-min={}'
 
-    ios_flags = \
-    [
+    ios_flags = [
         "-target", triple,
         "-integrated-as",
         "-isysroot", sdk,
