@@ -152,7 +152,7 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
         conf.env['CXXFLAGS'] += ['-std=gnu++0x']
 
     # To enable the latest standard on Mac OSX
-    #conf.env['CXXFLAGS'] += ['-std=gnu++11']
+    # conf.env['CXXFLAGS'] += ['-std=gnu++11']
 
     # Use clang's own C++ standard library on Mac OSX and iOS
     # Add other platforms when the library becomes stable there
@@ -174,8 +174,12 @@ def mkspec_get_clangxx_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}++'.format(major, minor)]
 
+    clangxx_binary_name = ['clang++']
+    if conf.is_mkspec_platform('linux'):
+        clangxx_binary_name += ['clang++-{0}.{1}'.format(major, minor)]
+
     # The default case works fine on all other platforms
-    return ['clang++']
+    return clangxx_binary_name
 
 
 @conf
@@ -191,5 +195,9 @@ def mkspec_get_clang_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}'.format(major, minor)]
 
+    clangxx_binary_name = ['clang']
+    if conf.is_mkspec_platform('linux'):
+        clangxx_binary_name += ['clang-{0}.{1}'.format(major, minor)]
+
     # The default case works fine on all other platforms
-    return ['clang']
+    return clangxx_binary_name

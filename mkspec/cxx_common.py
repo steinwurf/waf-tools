@@ -56,7 +56,7 @@ def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
     :param major: The major version number, e.g. 4
     :param minor: The minor version number, e.g. 6
     """
-    conf.get_cc_version(compiler, gcc=True)
+    conf.get_cc_version(compiler, gcc=True, clang=True)
 
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])
@@ -78,7 +78,7 @@ def mkspec_check_cc_version(conf, compiler, major, minor):
     :param major: The major version number of the g++ binary e.g. 4
     :param minor: The minor version number of the g++ binary e.g. 6
     """
-    conf.get_cc_version(compiler, gcc=True)
+    conf.get_cc_version(compiler, gcc=True, clang=True)
 
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])
