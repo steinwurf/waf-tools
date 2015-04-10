@@ -49,28 +49,27 @@ def mkspec_try_flags(conf, flagtype, flaglist):
 
 
 @conf
-def mkspec_check_minimum_cc_version(conf, compiler, major, minor, gcc=False,
-                                    clang=False):
+def mkspec_validate_cc_version(conf, major, minor, minimum=False):
     """
-    Check the minimum CC version.
+    Check the exact or minimum CC version.
 
     :param major: The major version number, e.g. 4
     :param minor: The minor version number, e.g. 6
-    :param gcc: boolean determing if the check is for gcc
-    :param clang: boolean determing if the check is for clang
+    :param minimum: Only check for a minimum compiler version, if true
     """
-    conf.get_cc_version(cc=compiler, gcc=gcc, clang=clang)
-
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])
 
-    major = int(major)
-    minor = int(minor)
-
-    if cc_major < major or (cc_major == major and cc_minor < minor):
-        conf.fatal("Compiler version: {0}, "
-                   "required minimum: major={1} and minor={2}."
-                   .format(conf.env['CC_VERSION'], major, minor))
+    if minimum:
+        if cc_major < major or (cc_major == major and cc_minor < minor):
+            conf.fatal("Compiler version: {0}, "
+                       "required minimum version: major={1} and minor={2}."
+                       .format(conf.env['CC_VERSION'], major, minor))
+    else:
+        if cc_major != major or cc_minor != minor:
+            conf.fatal("Wrong compiler version: {0}, "
+                       "expected version: major={1} and minor={2}."
+                       .format(conf.env['CC_VERSION'], major, minor))
 
 
 @conf
@@ -92,10 +91,7 @@ def mkspec_check_cc_version(conf, compiler, major, minor, gcc=False,
     major = int(major)
     minor = int(minor)
 
-    if cc_major != major or cc_minor != minor:
-        conf.fatal("Wrong version number: {0}, "
-                   "expected major={1} and minor={2}."
-                   .format(conf.env['CC_VERSION'], major, minor))
+
 
 
 @conf
