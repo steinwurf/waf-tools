@@ -57,6 +57,49 @@ def cxx_ios50_apple_llvm60_armv7(conf):
 
 
 @conf
+def cxx_ios70_apple_llvm60_armv7(conf):
+    """
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 armv7
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'armv7')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_ios70_apple_llvm60_armv7s(conf):
+    """
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 armv7s
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'armv7s')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_ios70_apple_llvm60_arm64(conf):
+    """
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 arm64
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'arm64')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_ios70_apple_llvm60_i386(conf):
+    """
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 i386 (simulator)
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'i386')
+
+
+@conf
+def cxx_ios70_apple_llvm60_x86_64(conf):
+    """
+    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 x86_64 (simulator)
+    """
+    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'x86_64')
+
+
+@conf
 def mkspec_setup_clang_address_sanitizer(conf, major, minor, arch):
     """
     To get a reasonable performance add -O1 or higher. To get nicer

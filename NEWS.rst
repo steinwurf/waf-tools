@@ -1,5 +1,5 @@
-News for external-waf-tools
-===========================
+News for waf-tools
+==================
 
 This file lists the major changes between versions. For a more detailed list
 of every change, see the Git log.
@@ -7,6 +7,27 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+2.40.2
+------
+* Patch: Use the threaded mode of usbmux in IOSRunner to mitigate the
+  connection startup problems on idle iOS devices.
+
+2.40.1
+------
+* Patch: Allow the user to override the compiler with the CXX/CC environment
+  variables.
+
+2.40.0
+------
+* Minor: Added iOS mkspec for 64-bit simulator: cxx_ios70_apple_llvm60_x86_64
+
+2.39.0
+------
+* Minor: Added install_shared_libs option to enable installation of shared libs.
+* Minor: Added iOS mkspecs: cxx_ios70_apple_llvm60_armv7,
+  cxx_ios70_apple_llvm60_armv7s, cxx_ios70_apple_llvm60_arm64 and
+  cxx_ios70_apple_llvm60_i386.
 
 2.38.0
 ------

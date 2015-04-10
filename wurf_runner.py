@@ -138,9 +138,9 @@ def make_run(taskgen, run_type):
     # test fails.
     post_funs = getattr(taskgen.bld, 'post_funs', None)
     if post_funs:
-        if not summary in post_funs:
+        if summary not in post_funs:
             taskgen.bld.add_post_fun(summary)
-        if not set_exit_code in post_funs:
+        if set_exit_code not in post_funs:
             taskgen.bld.add_post_fun(set_exit_code)
     else:
         taskgen.bld.add_post_fun(set_exit_code)
