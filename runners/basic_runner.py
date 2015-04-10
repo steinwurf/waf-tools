@@ -53,12 +53,11 @@ class BasicRunner(Task.Task):
 
     def runnable_status(self):
         """
-        Always execute the task if `waf --options=run_always` was used
+        Always execute the task if it was defined
         """
         ret = super(BasicRunner, self).runnable_status()
         if ret == Task.SKIP_ME:
-            if self.generator.bld.has_tool_option('run_always'):
-                return Task.RUN_ME
+            return Task.RUN_ME
 
         return ret
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # encoding: utf-8
 
 import os
@@ -14,7 +14,6 @@ def load_external_waf_tool(self, name):
     import inspect
     this_file = inspect.getfile(inspect.currentframe())
     path = os.path.join(os.path.dirname(this_file))
-    #path = os.path.dirname(os.path.realpath(__file__))
     self.load([name], tooldir=[path])
 
 
@@ -24,6 +23,7 @@ def configure(conf):
     conf.load_external_waf_tool('wurf_runner')
     conf.load_external_waf_tool('wurf_install_path')
     conf.load_external_waf_tool('wurf_project_generator')
+
 
 # Required for automatic recursion
 def build(bld):
