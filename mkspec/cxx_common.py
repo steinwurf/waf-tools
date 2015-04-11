@@ -73,28 +73,6 @@ def mkspec_validate_cc_version(conf, major, minor, minimum=False):
 
 
 @conf
-def mkspec_check_cc_version(conf, compiler, major, minor, gcc=False,
-                            clang=False):
-    """
-    Check the exact CC version.
-
-    :param major: The major version number of the g++ binary e.g. 4
-    :param minor: The minor version number of the g++ binary e.g. 6
-    :param gcc: boolean determing if the check is for gcc
-    :param clang: boolean determing if the check is for clang
-    """
-    conf.get_cc_version(cc=compiler, gcc=gcc, clang=clang)
-
-    cc_major = int(conf.env['CC_VERSION'][0])
-    cc_minor = int(conf.env['CC_VERSION'][1])
-
-    major = int(major)
-    minor = int(minor)
-
-
-
-
-@conf
 def mkspec_get_toolchain_paths(conf):
     """
     Return the common paths where the g++ binaries are located.
