@@ -10,6 +10,19 @@ import cxx_common
 
 
 @conf
+def mkspec_check_clang_version(conf, compiler, major, minor, minimum=False):
+    """
+    Check the exact or minimum clang version.
+
+    :param major: The major version number, e.g. 3
+    :param minor: The minor version number, e.g. 5
+    :param minimum: Only check for a minimum compiler version, if true
+    """
+    conf.get_cc_version(cc=compiler, clang=True)
+    conf.mkspec_validate_cc_version(major, minor, minimum)
+
+
+@conf
 def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
                            force_debug=False):
     """
@@ -22,13 +35,11 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
     # Where to look
     paths = conf.mkspec_get_toolchain_paths()
 
-    # If the user-defined CXX variable is set
-    # then use that compiler
+    # If the user-defined CXX variable is set, then use that compiler
     if 'CXX' in os.environ:
         cxx = waflib.Utils.to_list(os.environ['CXX'])
         conf.to_log('Using user defined environment variable CXX=%r' % cxx)
     else:
-
         # Find the clang++ compiler
         clangxx_names = conf.mkspec_get_clangxx_binary_name(major, minor)
         if minimum:
@@ -39,18 +50,13 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
     conf.env['CXX'] = cxx
     conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
 
-    if minimum:
-        conf.mkspec_check_minimum_cc_version(cxx, major, minor)
-    else:
-        conf.mkspec_check_cc_version(cxx, major, minor)
+    conf.mkspec_check_clang_version(cxx, major, minor, minimum)
 
-    # If the user-defined CC variable is set
-    # then use that compiler
+    # If the user-defined CC variable is set, then use that compiler
     if 'CC' in os.environ:
         cc = waflib.Utils.to_list(os.environ['CC'])
         conf.to_log('Using user defined environment variable CC=%r' % cc)
     else:
-
         # Find clang as the C compiler
         clang_names = conf.mkspec_get_clang_binary_name(major, minor)
         if minimum:
@@ -61,10 +67,7 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
     conf.env['CC'] = cc
     conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
 
-    if minimum:
-        conf.mkspec_check_minimum_cc_version(cc, major, minor)
-    else:
-        conf.mkspec_check_cc_version(cc, major, minor)
+    conf.mkspec_check_clang_version(cc, major, minor, minimum)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name(prefix)
@@ -169,7 +172,7 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
         conf.env['CXXFLAGS'] += ['-std=gnu++0x']
 
     # To enable the latest standard on Mac OSX
-    #conf.env['CXXFLAGS'] += ['-std=gnu++11']
+    # conf.env['CXXFLAGS'] += ['-std=gnu++11']
 
     # Use clang's own C++ standard library on Mac OSX and iOS
     # Add other platforms when the library becomes stable there
@@ -191,8 +194,12 @@ def mkspec_get_clangxx_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}++'.format(major, minor)]
 
+    clangxx_binary_name = ['clang++']
+    if conf.is_mkspec_platform('linux'):
+        clangxx_binary_name += ['clang++-{0}.{1}'.format(major, minor)]
+
     # The default case works fine on all other platforms
-    return ['clang++']
+    return clangxx_binary_name
 
 
 @conf
@@ -208,5 +215,9 @@ def mkspec_get_clang_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}'.format(major, minor)]
 
+    clangxx_binary_name = ['clang']
+    if conf.is_mkspec_platform('linux'):
+        clangxx_binary_name += ['clang-{0}.{1}'.format(major, minor)]
+
     # The default case works fine on all other platforms
-    return ['clang']
+    return clangxx_binary_name
