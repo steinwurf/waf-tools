@@ -49,47 +49,27 @@ def mkspec_try_flags(conf, flagtype, flaglist):
 
 
 @conf
-def mkspec_check_minimum_cc_version(conf, compiler, major, minor):
+def mkspec_validate_cc_version(conf, major, minor, minimum=False):
     """
-    Check the minimum CC version.
+    Check the exact or minimum CC version.
 
     :param major: The major version number, e.g. 4
     :param minor: The minor version number, e.g. 6
+    :param minimum: Only check for a minimum compiler version, if true
     """
-    conf.get_cc_version(compiler, gcc=True)
-
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])
 
-    major = int(major)
-    minor = int(minor)
-
-    if cc_major < major or (cc_major == major and cc_minor < minor):
-        conf.fatal("Compiler version: {0}, "
-                   "required minimum: major={1} and minor={2}."
-                   .format(conf.env['CC_VERSION'], major, minor))
-
-
-@conf
-def mkspec_check_cc_version(conf, compiler, major, minor):
-    """
-    Check the exact CC version.
-
-    :param major: The major version number of the g++ binary e.g. 4
-    :param minor: The minor version number of the g++ binary e.g. 6
-    """
-    conf.get_cc_version(compiler, gcc=True)
-
-    cc_major = int(conf.env['CC_VERSION'][0])
-    cc_minor = int(conf.env['CC_VERSION'][1])
-
-    major = int(major)
-    minor = int(minor)
-
-    if cc_major != major or cc_minor != minor:
-        conf.fatal("Wrong version number: {0}, "
-                   "expected major={1} and minor={2}."
-                   .format(conf.env['CC_VERSION'], major, minor))
+    if minimum:
+        if cc_major < major or (cc_major == major and cc_minor < minor):
+            conf.fatal("Compiler version: {0}, "
+                       "required minimum version: major={1} and minor={2}."
+                       .format(conf.env['CC_VERSION'], major, minor))
+    else:
+        if cc_major != major or cc_minor != minor:
+            conf.fatal("Wrong compiler version: {0}, "
+                       "expected version: major={1} and minor={2}."
+                       .format(conf.env['CC_VERSION'], major, minor))
 
 
 @conf
@@ -147,7 +127,7 @@ def mkspec_set_android_options(conf):
     conf.env['LINKFLAGS'] += ['-llog']
     # No need to specify 'gnustl_static' or 'gnustl_shared'
     # The Android toolchain will select the appropriate standard library
-    #conf.env.LIB_ANDROID = ['gnustl_static']
+    # conf.env.LIB_ANDROID = ['gnustl_static']
 
 
 @conf
@@ -188,8 +168,7 @@ def mkspec_set_ios_options(conf, min_ios_version, cpu):
     if using_simulator:
         ios_version_arg = '-mios-simulator-version-min={}'
 
-    ios_flags = \
-    [
+    ios_flags = [
         "-target", triple,
         "-integrated-as",
         "-isysroot", sdk,
