@@ -6,7 +6,11 @@ of every change, see the Git log.
 
 Latest
 ------
-* Patch: Prepared for waf version 1.8.8.
+* tbd
+
+2.41.0
+------
+* Minor: Prepared for waf version 1.8.8.
 * Patch: Fixed issue with Ubuntu clang installation.
 
 2.40.2
