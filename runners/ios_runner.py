@@ -46,11 +46,22 @@ class IOSRunner(SSHRunner):
         usbmux = os.path.join(usbmux_dir, 'tcprelay.py')
         # Use usbmux in threaded mode to handle multiple connections at once
         usbmux_cmd = [usbmux, '--threaded', '22:{}'.format(localport)]
-        scp_cmd = ['scp', '-P', localport]
-        ssh_cmd = ['ssh', '-t', '-p', localport, ssh_target]
 
         # Start the usbmux daemon to forward 'localport' to port 22 on USB
         self.usbmux_proc = start_proc(usbmux_cmd)
+
+        ssh_options = []
+        if bld.has_tool_option('ssh_options'):
+            ssh_options = \
+                bld.get_tool_option('ssh_options').replace('"', '').split(' ')
+
+        scp_options = []
+        if bld.has_tool_option('scp_options'):
+            scp_options = \
+                bld.get_tool_option('scp_options').replace('"', '').split(' ')
+
+        ssh_cmd = ['ssh', '-t', '-p', localport] + ssh_options + [ssh_target]
+        scp_cmd = ['scp', '-P', localport] + scp_options
 
         # Call the 'run_ssh' method of the SSHRunner class
         super(IOSRunner, self).run_ssh(ssh_cmd, scp_cmd, ssh_target, dest_dir)
