@@ -6,7 +6,18 @@ of every change, see the Git log.
 
 Latest
 ------
-* Patch: Prepared for waf version 1.8.8.
+* tbd
+
+2.42.0
+------
+* Minor: The usbmux process is not started and stopped in IosRunner. The
+  process will run permanently as a system service. This change is done to
+  alleviate connection issues with iOS devices.
+* Minor: Allow SSH and SCP options in IOSRunner to set additional flags.
+
+2.41.0
+------
+* Minor: Prepared for waf version 1.8.8.
 * Patch: Fixed issue with Ubuntu clang installation.
 
 2.40.2
