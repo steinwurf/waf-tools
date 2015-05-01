@@ -61,11 +61,11 @@ import os
 from waflib import Logs
 from waflib.TaskGen import feature, after_method
 
-from android_runner import AndroidRunner
-from basic_runner import BasicRunner
-from ios_runner import IOSRunner
-from ssh_runner import SSHRunner
-from emscripten_runner import EmscriptenRunner
+from runners.android_runner import AndroidRunner
+from runners.basic_runner import BasicRunner
+from runners.ios_runner import IOSRunner
+from runners.ssh_runner import SSHRunner
+from runners.emscripten_runner import EmscriptenRunner
 
 
 @feature('test')
