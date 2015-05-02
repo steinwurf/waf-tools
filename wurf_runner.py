@@ -68,6 +68,23 @@ from runners.ssh_runner import SSHRunner
 from runners.emscripten_runner import EmscriptenRunner
 
 
+def resolve(ctx):
+
+    opts = ctx.opt.add_option_group('Runner options')
+
+    opts.add_option(
+        '--run_tests', default=None, dest='run_tests',
+        action='store_true', help="Run all unit tests")
+
+    opts.add_option(
+        '--run_benchmarks', default=None, dest='run_benchmarks',
+        action='store_true', help="Run all benchmarks")
+
+    opts.add_option(
+        '--run_benchmark', default=None, dest='run_benchmark',
+        help="Run a specific benchmark")
+
+
 @feature('test')
 @after_method('apply_link')
 def make_test(self):
