@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+2.43.0
+------
+* Minor: Added the cxx_default_emscripten mkspec that only checks for a
+  required minimum version of the emscripten compiler.
+* Minor: Added mkspecs for emscripten: cxx_emscripten127 and cxx_emscripten130.
+
 2.42.0
 ------
 * Minor: The usbmux process is not started and stopped in IosRunner. The
