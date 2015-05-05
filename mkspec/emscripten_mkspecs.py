@@ -7,6 +7,14 @@ import emscripten_common
 
 
 @conf
+def cxx_default_emscripten(conf):
+    """
+    Detect and setup the default em++ compiler
+    """
+    conf.mkspec_emscripten_configure(1, 25, minimum=True)
+
+
+@conf
 def cxx_emscripten125(conf):
     """
     Detect and setup the em++ 1.25 compiler
@@ -21,12 +29,14 @@ def cxx_emscripten126(conf):
     """
     conf.mkspec_emscripten_configure(1, 26)
 
+
 @conf
 def cxx_emscripten127(conf):
     """
     Detect and setup the em++ 1.27 compiler
     """
     conf.mkspec_emscripten_configure(1, 27)
+
     
 @conf
 def cxx_emscripten130(conf):
