@@ -20,3 +20,17 @@ def cxx_emscripten126(conf):
     Detect and setup the em++ 1.26 compiler
     """
     conf.mkspec_emscripten_configure(1, 26)
+
+@conf
+def cxx_emscripten127(conf):
+    """
+    Detect and setup the em++ 1.27 compiler
+    """
+    conf.mkspec_emscripten_configure(1, 27)
+    
+@conf
+def cxx_emscripten130(conf):
+    """
+    Detect and setup the em++ 1.30 compiler
+    """
+    conf.mkspec_emscripten_configure(1, 30)
