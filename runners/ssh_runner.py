@@ -8,6 +8,47 @@ from waflib import Utils, Logs
 from basic_runner import BasicRunner
 
 
+def resolve(ctx):
+
+    opts = ctx.opt.add_option_group('SSH/iOS runner options')
+
+    opts.add_option(
+        '--ssh_runner', default=None, dest='ssh_runner',
+        action='store_true', help="Run the tests or benchmarks on a remote "
+                                  "host using SSH")
+
+    opts.add_option(
+        '--ssh_user', default=None, dest='ssh_user',
+        help='Set the SSH username (used with --ssh_runner)')
+
+    opts.add_option(
+        '--ssh_host', default=None, dest='ssh_host',
+        help='Set the target SSH host (used with --ssh_runner)')
+
+    opts.add_option(
+        '--ssh_dest_dir', default=None, dest='ssh_dest_dir',
+        help='Set the destination folder where the binary '
+             'will be copied with SCP (used with --ssh_runner)')
+
+    opts.add_option(
+        '--ssh_clean_dir', default=None, dest='ssh_clean_dir',
+        help='Delete all files from the destination folder '
+             'before running the binary (used with --ssh_runner)')
+
+    opts.add_option(
+        '--ssh_output_file', default=None, dest='ssh_output_file',
+        help='Save the output of the executed command to the given file '
+             '(used with --ssh_runner)')
+
+    opts.add_option(
+        '--ssh_options', default=None, dest='ssh_options',
+        help='Set extra options for SSH (used with --ssh_runner)')
+
+    opts.add_option(
+        '--scp_options', default=None, dest='scp_options',
+        help='Set extra options for SCP (used with --ssh_runner)')
+
+
 class SSHRunner(BasicRunner):
 
     def run_cmd(self, cmd):

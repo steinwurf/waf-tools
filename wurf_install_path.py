@@ -2,45 +2,42 @@
 # encoding: utf-8
 
 """
-Copies chosen targets to a specific location.
+Copies chosen targets to the specified install path.
 
-This tool is available in the waf-tools repository, so we have
-to load it:
-
-def options(opt):
-    import waflib.extras.wurf_dependency_bundle as bundle
-    import waflib.extras.wurf_dependency_resolve as resolve
-    import waflib.extras.wurf_configure_output
-
-    bundle.add_dependency(opt,
-        resolve.ResolveGitMajorVersion(
-            name='waf-tools',
-            git_repository='git://github.com/steinwurf/waf-tools.git',
-            major_version=1))
-
-    opt.load('wurf_dependency_bundle')
-    opt.load('wurf_tools')
-
-The tool should then be loaded:
-
-def configure(conf):
-    if conf.is_toplevel():
-        conf.load('wurf_dependency_bundle')
-        conf.load('wurf_tools')
-        conf.load_external_tool('install_path', 'wurf_install_path')
-
-
-The install path may now be updated by passing the install_path options. E.g.
-python waf --options=install_path="~/my_binaries"
+The install path can be set with the install_path option:
+    python waf --install_path="~/my_binaries"
 
 If you also pass the install_relative option waf will preserve the folder
-structure when installing e.g.:
-    python waf --options=install_path="~/my_binaries",install_relative
-
+structure when installing, e.g.:
+    python waf --install_path="~/my_binaries" --install_relative
 """
 
 import os
 from waflib.TaskGen import feature, before_method, after_method
+
+
+def resolve(ctx):
+
+    opts = ctx.opt.add_option_group('Install path options')
+
+    opts.add_option(
+        '--install_path', default=None, dest='install_path',
+        help="Copy the compiled C/C++ binaries to the specified path")
+
+    opts.add_option(
+        '--install_relative', default=None, dest='install_relative',
+        action='store_true', help="Preserve the folder structure "
+                                  "when copying binaries")
+
+    opts.add_option(
+        '--install_shared_libs', default=None, dest='install_shared_libs',
+        action='store_true', help="Copy the compiled C/C++ shared libraries "
+                                  "(used with --install_path)")
+
+    opts.add_option(
+        '--install_static_libs', default=None, dest='install_static_libs',
+        action='store_true', help="Copy the compiled C/C++ static libraries "
+                                  "(used with --install_path)")
 
 
 @feature('cshlib', 'cxxshlib')

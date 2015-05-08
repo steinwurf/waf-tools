@@ -29,6 +29,7 @@ def load_external_waf_tool(ctx, name):
 
 def resolve(ctx):
 
+    ctx.load('wurf_install_path')
     ctx.load('wurf_cxx_mkspec')
     ctx.load('wurf_runner')
 

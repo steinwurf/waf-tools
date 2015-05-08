@@ -77,12 +77,47 @@ def resolve(ctx):
         action='store_true', help="Run all unit tests")
 
     opts.add_option(
+        '--run_modified', default=None, dest='run_modified',
+        action='store_true', help="Only run the modified test binaries "
+                                  "(used with --run_tests)")
+
+    opts.add_option(
+        '--run_silent', default=None, dest='run_silent',
+        action='store_true', help="Do not print the test output on success "
+                                  "(used with --run_tests)")
+
+    opts.add_option(
         '--run_benchmarks', default=None, dest='run_benchmarks',
         action='store_true', help="Run all benchmarks")
 
     opts.add_option(
         '--run_benchmark', default=None, dest='run_benchmark',
         help="Run a specific benchmark")
+
+    opts.add_option(
+        '--print_benchmarks', default=None, dest='print_benchmarks',
+        action='store_true', help="Print the names of the defined benchmarks")
+
+    opts.add_option(
+        '--print_benchmark_paths', default=None, dest='print_benchmark_paths',
+        action='store_true', help="Print the paths to the benchmark binaries")
+
+    opts.add_option(
+        '--run_cmd', default=None, dest='run_cmd',
+        help='Run the tests or benchmarks with a custom command '
+             '(e.g. "valgrind %s")')
+
+    opts.add_option(
+        '--python_result', default=None, dest='python_result',
+        help='Save the benchmark results to the given Python file '
+             '(sets the "--pyfile" option)')
+
+    opts.add_option(
+        '--device_id', default=None, dest='device_id',
+        help='Specify the ID of the target Android device '
+             '(used with ADB when multiple devices are available)')
+
+    ctx.load('runners.ssh_runner')
 
 
 @feature('test')
