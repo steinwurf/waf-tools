@@ -121,7 +121,7 @@ def mkspec_set_gxx_cxxflags(conf):
     # Optimization flags
     conf.env['CXXFLAGS'] += ['-O2', '-ftree-vectorize', '-finline-functions']
     # Warning flags (pedantic ensures ISO C++ conformance)
-    conf.env['CFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
+    conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']
