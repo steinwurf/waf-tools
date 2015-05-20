@@ -53,10 +53,11 @@ def mkspec_set_msvc_flags(conf):
         # Use the multithread, release version of the run-time library
         conf.env['CXXFLAGS'] += ['/MT']
 
-    # Define _CRT_SECURE_NO_WARNINGS and _SCL_SECURE_NO_WARNINGS to suppress
-    # deprecation warnings for strcpy, sprintf, etc.
+    # Add various defines to suppress deprecation warnings for common
+    # functions like strcpy, sprintf and socket API calls
     conf.env['CXXFLAGS'] += \
-        ['/D_SCL_SECURE_NO_WARNINGS', '/D_CRT_SECURE_NO_WARNINGS']
+        ['/D_SCL_SECURE_NO_WARNINGS', '/D_CRT_SECURE_NO_WARNINGS',
+         '/D_WINSOCK_DEPRECATED_NO_WARNINGS']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
@@ -69,6 +70,11 @@ def mkspec_set_msvc_flags(conf):
     # instead of Level 4 to better match g++ warnings
     conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100',
                              '/EHs', '/D_WIN32_WINNT=0x0501']
+
+    # Do not generate .manifest files (the /MANIFEST flag is added by waf)
+    conf.env['LINKFLAGS'].remove('/MANIFEST')
+    conf.env['LINKFLAGS'] += ['/MANIFEST:NO']
+    conf.env['MSVC_MANIFEST'] = False
 
     # Disable LNK4221 linker warning for empty object files
     conf.env['LINKFLAGS'] += ['/ignore:4221']  # used for LINK.exe

@@ -151,7 +151,7 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     if conf.get_mkspec_platform() in ['mac', 'ios']:
         optflag = '-Os'
 
-    conf.env['CXXFLAGS'] += [optflag, '-Wextra', '-Wall']
+    conf.env['CXXFLAGS'] += [optflag, '-pedantic', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CXXFLAGS'] += ['-g']
