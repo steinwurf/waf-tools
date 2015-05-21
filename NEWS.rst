@@ -8,6 +8,13 @@ Latest
 ------
 * tbd
 
+2.44.0
+------
+* Minor: Added the cxx_gcov_gxx49_x64 mkspec for code coverage analysis
+  with gcov.
+* Minor: Added -pedantic and -finline-functions flags for g++ and clang.
+* Minor: Disabled the unnecessary manifest files for msvc.
+
 2.43.0
 ------
 * Minor: Added the cxx_default_emscripten mkspec that only checks for a
