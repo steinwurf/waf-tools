@@ -115,6 +115,27 @@ def cxx_crosslinux_gxx48_mips(conf):
 
 
 @conf
+def cxx_gcov_gxx49_x64(conf):
+    """
+    Configure g++ 4.9 (64 bit) for coverage analysis with gcov
+    """
+    # Don't add any optimization flags (these might lead to incorrect results)
+    conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+
+    conf.mkspec_gxx_configure(4, 9)
+    conf.mkspec_add_common_flag('-m64')
+
+    # Set flag to compile and link code instrumented for coverage analysis
+    conf.mkspec_add_common_flag('--coverage')
+
+    # Add flags to disable optimization and all function inlining
+    flags = ['-O0', '-fPIC', '-fno-inline', '-fno-inline-small-functions',
+             '-fno-default-inline']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+
+
+@conf
 def cxx_gxx46_x64(conf):
     """
     Detect and setup the g++ 4.6 compiler for 64 bit

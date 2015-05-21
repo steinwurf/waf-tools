@@ -103,7 +103,14 @@ def mkspec_gxx_android_configure(conf, major, minor, prefix):
 @conf
 def mkspec_set_gcc_ccflags(conf):
 
-    conf.env['CFLAGS'] += ['-O2', '-ftree-vectorize', '-Wextra', '-Wall']
+    # Optimization flags
+    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CFLAGS'] += optflags
+
+    # Warning flags
+    conf.env['CFLAGS'] += ['-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CFLAGS'] += ['-g']
@@ -115,7 +122,14 @@ def mkspec_set_gcc_ccflags(conf):
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] += ['-O2', '-ftree-vectorize', '-Wextra', '-Wall']
+    # Optimization flags
+    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CXXFLAGS'] += optflags
+
+    # Warning flags (pedantic ensures ISO C++ conformance)
+    conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']

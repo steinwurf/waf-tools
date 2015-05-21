@@ -124,6 +124,10 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
     if conf.get_mkspec_platform() in ['mac', 'ios']:
         optflag = '-Os'
 
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CFLAGS'] += [optflag]
+
+    # Warning flags
     conf.env['CFLAGS'] += [optflag, '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
@@ -151,7 +155,11 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     if conf.get_mkspec_platform() in ['mac', 'ios']:
         optflag = '-Os'
 
-    conf.env['CXXFLAGS'] += [optflag, '-Wextra', '-Wall']
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CXXFLAGS'] += [optflag]
+
+    # Warning flags
+    conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CXXFLAGS'] += ['-g']
@@ -194,12 +202,13 @@ def mkspec_get_clangxx_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}++'.format(major, minor)]
 
-    clangxx_binary_name = ['clang++']
-    if conf.is_mkspec_platform('linux'):
-        clangxx_binary_name += ['clang++-{0}.{1}'.format(major, minor)]
+    # The default name works fine on most other platforms
+    clangxx_binary_names = ['clang++']
 
-    # The default case works fine on all other platforms
-    return clangxx_binary_name
+    if conf.is_mkspec_platform('linux'):
+        clangxx_binary_names += ['clang++-{0}.{1}'.format(major, minor)]
+
+    return clangxx_binary_names
 
 
 @conf
@@ -215,9 +224,10 @@ def mkspec_get_clang_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}'.format(major, minor)]
 
-    clangxx_binary_name = ['clang']
-    if conf.is_mkspec_platform('linux'):
-        clangxx_binary_name += ['clang-{0}.{1}'.format(major, minor)]
+    # The default name works fine on most other platforms
+    clang_binary_names = ['clang']
 
-    # The default case works fine on all other platforms
-    return clangxx_binary_name
+    if conf.is_mkspec_platform('linux'):
+        clang_binary_names += ['clang-{0}.{1}'.format(major, minor)]
+
+    return clang_binary_names
