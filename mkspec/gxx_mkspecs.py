@@ -119,14 +119,11 @@ def cxx_gcov_gxx49_x64(conf):
     """
     Configure g++ 4.9 (64 bit) for coverage analysis with gcov
     """
+    # Don't add any optimization flags (these might lead to incorrect results)
+    conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+
     conf.mkspec_gxx_configure(4, 9)
     conf.mkspec_add_common_flag('-m64')
-
-    # Remove all optimization flags (these might lead to incorrect results)
-    remove_flags = ['-O2', '-ftree-vectorize', '-finline-functions']
-    for flag in remove_flags:
-        conf.env['CFLAGS'].remove(flag)
-        conf.env['CXXFLAGS'].remove(flag)
 
     # Set flag to compile and link code instrumented for coverage analysis
     conf.mkspec_add_common_flag('--coverage')
