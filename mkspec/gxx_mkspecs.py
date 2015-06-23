@@ -221,6 +221,9 @@ def cxx_raspberry_gxx49_arm(conf):
     Detect and setup the g++ 4.9 cross-compiler for Raspberry Pi (Linux)
     """
     conf.mkspec_gxx_configure(4, 9, 'raspberry-gxx49-arm')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
 
 @conf
