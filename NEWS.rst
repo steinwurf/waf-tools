@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+2.45.0
+------
+* Minor: Added mkspecs for new cross-compiler toolchains:
+  cxx_raspberry_gxx49_arm, cxx_openwrt_gxx48_arm.
+
 2.44.0
 ------
 * Minor: Added the cxx_gcov_gxx49_x64 mkspec for code coverage analysis
