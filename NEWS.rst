@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+2.46.0
+------
+* Minor: Updated the minimum versions in cxx_default to g++ 4.8 and clang 3.5.
+* Minor: Switched to the -std=c++11 flag for g++ and clang.
+
 2.45.0
 ------
 * Minor: Added mkspecs for new cross-compiler toolchains:
