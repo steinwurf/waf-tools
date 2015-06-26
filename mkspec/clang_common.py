@@ -169,18 +169,15 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    # Use the more restrictive c++0x option for linux
+    # Use the more restrictive c++11 option for linux
     if conf.is_mkspec_platform('linux'):
-        conf.env['CXXFLAGS'] += ['-std=c++0x']
+        conf.env['CXXFLAGS'] += ['-std=c++11']
     else:
-        # Other platforms might need some non-standard functions
-        # therefore we use gnu++0x
+        # Other platforms might need some non-standard functions,
+        # therefore we use gnu++11
         # For Android see: http://stackoverflow.com/questions/9247151
         # For MinGW: http://stackoverflow.com/questions/6312151
-        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
-
-    # To enable the latest standard on Mac OSX
-    # conf.env['CXXFLAGS'] += ['-std=gnu++11']
+        conf.env['CXXFLAGS'] += ['-std=gnu++11']
 
     # Use clang's own C++ standard library on Mac OSX and iOS
     # Add other platforms when the library becomes stable there
