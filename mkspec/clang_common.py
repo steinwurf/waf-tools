@@ -112,7 +112,7 @@ def mkspec_clang_android_configure(conf, major, minor, prefix, target):
 def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu,
                                minimum=False):
     conf.set_mkspec_platform('ios')
-    conf.mkspec_clang_configure(major, minor, minimum)
+    conf.mkspec_clang_configure(major, minor, minimum=minimum)
     conf.mkspec_set_ios_options(min_ios_version, cpu)
 
 
