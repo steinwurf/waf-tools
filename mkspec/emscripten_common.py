@@ -98,11 +98,13 @@ def check_emscripten_version(conf, emscripten_cc, major, minor, minium):
     except:
         conf.fatal('could not determine the compiler version')
 
-    if minium and cc_major != major or cc_minor != minor:
-        conf.fatal("Wrong version number: major={0} and minor={1}, "
-                   "expected major={2} and minor={3}."
-                   .format(cc_major, cc_minor, major, minor))
-    elif cc_major < major or (cc_major == major and cc_minor < minor):
-        conf.fatal("Compiler version: major={1} and minor={2}, "
-                   "required minimum: major={1} and minor={2}."
-                   .format(cc_major, cc_minor, major, minor))
+    if minimum:
+        if cc_major < major or (cc_major == major and cc_minor < minor):
+            conf.fatal("Compiler version: major={1} and minor={2}, "
+                       "required minimum: major={1} and minor={2}."
+                       .format(cc_major, cc_minor, major, minor))
+    else:
+        if cc_major != major or cc_minor != minor:
+            conf.fatal("Wrong version number: major={0} and minor={1}, "
+                       "expected major={2} and minor={3}."
+                       .format(cc_major, cc_minor, major, minor))

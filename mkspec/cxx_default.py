@@ -64,7 +64,7 @@ def cxx_default(conf, arch=None):
     cxx_compilers = {
         'win32':  ['msvc', 'g++'],
         'linux':  ['g++', 'clang++'],
-        'darwin': ['clang++', 'g++'],
+        'darwin': ['clang++'],
         'cygwin': ['g++'],
         'default': ['g++']
     }
