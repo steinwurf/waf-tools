@@ -87,7 +87,7 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
 
 
 @conf
-def check_emscripten_version(conf, emscripten_cc, major, minor, minium):
+def check_emscripten_version(conf, emscripten_cc, major, minor, minimum):
     try:
         p = subprocess.Popen(
             emscripten_cc + ['--version'],
