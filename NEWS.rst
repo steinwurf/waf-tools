@@ -8,6 +8,16 @@ Latest
 ------
 * tbd
 
+2.47.0
+------
+* Minor: Added cxx_apple_llvm61_x64 mkspec (to support XCode 6.4).
+* Minor: Added default iOS mkspecs where we only check for a minimum version
+  of the Apple LLVM compiler: cxx_ios70_apple_llvm_armv7,
+  cxx_ios70_apple_llvm_armv7s, cxx_ios70_apple_llvm_arm64,
+  cxx_ios70_apple_llvm_i386, cxx_ios70_apple_llvm_x86_64.
+* Minor: Added cxx_emscripten134 mkspec.
+* Patch: Corrected the check for the minimum version of the emscripten compiler.
+
 2.46.0
 ------
 * Minor: Updated the minimum versions in cxx_default to g++ 4.8 and clang 3.5.
