@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+2.48.0
+------
+* Minor: Added cxx_msvc14_x86 and cxx_msvc14_x64 mkspecs and adjusted compiler
+  flags to support the Visual Studio 2015 compiler (MSVC 14.0).
+
 2.47.0
 ------
 * Minor: Added cxx_apple_llvm61_x64 mkspec (to support XCode 6.4).
