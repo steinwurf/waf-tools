@@ -62,14 +62,15 @@ def mkspec_set_msvc_flags(conf):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target)
-    # to suppress warnings in boost asio
+    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target) to suppress warnings
+    # in Boost Asio.
     # Disable warning C4345 which only states that msvc follows the
-    # C++ standard for initializing POD types when the () form is used
-    # Treat C4100 unreferenced parameter warning as Level 3
-    # instead of Level 4 to better match g++ warnings
-    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100',
-                             '/EHs', '/D_WIN32_WINNT=0x0501']
+    # C++ standard for initializing POD types when the () form is used.
+    # Since we compile heavily templated code, we enable /bigobj to allow
+    # large object files and we disable warning C4503 that complains about
+    # the length of decorated template names.
+    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/wd4503',
+                             '/EHs', '/D_WIN32_WINNT=0x0501', '/bigobj']
 
     # Do not generate .manifest files (the /MANIFEST flag is added by waf)
     conf.env['LINKFLAGS'].remove('/MANIFEST')
