@@ -229,6 +229,24 @@ def cxx_clang35_x86(conf):
 
 
 @conf
+def cxx_clang36_x64(conf):
+    """
+    Detect and setup the clang 3.6 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(3, 6)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_clang36_x86(conf):
+    """
+    Detect and setup the clang 3.6 compiler for 32 bit
+    """
+    conf.mkspec_clang_configure(3, 6)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_ios50_apple_llvm42_armv7(conf):
     """
     Detect and setup the Apple LLVM 4.2 compiler for iOS 5.0 armv7
