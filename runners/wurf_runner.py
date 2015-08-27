@@ -67,6 +67,8 @@ from ios_runner import IOSRunner
 from ssh_runner import SSHRunner
 from emscripten_runner import EmscriptenRunner
 
+# We keep a list of the run tasks so that we can execute them sequentially
+run_tasks = []
 
 @feature('test')
 @after_method('apply_link')
@@ -121,6 +123,13 @@ def make_run(taskgen, run_type):
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
         task.test_inputs = taskgen.to_nodes(test_files)
+
+        # Make sure that this newly created task is executed after the
+        # previously defined run task (if there is such a task)
+        if len(run_tasks) > 0:
+            task.set_run_after(run_tasks[-1])
+        # Store this task in the run_tasks list
+        run_tasks.append(task)
 
         # Check if the executable requires any kernel modules
         kernel_modules = getattr(taskgen, 'kernel_modules', [])
