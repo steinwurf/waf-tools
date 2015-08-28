@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+2.50.0
+------
+* Minor: Force the sequential execution of run tasks (tests and benchmarks)
+  in wurf_runner. The run tasks are executed in the same order as they are
+  defined in the wscripts.
+
 2.49.0
 ------
 * Minor: Added mkspecs for clang 3.6 and g++ 5.2.
