@@ -19,11 +19,8 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
     # The path to the emscripten compiler
     paths = conf.get_tool_option('emscripten_path')
 
-    # The node.js binary is called "nodejs" on Linux
-    if "linux" in sys.platform:
-        conf.find_program('nodejs', var='NODEJS')
-    else:
-        conf.find_program('node', var='NODEJS')
+    # The node.js binary can be "nodejs" or simply "node"
+    conf.find_program(['nodejs', 'node'], var='NODEJS')
 
     # Find the clang++ compiler
     cxx = conf.find_program(['em++'], path_list=paths)
