@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.51.0
+------
+* Minor: Allow alternative names for node.js binary on all platforms.
+
 2.50.0
 ------
 * Minor: Force the sequential execution of run tasks (tests and benchmarks)
