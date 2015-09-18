@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+2.52.0
+------
+* Minor: Added the result_file and result_folder options to all runners to
+  copy a generated file to the specified folder on the host.
+
 2.51.0
 ------
 * Minor: Allow alternative names for node.js binary on all platforms.
