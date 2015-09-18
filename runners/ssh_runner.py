@@ -124,14 +124,7 @@ class SSHRunner(BasicRunner):
 
         run_binary_cmd = "./{0}".format(binary)
 
-        # If this is a benchmark and we need to retrieve the result file
-        if bld.has_tool_option('run_benchmark') and \
-           bld.has_tool_option('python_result'):
-            # Add the benchmark python result output filename option
-            run_binary_cmd += " --pyfile={}".format(
-                bld.get_tool_option("python_result"))
-
-        # Add the given run command modifications
+        # Format the run command
         run_binary_cmd = self.format_command(run_binary_cmd)
 
         # Some SSH servers may truncate long outputs, so a workaround is used:
@@ -195,18 +188,26 @@ class SSHRunner(BasicRunner):
             self.save_result(results, ssh_cmd)
             return
 
-        # Everything seems to be fine, pull the output file if needed
-        if bld.has_tool_option('run_benchmark') and \
-           bld.has_tool_option('python_result'):
-            output_file = bld.get_tool_option("python_result")
+        # Pull the result file if needed
+        if bld.has_tool_option('result_file'):
 
-            # Remove the old benchmark if it exists
-            self.run_cmd(["rm", "-f", output_file])
+            result_file = bld.get_tool_option("result_file")
 
-            benchmark_result = os.path.join(dest_dir, output_file)
+            result_folder = '.'
+            result_on_host = result_file
+            if bld.has_tool_option('result_folder'):
+                result_folder = bld.get_tool_option('result_folder')
+                result_on_host = os.path.join(result_folder, result_file)
+
+            # Remove the old result file if it exists
+            self.run_cmd(["rm", "-f", result_on_host])
+
+            # This works if the path separators are compatible on the host
+            # and the target device
+            result_on_device = os.path.join(dest_dir, result_file)
 
             result = self.run_cmd(scp_cmd + ['{0}:{1}'.format(
-                ssh_target, benchmark_result), '.'])
+                ssh_target, result_on_device), result_folder])
             results.append(result)
 
             if result['return_code'] != 0:

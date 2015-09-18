@@ -61,14 +61,7 @@ class AndroidRunner(BasicRunner):
 
         run_binary_cmd = "./{0}".format(binary)
 
-        # If this is a benchmark and we need to retrieve the result file
-        if bld.has_tool_option('run_benchmark') and \
-           bld.has_tool_option('python_result'):
-            # Add the benchmark python result output filename option
-            run_binary_cmd += " --pyfile={}".format(
-                bld.get_tool_option("python_result"))
-
-        # Add the given run command modifications
+        # Format the run command
         run_binary_cmd = self.format_command(run_binary_cmd)
 
         # Echo the exit code after the shell command
@@ -104,9 +97,8 @@ class AndroidRunner(BasicRunner):
             self.save_result(results)
             return
 
-        # Everything seems to be fine, lets pull the output file if needed
-        if bld.has_tool_option('run_benchmark') and \
-           bld.has_tool_option('python_result'):
+        # Pull the result file if needed
+        if bld.has_tool_option('result_file'):
 
             adb_pull = [adb]
 
@@ -115,15 +107,21 @@ class AndroidRunner(BasicRunner):
 
             adb_pull += ['pull']
 
-            output_file = bld.get_tool_option("python_result")
+            result_file = bld.get_tool_option("result_file")
 
             # This path is on android and not the host platform
-            benchmark_result = dest_dir + output_file
+            result_on_device = dest_dir + result_file
 
-            # Remove the old benchmark if it exists
-            self.run_cmd(["rm", "-f", output_file])
+            result_on_host = result_file
+            if bld.has_tool_option('result_folder'):
+                result_folder = bld.get_tool_option('result_folder')
+                result_on_host = os.path.join(result_folder, result_file)
 
-            result = self.run_cmd(adb_pull + [benchmark_result, output_file])
+            # Remove the old result file if it exists
+            self.run_cmd(["rm", "-f", result_on_host])
+
+            result = self.run_cmd(
+                adb_pull + [result_on_device, result_on_host])
             results.append(result)
 
             if result['return_code'] != 0:
