@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+2.53.0
+------
 * Minor: Ignore the file extension when running a specific benchmark with
   the run_benchmark option.
 
