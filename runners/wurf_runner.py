@@ -84,8 +84,9 @@ def make_benchmark(self):
         make_run(self, "benchmark")
     elif hasattr(self, 'link_task'):
         if self.bld.has_tool_option('run_benchmark'):
+            # Compare the benchmark name ignoring the file extension
             if self.bld.get_tool_option("run_benchmark") == \
-               self.link_task.outputs[0].name:
+               os.path.splitext(self.link_task.outputs[0].name)[0]:
                 make_run(self, "benchmark")
 
         if self.bld.has_tool_option('print_benchmark_paths'):
