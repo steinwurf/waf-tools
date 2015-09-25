@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.53.1
+------
+* Patch: Ensure that the result_folder exists in SSHRunner and AndroidRunner.
+
 2.53.0
 ------
 * Minor: Ignore the file extension when running a specific benchmark with
