@@ -197,6 +197,9 @@ class SSHRunner(BasicRunner):
             result_on_host = result_file
             if bld.has_tool_option('result_folder'):
                 result_folder = bld.get_tool_option('result_folder')
+                # Make sure that the result folder exists on the host
+                if not os.path.exists(result_folder):
+                    os.makedirs(result_folder)
                 result_on_host = os.path.join(result_folder, result_file)
 
             # Remove the old result file if it exists
