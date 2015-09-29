@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+2.54.0
+------
+* Minor: Added cxx_apple_llvm70_x64 mkspec (to support XCode 7.0).
+
 2.53.1
 ------
 * Patch: Ensure that the result_folder exists in SSHRunner and AndroidRunner.
