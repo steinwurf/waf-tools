@@ -59,11 +59,6 @@ def resolve(ctx):
         action='store_true', help='Run all unit tests')
 
     opts.add_option(
-        '--run_modified', default=None, dest='run_modified',
-        action='store_true', help='Only run the modified test binaries '
-                                  '(used with --run_tests)')
-
-    opts.add_option(
         '--run_silent', default=None, dest='run_silent',
         action='store_true', help='Do not print the test output on success '
                                   '(used with --run_tests)')

@@ -55,15 +55,11 @@ class BasicRunner(Task.Task):
 
     def runnable_status(self):
         """
-        Always execute the test task
-
-        If the run_modified option is present, then only the modified test
-        binaries will be run.
+        Always execute the run task (even if the binary did not change)
         """
         ret = super(BasicRunner, self).runnable_status()
         if ret == Task.SKIP_ME:
-            if not self.generator.bld.has_tool_option('run_modified'):
-                return Task.RUN_ME
+            return Task.RUN_ME
 
         return ret
 
