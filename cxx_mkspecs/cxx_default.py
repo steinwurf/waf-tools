@@ -8,9 +8,9 @@ from waflib import Logs
 from waflib import Utils
 from waflib.Configure import conf
 
-import clang_mkspecs
-import gxx_mkspecs
-import msvc_mkspecs
+from . import clang_mkspecs
+from . import gxx_mkspecs
+from . import msvc_mkspecs
 
 
 def load_compiler(conf, compiler, arch):

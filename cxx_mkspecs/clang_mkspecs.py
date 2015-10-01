@@ -3,7 +3,7 @@
 
 from waflib.Configure import conf
 
-import clang_common
+from . import clang_common
 
 
 @conf

@@ -3,7 +3,7 @@
 
 from waflib.Configure import conf
 
-import gxx_common
+from . import gxx_common
 
 
 @conf

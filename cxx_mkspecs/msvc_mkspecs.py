@@ -3,7 +3,7 @@
 
 from waflib.Configure import conf
 
-import msvc_common
+from . import msvc_common
 
 
 @conf

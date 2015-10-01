@@ -9,9 +9,6 @@ import wurf_project_generator
 
 from waflib.Configure import conf
 
-APPNAME = 'waf-tools'
-VERSION = '2.34.0'
-
 
 @conf
 def load_external_waf_tool(ctx, name):
