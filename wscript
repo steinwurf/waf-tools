@@ -36,7 +36,8 @@ def resolve(ctx):
 
 def configure(conf):
 
-    conf.load('wurf_cxx_mkspec')
+    if not conf.env['DISABLE_WURF_CXX_MKSPEC']:
+        conf.load('wurf_cxx_mkspec')
     conf.load('wurf_runner')
     conf.load('wurf_install_path')
     conf.load('wurf_project_generator')
