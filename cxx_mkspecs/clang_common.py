@@ -109,9 +109,10 @@ def mkspec_clang_android_configure(conf, major, minor, prefix, target):
 
 
 @conf
-def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu):
+def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu,
+                               minimum=False):
     conf.set_mkspec_platform('ios')
-    conf.mkspec_clang_configure(major, minor)
+    conf.mkspec_clang_configure(major, minor, minimum=minimum)
     conf.mkspec_set_ios_options(min_ios_version, cpu)
 
 
@@ -124,6 +125,10 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
     if conf.get_mkspec_platform() in ['mac', 'ios']:
         optflag = '-Os'
 
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CFLAGS'] += [optflag]
+
+    # Warning flags
     conf.env['CFLAGS'] += [optflag, '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
@@ -151,7 +156,11 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     if conf.get_mkspec_platform() in ['mac', 'ios']:
         optflag = '-Os'
 
-    conf.env['CXXFLAGS'] += [optflag, '-Wextra', '-Wall']
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CXXFLAGS'] += [optflag]
+
+    # Warning flags
+    conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CXXFLAGS'] += ['-g']
@@ -161,18 +170,15 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    # Use the more restrictive c++0x option for linux
+    # Use the more restrictive c++11 option for linux
     if conf.is_mkspec_platform('linux'):
-        conf.env['CXXFLAGS'] += ['-std=c++0x']
+        conf.env['CXXFLAGS'] += ['-std=c++11']
     else:
-        # Other platforms might need some non-standard functions
-        # therefore we use gnu++0x
+        # Other platforms might need some non-standard functions,
+        # therefore we use gnu++11
         # For Android see: http://stackoverflow.com/questions/9247151
         # For MinGW: http://stackoverflow.com/questions/6312151
-        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
-
-    # To enable the latest standard on Mac OSX
-    # conf.env['CXXFLAGS'] += ['-std=gnu++11']
+        conf.env['CXXFLAGS'] += ['-std=gnu++11']
 
     # Use clang's own C++ standard library on Mac OSX and iOS
     # Add other platforms when the library becomes stable there
@@ -194,12 +200,13 @@ def mkspec_get_clangxx_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}++'.format(major, minor)]
 
-    clangxx_binary_name = ['clang++']
-    if conf.is_mkspec_platform('linux'):
-        clangxx_binary_name += ['clang++-{0}.{1}'.format(major, minor)]
+    # The default name works fine on most other platforms
+    clangxx_binary_names = ['clang++']
 
-    # The default case works fine on all other platforms
-    return clangxx_binary_name
+    if conf.is_mkspec_platform('linux'):
+        clangxx_binary_names += ['clang++-{0}.{1}'.format(major, minor)]
+
+    return clangxx_binary_names
 
 
 @conf
@@ -215,9 +222,10 @@ def mkspec_get_clang_binary_name(conf, major, minor):
         # The numbered clang is the only real binary in the Android toolchain
         return ['clang{0}{1}'.format(major, minor)]
 
-    clangxx_binary_name = ['clang']
-    if conf.is_mkspec_platform('linux'):
-        clangxx_binary_name += ['clang-{0}.{1}'.format(major, minor)]
+    # The default name works fine on most other platforms
+    clang_binary_names = ['clang']
 
-    # The default case works fine on all other platforms
-    return clangxx_binary_name
+    if conf.is_mkspec_platform('linux'):
+        clang_binary_names += ['clang-{0}.{1}'.format(major, minor)]
+
+    return clang_binary_names

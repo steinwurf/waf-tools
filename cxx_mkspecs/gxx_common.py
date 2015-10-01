@@ -103,7 +103,14 @@ def mkspec_gxx_android_configure(conf, major, minor, prefix):
 @conf
 def mkspec_set_gcc_ccflags(conf):
 
-    conf.env['CFLAGS'] += ['-O2', '-ftree-vectorize', '-Wextra', '-Wall']
+    # Optimization flags
+    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CFLAGS'] += optflags
+
+    # Warning flags
+    conf.env['CFLAGS'] += ['-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CFLAGS'] += ['-g']
@@ -115,7 +122,14 @@ def mkspec_set_gcc_ccflags(conf):
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    conf.env['CXXFLAGS'] += ['-O2', '-ftree-vectorize', '-Wextra', '-Wall']
+    # Optimization flags
+    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CXXFLAGS'] += optflags
+
+    # Warning flags (pedantic ensures ISO C++ conformance)
+    conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g']
@@ -125,18 +139,16 @@ def mkspec_set_gxx_cxxflags(conf):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    # Use the more restrictive c++0x option for linux
+    # Use the more restrictive c++11 standard on Linux
     if conf.is_mkspec_platform('linux'):
-        conf.env['CXXFLAGS'] += ['-std=c++0x']
+        conf.env['CXXFLAGS'] += ['-std=c++11']
     else:
-        # Other platforms might need some non-standard functions
-        # therefore we use gnu++0x
+        # Other platforms might need some non-standard functions,
+        # therefore we use gnu++11
         # For Android see: http://stackoverflow.com/questions/9247151
         # For MinGW: http://stackoverflow.com/questions/6312151
-        conf.env['CXXFLAGS'] += ['-std=gnu++0x']
+        conf.env['CXXFLAGS'] += ['-std=gnu++11']
 
-    # To enable the latest standard on g++ 4.7
-    # conf.env['CXXFLAGS'] += ['-std=c++11']
 
 
 @conf

@@ -119,6 +119,8 @@ def resolve(ctx):
 
     ctx.load('runners.ssh_runner')
 
+# We keep a list of the run tasks so that we can execute them sequentially
+run_tasks = []
 
 @feature('test')
 @after_method('apply_link')
@@ -134,8 +136,9 @@ def make_benchmark(self):
         make_run(self, "benchmark")
     elif hasattr(self, 'link_task'):
         if self.bld.has_tool_option('run_benchmark'):
+            # Compare the benchmark name ignoring the file extension
             if self.bld.get_tool_option("run_benchmark") == \
-               self.link_task.outputs[0].name:
+               os.path.splitext(self.link_task.outputs[0].name)[0]:
                 make_run(self, "benchmark")
 
         if self.bld.has_tool_option('print_benchmark_paths'):
@@ -173,6 +176,13 @@ def make_run(taskgen, run_type):
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
         task.test_inputs = taskgen.to_nodes(test_files)
+
+        # Make sure that this newly created task is executed after the
+        # previously defined run task (if there is such a task)
+        if len(run_tasks) > 0:
+            task.set_run_after(run_tasks[-1])
+        # Store this task in the run_tasks list
+        run_tasks.append(task)
 
         # Check if the executable requires any kernel modules
         kernel_modules = getattr(taskgen, 'kernel_modules', [])

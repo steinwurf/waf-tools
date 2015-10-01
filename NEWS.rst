@@ -8,6 +8,70 @@ Latest
 ------
 * tbd
 
+2.54.0
+------
+* Minor: Added cxx_apple_llvm70_x64 mkspec (to support XCode 7.0).
+
+2.53.1
+------
+* Patch: Ensure that the result_folder exists in SSHRunner and AndroidRunner.
+
+2.53.0
+------
+* Minor: Ignore the file extension when running a specific benchmark with
+  the run_benchmark option.
+
+2.52.0
+------
+* Minor: Added the result_file and result_folder options to all runners to
+  copy a generated file to the specified folder on the host.
+
+2.51.0
+------
+* Minor: Allow alternative names for node.js binary on all platforms.
+
+2.50.0
+------
+* Minor: Force the sequential execution of run tasks (tests and benchmarks)
+  in wurf_runner. The run tasks are executed in the same order as they are
+  defined in the wscripts.
+
+2.49.0
+------
+* Minor: Added mkspecs for clang 3.6 and g++ 5.2.
+
+2.48.0
+------
+* Minor: Added cxx_msvc14_x86 and cxx_msvc14_x64 mkspecs and adjusted compiler
+  flags to support the Visual Studio 2015 compiler (MSVC 14.0).
+
+2.47.0
+------
+* Minor: Added cxx_apple_llvm61_x64 mkspec (to support XCode 6.4).
+* Minor: Added default iOS mkspecs where we only check for a minimum version
+  of the Apple LLVM compiler: cxx_ios70_apple_llvm_armv7,
+  cxx_ios70_apple_llvm_armv7s, cxx_ios70_apple_llvm_arm64,
+  cxx_ios70_apple_llvm_i386, cxx_ios70_apple_llvm_x86_64.
+* Minor: Added cxx_emscripten134 mkspec.
+* Patch: Corrected the check for the minimum version of the emscripten compiler.
+
+2.46.0
+------
+* Minor: Updated the minimum versions in cxx_default to g++ 4.8 and clang 3.5.
+* Minor: Switched to the -std=c++11 flag for g++ and clang.
+
+2.45.0
+------
+* Minor: Added mkspecs for new cross-compiler toolchains:
+  cxx_raspberry_gxx49_arm, cxx_openwrt_gxx48_arm.
+
+2.44.0
+------
+* Minor: Added the cxx_gcov_gxx49_x64 mkspec for code coverage analysis
+  with gcov.
+* Minor: Added -pedantic and -finline-functions flags for g++ and clang.
+* Minor: Disabled the unnecessary manifest files for msvc.
+
 2.43.0
 ------
 * Minor: Added the cxx_default_emscripten mkspec that only checks for a

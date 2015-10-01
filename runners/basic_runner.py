@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import os
+import shutil
 from waflib import Utils, Task, Logs
 testlock = Utils.threading.Lock()
 
@@ -119,12 +120,6 @@ class BasicRunner(Task.Task):
         if self.kernel_objects:
             cmd.insert(0, 'sudo')
 
-        # If this is a benchmark and we need to retrieve the result file
-        if bld.has_tool_option('run_benchmark') and \
-           bld.has_tool_option('python_result'):
-            cmd += ["--pyfile={0}".format(
-                bld.get_tool_option("python_result"))]
-
         # First check whether we require any test files
         for t in self.test_inputs:
 
@@ -153,6 +148,23 @@ class BasicRunner(Task.Task):
         for ko in reversed(self.kernel_objects):
             result = self.run_cmd(['sudo', 'rmmod', ko.name])
             results.append(result)
+
+        # Copy the result file to the result folder if needed
+        if bld.has_tool_option('result_file') and \
+           bld.has_tool_option('result_folder'):
+
+            result_file = bld.get_tool_option("result_file")
+            result_folder = bld.get_tool_option('result_folder')
+
+            result_file = os.path.join(
+                self.inputs[0].parent.abspath(), result_file)
+
+            # Make sure that the result folder exists
+            if not os.path.exists(result_folder):
+                os.makedirs(result_folder)
+
+            # copy2 copies the result file and preserves its metadata
+            shutil.copy2(result_file, result_folder)
 
         self.save_result(results)
 

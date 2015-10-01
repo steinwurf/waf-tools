@@ -17,9 +17,9 @@ def load_compiler(conf, compiler, arch):
     # Note clang goes first otherwise 'g++' will be in 'clang++'
     #                                  ¯¯¯                  ¯¯¯
     if 'clang' in compiler:
-        conf.mkspec_clang_configure(3, 4, minimum=True)
+        conf.mkspec_clang_configure(3, 5, minimum=True)
     elif 'g++' in compiler:
-        conf.mkspec_gxx_configure(4, 7, minimum=True)
+        conf.mkspec_gxx_configure(4, 8, minimum=True)
     elif 'msvc' in compiler or 'CL.exe' in compiler or 'cl.exe' in compiler:
         if arch == 'x86':
             conf.env.MSVC_TARGETS = ['x86']
@@ -64,7 +64,7 @@ def cxx_default(conf, arch=None):
     cxx_compilers = {
         'win32':  ['msvc', 'g++'],
         'linux':  ['g++', 'clang++'],
-        'darwin': ['clang++', 'g++'],
+        'darwin': ['clang++'],
         'cygwin': ['g++'],
         'default': ['g++']
     }

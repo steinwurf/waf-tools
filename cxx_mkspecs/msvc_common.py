@@ -53,22 +53,29 @@ def mkspec_set_msvc_flags(conf):
         # Use the multithread, release version of the run-time library
         conf.env['CXXFLAGS'] += ['/MT']
 
-    # Define _CRT_SECURE_NO_WARNINGS and _SCL_SECURE_NO_WARNINGS to suppress
-    # deprecation warnings for strcpy, sprintf, etc.
+    # Add various defines to suppress deprecation warnings for common
+    # functions like strcpy, sprintf and socket API calls
     conf.env['CXXFLAGS'] += \
-        ['/D_SCL_SECURE_NO_WARNINGS', '/D_CRT_SECURE_NO_WARNINGS']
+        ['/D_SCL_SECURE_NO_WARNINGS', '/D_CRT_SECURE_NO_WARNINGS',
+         '/D_WINSOCK_DEPRECATED_NO_WARNINGS']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target)
-    # to suppress warnings in boost asio
+    # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target) to suppress warnings
+    # in Boost Asio.
     # Disable warning C4345 which only states that msvc follows the
-    # C++ standard for initializing POD types when the () form is used
-    # Treat C4100 unreferenced parameter warning as Level 3
-    # instead of Level 4 to better match g++ warnings
-    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/w34100',
-                             '/EHs', '/D_WIN32_WINNT=0x0501']
+    # C++ standard for initializing POD types when the () form is used.
+    # Since we compile heavily templated code, we enable /bigobj to allow
+    # large object files and we disable warning C4503 that complains about
+    # the length of decorated template names.
+    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/wd4503',
+                             '/EHs', '/D_WIN32_WINNT=0x0501', '/bigobj']
+
+    # Do not generate .manifest files (the /MANIFEST flag is added by waf)
+    conf.env['LINKFLAGS'].remove('/MANIFEST')
+    conf.env['LINKFLAGS'] += ['/MANIFEST:NO']
+    conf.env['MSVC_MANIFEST'] = False
 
     # Disable LNK4221 linker warning for empty object files
     conf.env['LINKFLAGS'] += ['/ignore:4221']  # used for LINK.exe

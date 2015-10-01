@@ -17,12 +17,12 @@ def cxx_android_clang34_armv7(conf):
 
 
 @conf
-def cxx_apple_llvm60_x64(conf):
+def cxx_apple_llvm70_x64(conf):
     """
-    Detect and setup the 64-bit Apple LLVM 6.0 compiler (clang 3.5)
+    Detect and setup the 64-bit Apple LLVM 7.0 compiler
     """
     if conf.is_mkspec_platform('mac'):
-        conf.mkspec_clang_configure(6, 0)
+        conf.mkspec_clang_configure(7, 0)
         conf.mkspec_add_common_flag('-m64')
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
@@ -48,55 +48,73 @@ def cxx_clang35_x86(conf):
 
 
 @conf
-def cxx_ios50_apple_llvm60_armv7(conf):
+def cxx_clang36_x64(conf):
     """
-    Detect and setup the Apple LLVM 6.0 compiler for iOS 5.0 armv7
+    Detect and setup the clang 3.6 compiler for 64 bit
     """
-    conf.mkspec_clang_ios_configure(6, 0, '5.0', 'armv7')
+    conf.mkspec_clang_configure(3, 6)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_clang36_x86(conf):
+    """
+    Detect and setup the clang 3.6 compiler for 32 bit
+    """
+    conf.mkspec_clang_configure(3, 6)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
+def cxx_ios50_apple_llvm_armv7(conf):
+    """
+    Detect and setup the default Apple LLVM compiler for iOS 5.0 armv7
+    """
+    conf.mkspec_clang_ios_configure(6, 1, '5.0', 'armv7', minimum=True)
     conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
-def cxx_ios70_apple_llvm60_armv7(conf):
+def cxx_ios70_apple_llvm_armv7(conf):
     """
-    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 armv7
+    Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
     """
-    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'armv7')
+    conf.mkspec_clang_ios_configure(6, 1, '7.0', 'armv7', minimum=True)
     conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
-def cxx_ios70_apple_llvm60_armv7s(conf):
+def cxx_ios70_apple_llvm_armv7s(conf):
     """
-    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 armv7s
+    Detect and setup the Apple LLVM compiler for iOS 7.0 armv7s
     """
-    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'armv7s')
+    conf.mkspec_clang_ios_configure(6, 1, '7.0', 'armv7s', minimum=True)
     conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
-def cxx_ios70_apple_llvm60_arm64(conf):
+def cxx_ios70_apple_llvm_arm64(conf):
     """
-    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 arm64
+    Detect and setup the Apple LLVM compiler for iOS 7.0 arm64
     """
-    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'arm64')
+    conf.mkspec_clang_ios_configure(6, 1, '7.0', 'arm64', minimum=True)
     conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
-def cxx_ios70_apple_llvm60_i386(conf):
+def cxx_ios70_apple_llvm_i386(conf):
     """
-    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 i386 (simulator)
+    Detect and setup the Apple LLVM compiler for iOS 7.0 i386 (simulator)
     """
-    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'i386')
+    conf.mkspec_clang_ios_configure(6, 1, '7.0', 'i386', minimum=True)
 
 
 @conf
-def cxx_ios70_apple_llvm60_x86_64(conf):
+def cxx_ios70_apple_llvm_x86_64(conf):
     """
-    Detect and setup the Apple LLVM 6.0 compiler for iOS 7.0 x86_64 (simulator)
+    Detect and setup the Apple LLVM compiler for iOS 7.0 x86_64 (simulator)
     """
-    conf.mkspec_clang_ios_configure(6, 0, '7.0', 'x86_64')
+    conf.mkspec_clang_ios_configure(6, 1, '7.0', 'x86_64', minimum=True)
 
 
 @conf
