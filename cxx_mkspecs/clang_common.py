@@ -6,6 +6,8 @@ import os
 from waflib.Configure import conf
 import waflib.Utils
 
+from . import cxx_common
+
 
 @conf
 def mkspec_check_clang_version(conf, compiler, major, minor, minimum=False):
