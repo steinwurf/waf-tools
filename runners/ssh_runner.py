@@ -37,7 +37,7 @@ def resolve(ctx):
 
     opts.add_option(
         '--ssh_output_file', default=None, dest='ssh_output_file',
-        help='Save the output of the executed command to the given file '
+        help='Save the console output to the given file '
              '(used with --ssh_runner)')
 
     opts.add_option(
