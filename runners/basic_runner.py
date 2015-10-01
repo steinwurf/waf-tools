@@ -4,6 +4,7 @@
 import os
 import shutil
 from waflib import Utils, Task, Logs
+
 testlock = Utils.threading.Lock()
 
 def nice_path(node):

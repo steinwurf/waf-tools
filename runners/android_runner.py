@@ -4,7 +4,7 @@
 import os
 import re
 
-from basic_runner import BasicRunner
+from .basic_runner import BasicRunner
 
 
 class AndroidRunner(BasicRunner):

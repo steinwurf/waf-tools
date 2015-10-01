@@ -4,7 +4,8 @@
 import os
 import time
 from waflib import Utils, Logs
-from ssh_runner import SSHRunner
+
+from .ssh_runner import SSHRunner
 
 
 class IOSRunner(SSHRunner):

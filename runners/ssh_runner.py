@@ -5,7 +5,8 @@ import os
 import sys
 import re
 from waflib import Utils, Logs
-from basic_runner import BasicRunner
+
+from .basic_runner import BasicRunner
 
 
 def resolve(ctx):
