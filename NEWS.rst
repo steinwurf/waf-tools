@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+3.0.1
+-----
+* Patch: Added missing property to the ssh_clean_dir option which does not
+  take a value.
+
 3.0.0
 -----
 * Major: Changed the folder structure so that the main tools are located
