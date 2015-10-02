@@ -14,9 +14,8 @@ def resolve(ctx):
     opts = ctx.opt.add_option_group('SSH/iOS runner options')
 
     opts.add_option(
-        '--ssh_runner', default=None, dest='ssh_runner',
-        action='store_true', help="Run the tests or benchmarks on a remote "
-                                  "host using SSH")
+        '--ssh_runner', default=None, dest='ssh_runner', action='store_true',
+         help="Run the tests or benchmarks on a remote host using SSH")
 
     opts.add_option(
         '--ssh_user', default=None, dest='ssh_user',
@@ -33,6 +32,7 @@ def resolve(ctx):
 
     opts.add_option(
         '--ssh_clean_dir', default=None, dest='ssh_clean_dir',
+        action='store_true',
         help='Delete all files from the destination folder '
              'before running the binary (used with --ssh_runner)')
 
