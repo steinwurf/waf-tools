@@ -4,6 +4,7 @@
 import os
 import shutil
 from waflib import Utils, Task, Logs
+
 testlock = Utils.threading.Lock()
 
 def nice_path(node):
@@ -54,12 +55,11 @@ class BasicRunner(Task.Task):
 
     def runnable_status(self):
         """
-        Always execute the task if `waf --options=run_always` was used
+        Always execute the run task (even if the binary did not change)
         """
         ret = super(BasicRunner, self).runnable_status()
         if ret == Task.SKIP_ME:
-            if self.generator.bld.has_tool_option('run_always'):
-                return Task.RUN_ME
+            return Task.RUN_ME
 
         return ret
 

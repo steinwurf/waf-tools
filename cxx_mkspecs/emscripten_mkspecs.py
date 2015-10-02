@@ -3,7 +3,7 @@
 
 from waflib.Configure import conf
 
-import emscripten_common
+from . import emscripten_common
 
 
 @conf

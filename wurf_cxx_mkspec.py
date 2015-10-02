@@ -4,11 +4,11 @@
 from waflib import Utils
 from waflib.Configure import conf
 
-import cxx_default
-import clang_mkspecs
-import gxx_mkspecs
-import msvc_mkspecs
-import emscripten_mkspecs
+import cxx_mkspecs.cxx_default
+import cxx_mkspecs.clang_mkspecs
+import cxx_mkspecs.gxx_mkspecs
+import cxx_mkspecs.msvc_mkspecs
+import cxx_mkspecs.emscripten_mkspecs
 
 # Allows us to catch queries for platforms that we do not yet support
 mkspec_platforms = ['windows', 'linux', 'android', 'mac', 'ios', 'emscripten']
@@ -48,7 +48,65 @@ def is_mkspec_platform(conf, platform):
     return conf.get_mkspec_platform() == platform
 
 
+def resolve(ctx):
+
+    opts = ctx.opt.add_option_group('Makespec options')
+
+    opts.add_option(
+        '--cxx_mkspec', default=None, dest='cxx_mkspec',
+        help="Select a C++ make specification (which can include a specific "
+             "platform, compiler and CPU architecture)")
+
+    opts.add_option(
+        '--cxx_debug', default=None, dest='cxx_debug',
+        action='store_true', help="Defines compiler flags for a debug build")
+
+    opts.add_option(
+        '--cxx_nodebug', default=None, dest='cxx_nodebug',
+        action='store_true', help='Defines the "NDEBUG" compiler flag')
+
+    opts.add_option(
+        '--cflags', default=None, dest='cflags',
+        help='Defines extra flags for the C compiler '
+             '(use the ";" character between flags)')
+
+    opts.add_option(
+        '--cxxflags', default=None, dest='cxxflags',
+        help='Defines extra flags for the C++ compiler '
+             '(use the ";" character between flags)')
+
+    opts.add_option(
+        '--linkflags', default=None, dest='linkflags',
+        help='Defines extra flags for the linker '
+             '(use the ";" character between flags)')
+
+    opts.add_option(
+        '--commonflags', default=None, dest='commonflags',
+        help='Defines extra flags for the C/C++ compiler and the linker '
+             '(use the ";" character between flags)')
+
+    opts.add_option(
+        '--android_sdk_dir', default=None, dest='android_sdk_dir',
+        help="Path to the Android SDK (not required if ADB is in the PATH)")
+
+    opts.add_option(
+        '--android_ndk_dir', default=None, dest='android_ndk_dir',
+        help='Path to the standalone Android toolchain (the standard NDK '
+             'is not supported)')
+
+    opts.add_option(
+        '--ios_sdk_dir', default=None, dest='ios_sdk_dir',
+        help="Path to the iOS SDK (not required if XCode is installed to "
+             "the default location)")
+
+    opts.add_option(
+        '--ios_toolchain_dir', default=None, dest='ios_toolchain_dir',
+        help="Path to the iOS toolchain (not required if XCode is installed "
+             "to the default location)")
+
+
 def configure(conf):
+
     # Which mkspec should we use, by default, use the cxx_default
     # that simply fallbacks to use waf auto detect of compiler etc.
     mkspec = "cxx_default"

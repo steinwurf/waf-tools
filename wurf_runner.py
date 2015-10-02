@@ -6,54 +6,36 @@
 # been significantly rewritten.
 
 """
-Unit testing + benchmark tool.
+Tool for running unit tests and benchmarks on various platforms.
 
-This tool is available in the external-waf-tools repository, so we have
-to load it:
+This tool is loaded automatically in the wscript of "waf-tools".
 
-def options(opt):
-    import waflib.extras.wurf_dependency_bundle as bundle
-    import waflib.extras.wurf_dependency_resolve as resolve
-    import waflib.extras.wurf_configure_output
-
-    bundle.add_dependency(opt,
-        resolve.ResolveGitMajorVersion(
-            name='waf-tools',
-            git_repository='git://github.com/steinwurf/external-waf-tools.git',
-            major_version=1))
-
-    opt.load('wurf_dependency_bundle')
-    opt.load('wurf_tools')
-
-The tool should then be loaded:
-
-def configure(conf):
-    if conf.is_toplevel():
-        conf.load('wurf_dependency_bundle')
-        conf.load('wurf_tools')
-        conf.load_external_tool('mkspec', 'wurf_cxx_mkspec_tool')
-        conf.load_external_tool('runners', 'wurf_runner')
-
-Finally in the build step, we add 'test' as a feature:
+The '--run_tests' option will run the programs that use the 'test' feature:
 
 def build(bld):
     bld.program(features = 'cxx test',
                 source   = ['main.cpp'],
                 target   = 'hello')
 
-This tool also support providing test files. This is useful when writing
-tests that require some input data file in order to run. The test files
+The '--run_benchmarks' and '--run_benchmark=...' options are used to run
+programs that define the 'benchmark' feature:
+
+def build(bld):
+    bld.program(features = 'cxx benchmark',
+                source   = ['main.cpp'],
+                target   = 'my_benchmark')
+
+This tool can also copy test files. This is useful when writing
+tests that require some input data files in order to run. The test files
 will be copied to the directory where the test binary will be executed.
 
-Test files are added by specifying them using the test_files attribute
-of the build. E.g.:
+Test files can be added with the 'test_files' attribute:
 
 def build(bld):
     bld.program(features   = 'cxx test',
                 source     = ['main.cpp'],
                 target     = 'hello',
                 test_files = ['test_input.txt'])
-
 """
 
 import os
@@ -61,11 +43,62 @@ import os
 from waflib import Logs
 from waflib.TaskGen import feature, after_method
 
-from android_runner import AndroidRunner
-from basic_runner import BasicRunner
-from ios_runner import IOSRunner
-from ssh_runner import SSHRunner
-from emscripten_runner import EmscriptenRunner
+from runners.android_runner import AndroidRunner
+from runners.basic_runner import BasicRunner
+from runners.ios_runner import IOSRunner
+from runners.ssh_runner import SSHRunner
+from runners.emscripten_runner import EmscriptenRunner
+
+
+def resolve(ctx):
+
+    opts = ctx.opt.add_option_group('Runner options')
+
+    opts.add_option(
+        '--run_tests', default=None, dest='run_tests',
+        action='store_true', help='Run all unit tests')
+
+    opts.add_option(
+        '--run_silent', default=None, dest='run_silent',
+        action='store_true', help='Do not print the test output on success '
+                                  '(used with --run_tests)')
+
+    opts.add_option(
+        '--run_benchmarks', default=None, dest='run_benchmarks',
+        action='store_true', help='Run all benchmarks')
+
+    opts.add_option(
+        '--run_benchmark', default=None, dest='run_benchmark',
+        help='Run a specific benchmark')
+
+    opts.add_option(
+        '--print_benchmarks', default=None, dest='print_benchmarks',
+        action='store_true', help='Print the names of the defined benchmarks')
+
+    opts.add_option(
+        '--print_benchmark_paths', default=None, dest='print_benchmark_paths',
+        action='store_true', help='Print the paths to the benchmark binaries')
+
+    opts.add_option(
+        '--run_cmd', default=None, dest='run_cmd',
+        help='Run the target executable with a custom command '
+             '(e.g. "valgrind %s")')
+
+    opts.add_option(
+        '--result_file', default=None, dest='result_file',
+        help='Copy the specified result file to the host')
+
+    opts.add_option(
+        '--result_folder', default=None, dest='result_folder',
+        help='Copy the result file to the given folder on the host '
+             '(used with --result_file)')
+
+    opts.add_option(
+        '--device_id', default=None, dest='device_id',
+        help='Specify the ID of the target Android device '
+             '(used with ADB when multiple devices are available)')
+
+    ctx.load('runners.ssh_runner')
 
 # We keep a list of the run tasks so that we can execute them sequentially
 run_tasks = []
@@ -74,20 +107,20 @@ run_tasks = []
 @after_method('apply_link')
 def make_test(self):
     if self.bld.has_tool_option('run_tests'):
-        make_run(self, "test")
+        make_run(self, 'test')
 
 
 @feature('benchmark')
 @after_method('apply_link')
 def make_benchmark(self):
     if self.bld.has_tool_option('run_benchmarks'):
-        make_run(self, "benchmark")
+        make_run(self, 'benchmark')
     elif hasattr(self, 'link_task'):
         if self.bld.has_tool_option('run_benchmark'):
             # Compare the benchmark name ignoring the file extension
-            if self.bld.get_tool_option("run_benchmark") == \
+            if self.bld.get_tool_option('run_benchmark') == \
                os.path.splitext(self.link_task.outputs[0].name)[0]:
-                make_run(self, "benchmark")
+                make_run(self, 'benchmark')
 
         if self.bld.has_tool_option('print_benchmark_paths'):
             print(self.link_task.outputs[0].relpath())

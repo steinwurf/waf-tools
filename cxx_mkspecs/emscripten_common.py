@@ -7,7 +7,7 @@ import sys
 from waflib.Utils import subprocess
 from waflib.Configure import conf
 
-import cxx_common
+from . import cxx_common
 
 
 @conf

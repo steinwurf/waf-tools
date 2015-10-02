@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from basic_runner import BasicRunner
+from .basic_runner import BasicRunner
 
 
 class EmscriptenRunner(BasicRunner):

@@ -6,7 +6,7 @@ import os
 from waflib.Configure import conf
 import waflib.Utils
 
-import cxx_common
+from . import cxx_common
 
 
 @conf

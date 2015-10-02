@@ -6,7 +6,12 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Major: Changed the folder structure so that the main tools are located
+  in the root folder and their submodules are in the corresponding subfolders.
+* Major: Defined all tool options in the resolve step to work with the
+  recursive option resolution. The tool options are now standalone, and they
+  are described in the waf help.
+* Major: Removed the mkspecs that are no longer supported.
 
 2.54.0
 ------

@@ -8,6 +8,8 @@ import waflib.Tools.gcc
 import waflib.Tools.gxx
 import waflib.Utils
 
+from . import cxx_common
+
 
 @conf
 def mkspec_check_gcc_version(conf, compiler, major, minor, minimum=False):
