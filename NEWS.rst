@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+3.0.0
+-----
 * Major: Changed the folder structure so that the main tools are located
   in the root folder and their submodules are in the corresponding subfolders.
 * Major: Defined all tool options in the resolve step to work with the
