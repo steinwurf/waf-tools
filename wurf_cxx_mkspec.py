@@ -104,6 +104,10 @@ def resolve(ctx):
         help="Path to the iOS toolchain (not required if XCode is installed "
              "to the default location)")
 
+    opts.add_option(
+        '--emscripten_path', default=None, dest='emscripten_path',
+        help="Path to the Emscripten compiler (em++)")
+
 
 def configure(conf):
 
