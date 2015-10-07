@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+3.0.2
+-----
+* Patch: Added missing emscripten_path option.
+
 3.0.1
 -----
 * Patch: Added missing property to the ssh_clean_dir option which does not
