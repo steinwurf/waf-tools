@@ -165,7 +165,8 @@ def make_run(taskgen, run_type):
             # this waf process, so e.g. the pthread shared lib should be
             # already available on the system.
             lib_task_gen = taskgen.bld.task_gen_cache_names.get(lib_name, None)
-            if lib_task_gen and lib_task_gen.target:
+            if lib_task_gen and lib_task_gen.target and \
+               hasattr(lib_task_gen, 'link_task'):
                 # Some lib found, now determine if it is a shared lib.
                 lib_node = lib_task_gen.link_task.outputs[0]
 
