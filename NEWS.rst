@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+3.1.0
+-----
 * Minor: The test runner automatically copies the compiled shared libraries
   next to the test binaries (no need to specify these as test_files).
 
