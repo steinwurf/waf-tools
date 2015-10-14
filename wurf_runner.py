@@ -130,11 +130,10 @@ def make_benchmark(self):
 
 def make_run(taskgen, run_type):
     """
-    Create the run task. There can be only one unit test
-    task by task generator.
-    """
-    task = None
+    Create the run task.
 
+    There can be only one unit test task by task generator.
+    """
     if hasattr(taskgen, 'link_task'):
 
         taskgen.bld.add_group()
@@ -157,6 +156,19 @@ def make_run(taskgen, run_type):
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
         task.test_inputs = taskgen.to_nodes(test_files)
+
+        # Locate the shared libs this binary is depending on (if any).
+        # And Add these to the set of test inputs.
+        for lib in taskgen.uselib:
+            lib = taskgen.bld.task_gen_cache_names.get(lib, None)
+            if lib and lib.target:
+                # Some lib found, now detect whehter it's a shared lib.
+                shared_lib_name = taskgen.env['cshlib_PATTERN'] % lib.target
+                shared_lib = lib.link_task.outputs[0]
+                if shared_lib_name == shared_lib.name:
+                    # The lib follows the shared lib pattern, we assume it's a
+                    # shared lib, and add it to the test inputs.
+                    task.test_inputs.append(shared_lib)
 
         # Make sure that this newly created task is executed after the
         # previously defined run task (if there is such a task)
