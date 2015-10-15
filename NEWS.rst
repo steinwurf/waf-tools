@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+3.1.1
+-----
+* Patch: Use `use` instead of `uselib` to find the needed the shared libraries.
+
 3.1.0
 -----
 * Minor: The test runner automatically copies the compiled shared libraries
