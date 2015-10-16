@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+3.1.2
+-----
+* Patch: Revert the change made in 3.1.1.
+
 3.1.1
 -----
 * Patch: Use `use` instead of `uselib` to find the needed the shared libraries.
