@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+3.2.0
+-----
+* Minor: Added cxx_android5_gxx48_armv7 mkspec to support Android 5.0+ where
+  only position independent executables (PIE) can be executed.
+
 3.1.3
 -----
 * Patch: Use both `use` and `uselib` to find the needed the shared libraries.
