@@ -34,6 +34,19 @@ def cxx_android_gxx48_armv7(conf):
 
 
 @conf
+def cxx_android5_gxx48_armv7(conf):
+    """
+    Detect and setup the Android 5.0+ g++ 4.8 compiler for ARMv7
+    """
+    conf.cxx_android_gxx48_armv7()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    conf.mkspec_add_common_flag('-fPIE')
+    conf.env['LINKFLAGS'] += ['-pie']
+
+
+@conf
 def cxx_gcov_gxx49_x64(conf):
     """
     Configure g++ 4.9 (64 bit) for coverage analysis with gcov
