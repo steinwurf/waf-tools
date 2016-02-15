@@ -55,11 +55,30 @@ def cxx_android_gxx49_x86(conf):
 
 
 @conf
-def cxx_android_gxx49_x64(conf):
+def cxx_android5_gxx49_x86(conf):
     """
-    Detect and setup the Android g++ 4.9 compiler for x86_64
+    Detect and setup the Android 5.0+ g++ 4.9 compiler for x86
     """
+    conf.cxx_android_gxx49_x86()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    conf.mkspec_add_common_flag('-fPIE')
+    conf.env['LINKFLAGS'] += ['-pie']
+
+
+@conf
+def cxx_android5_gxx49_x64(conf):
+    """
+    Detect and setup the Android 5.0+ g++ 4.9 compiler for x86_64
+    """
+    # Note: The x86_64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --platform=android-21 option (or above).
     conf.mkspec_gxx_android_configure(4, 9, 'x86_64-linux-android')
+    # The PIE binary must be the default in this case
+    conf.mkspec_add_common_flag('-fPIE')
+    conf.env['LINKFLAGS'] += ['-pie']
 
 
 @conf
