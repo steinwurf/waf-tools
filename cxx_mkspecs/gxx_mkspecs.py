@@ -47,6 +47,22 @@ def cxx_android5_gxx48_armv7(conf):
 
 
 @conf
+def cxx_android_gxx49_x86(conf):
+    """
+    Detect and setup the Android g++ 4.9 compiler for x86
+    """
+    conf.mkspec_gxx_android_configure(4, 9, 'i686-linux-android')
+
+
+@conf
+def cxx_android_gxx49_x64(conf):
+    """
+    Detect and setup the Android g++ 4.9 compiler for x86_64
+    """
+    conf.mkspec_gxx_android_configure(4, 9, 'x86_64-linux-android')
+
+
+@conf
 def cxx_gcov_gxx49_x64(conf):
     """
     Configure g++ 4.9 (64 bit) for coverage analysis with gcov

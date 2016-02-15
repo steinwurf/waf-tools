@@ -62,15 +62,19 @@ def mkspec_set_msvc_flags(conf):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
+    # The /EHs flag only allows standard C++ exceptions (which might also
+    # originate from extern "C" functions).
     # Set _WIN32_WINNT=0x0501 (i.e. Windows XP target) to suppress warnings
     # in Boost Asio.
-    # Disable warning C4345 which only states that msvc follows the
-    # C++ standard for initializing POD types when the () form is used.
-    # Since we compile heavily templated code, we enable /bigobj to allow
-    # large object files and we disable warning C4503 that complains about
-    # the length of decorated template names.
-    conf.env['CXXFLAGS'] += ['/O2', '/Ob2', '/W3', '/wd4345', '/wd4503',
-                             '/EHs', '/D_WIN32_WINNT=0x0501', '/bigobj']
+    # Disabled compiler warnings:
+    # - C4503 that complains about the length of decorated template names.
+    #   This occurs frequently as we compile heavily templated code, and
+    #   we also have to enable /bigobj to allow large object files.
+    # - C4312 that warns about assigning a 32-bit value to a 64-bit pointer
+    #   type which is commonly used in our unit tests.
+    conf.env['CXXFLAGS'] += \
+        ['/O2', '/W2', '/wd4503', '/wd4312',
+         '/EHs', '/D_WIN32_WINNT=0x0501', '/bigobj']
 
     # Do not generate .manifest files (the /MANIFEST flag is added by waf)
     conf.env['LINKFLAGS'].remove('/MANIFEST')
