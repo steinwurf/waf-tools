@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+3.3.0
+-----
+* Minor: Added mkspecs for the x86 and x86_64 architectures on Android:
+  cxx_android_gxx49_x86, cxx_android5_gxx49_x86 and cxx_android5_gxx49_x64.
+* Minor: Consolidated msvc compiler flags and warnings.
+
 3.2.0
 -----
 * Minor: Added cxx_android5_gxx48_armv7 mkspec to support Android 5.0+ where
