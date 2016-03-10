@@ -36,7 +36,7 @@ def cxx_android_gxx48_armv7(conf):
 @conf
 def cxx_android5_gxx48_armv7(conf):
     """
-    Detect and setup the Android 5.0+ g++ 4.8 compiler for ARMv7
+    Detects and setup the Android 5.0+ g++ 4.8 compiler for ARMv7
     """
     conf.cxx_android_gxx48_armv7()
     # Only position independent executables (PIE) are supported on Android 5
