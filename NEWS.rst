@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added mkspecs for clang 3.7 and g++ 5.3.
+* Minor: Added the cxx_apple_llvm73_x64 mkspec (to support XCode 7.3).
 
 3.3.0
 -----
