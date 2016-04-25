@@ -244,9 +244,19 @@ def assemble_output(stdout, stderr):
     """Helper function to assemble output message from the test results"""
     msg = []
     if stdout:
+        try:
+            stdout.encode("ascii")
+        except UnicodeError:
+            stdout = stdout.encode("utf-8")
         msg.append('\nstdout:\n\n{}'.format(stdout))
+
     if stderr:
+        try:
+            stderr.encode("ascii")
+        except UnicodeError:
+            stderr = stderr.encode("utf-8")
         msg.append('\nstderr:\n\n{}'.format(stderr))
+
     return msg
 
 
