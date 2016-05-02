@@ -8,6 +8,11 @@ Latest
 ------
 * Patch: Encode stdout/stderr to utf-8 if it cannot be encoded as ascii.
 
+3.4.0
+-----
+* Minor: Added mkspecs for clang 3.7 and g++ 5.3.
+* Minor: Added the cxx_apple_llvm73_x64 mkspec (to support XCode 7.3).
+
 3.3.0
 -----
 * Minor: Added mkspecs for the x86 and x86_64 architectures on Android:
