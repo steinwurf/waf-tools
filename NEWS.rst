@@ -6,7 +6,11 @@ of every change, see the Git log.
 
 Latest
 ------
-* Patch: Encode stdout/stderr to utf-8 if it cannot be encoded as ascii.
+* tbd
+
+3.4.1
+-----
+* Patch: The test runner supports utf-8 characters printed on stdout/stderr.
 
 3.4.0
 -----
