@@ -169,8 +169,8 @@ class BasicRunner(Task.Task):
         """
         Stores the result in the self.generator.bld.runner_results
         """
-        combined_stdout = ""
-        combined_stderr = ""
+        combined_stdout = u""
+        combined_stderr = u""
         combined_return_code = 0
 
         for result in results:
@@ -178,13 +178,14 @@ class BasicRunner(Task.Task):
             if not isinstance(cmd, str):
                 cmd = " ".join(cmd)
 
-            combined_stdout += 'Running: {0}\n'.format(cmd)
+            combined_stdout += u'Running: {0}\n'.format(cmd)
             if result["stdout"]:
-                combined_stdout += result["stdout"].decode('utf-8')
+                combined_stdout += \
+                    result["stdout"].decode('utf-8').replace('\r\n', '\n')
 
             if result["stderr"]:
-                combined_stderr += 'Running: {0}\n{1}'.format(
-                    cmd, result["stderr"].decode('utf-8'))
+                combined_stderr += u'Running: {0}\n{1}'.format(cmd,
+                    result["stderr"].decode('utf-8').replace('\r\n', '\n'))
             if result['return_code'] != 0:
                 combined_return_code = -1
 
@@ -197,7 +198,7 @@ class BasicRunner(Task.Task):
         testlock.acquire()
         try:
             bld = self.generator.bld
-            Logs.debug("wr: %r", result)
+            Logs.debug(u"wr: %r", result)
             try:
                 bld.runner_results.append(combined_result)
             except AttributeError:
