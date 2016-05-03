@@ -178,7 +178,7 @@ class BasicRunner(Task.Task):
             if not isinstance(cmd, str):
                 cmd = " ".join(cmd)
 
-            combined_stdout += u'Running: {0}\n'.format(cmd)
+            combined_stdout += u'Running: {0}\n'.format(cmd.decode('utf-8'))
             if result["stdout"]:
                 combined_stdout += \
                     result["stdout"].decode('utf-8').replace('\r\n', '\n')
