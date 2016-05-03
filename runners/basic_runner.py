@@ -178,14 +178,18 @@ class BasicRunner(Task.Task):
             if not isinstance(cmd, str):
                 cmd = " ".join(cmd)
 
-            combined_stdout += u'Running: {0}\n'.format(cmd.decode('utf-8'))
+            if hasattr(cmd, "decode"):
+                # This is needed in Python 2 to allow unicode paths
+                cmd = cmd.decode('utf-8')
+
+            combined_stdout += u'Running: {0}\n'.format(cmd)
             if result["stdout"]:
-                combined_stdout += \
-                    result["stdout"].decode('utf-8').replace('\r\n', '\n')
+                combined_stdout += result["stdout"].replace('\r\n', '\n')
 
             if result["stderr"]:
                 combined_stderr += u'Running: {0}\n{1}'.format(cmd,
-                    result["stderr"].decode('utf-8').replace('\r\n', '\n'))
+                    result["stderr"].replace('\r\n', '\n'))
+
             if result['return_code'] != 0:
                 combined_return_code = -1
 
@@ -220,6 +224,7 @@ class BasicRunner(Task.Task):
         (stdout, stderr) = proc.communicate()
 
         result = {'cmd': cmd, 'return_code': proc.returncode,
-                  'stdout': stdout, 'stderr': stderr}
+                  'stdout': stdout.decode('utf-8'),
+                  'stderr': stderr.decode('utf-8')}
 
         return result

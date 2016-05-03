@@ -243,6 +243,7 @@ def summary(bld):
 def assemble_output(stdout, stderr):
     """Helper function to assemble output message from the test results"""
     msg = []
+
     if stdout:
         msg.append(u'\nstdout:\n\n{}'.format(stdout))
 
