@@ -78,7 +78,8 @@ class SSHRunner(BasicRunner):
         (stdout, stderr) = proc.communicate()
 
         result = {'cmd': cmd, 'return_code': proc.returncode,
-                  'stdout': stdout, 'stderr': stderr}
+                  'stdout': stdout.decode('utf-8'),
+                  'stderr': stderr.decode('utf-8')}
 
         return result
 

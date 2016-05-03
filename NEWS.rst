@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Patch: Encode stdout/stderr to utf-8 if it cannot be encoded as ascii.
 
 3.4.0
 -----
