@@ -121,6 +121,11 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
 
     optflag = '-O2'
 
+    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
+    # code on this platform
+    if conf.get_mkspec_platform() in ['ios']:
+        optflag = '-Os'
+
     if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
         conf.env['CFLAGS'] += [optflag]
 
@@ -138,6 +143,11 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
 def mkspec_set_clang_cxxflags(conf, force_debug=False):
 
     optflag = '-O2'
+
+    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
+    # code on this platform
+    if conf.get_mkspec_platform() in ['ios']:
+        optflag = '-Os'
 
     if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
         conf.env['CXXFLAGS'] += [optflag]
