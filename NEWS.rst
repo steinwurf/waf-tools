@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+3.5.0
+-----
+* Minor: Re-enabled the -O2 flag on OSX. This produces 15x faster code for
+  the binary field.
+
 3.4.1
 -----
 * Patch: The test runner supports utf-8 characters printed on stdout/stderr.
