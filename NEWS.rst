@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+3.5.1
+-----
+* Patch: Use the /Z7 flag for MSVC debug builds to include all debugging
+  information in the .obj files.
+
 3.5.0
 -----
 * Minor: Re-enabled the -O2 flag on OSX. This produces 15x faster code for
