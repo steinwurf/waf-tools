@@ -41,12 +41,11 @@ def mkspec_msvc_configure(conf, version):
 def mkspec_set_msvc_flags(conf):
 
     if conf.has_tool_option('cxx_debug'):
-        # Generate complete debugging information in a .pdb file
         # Use the multithread, debug version of the run-time library
-        conf.env['CXXFLAGS'] += ['/Zi', '/MTd']
-        # Force serialized writes to the .pdb file (necessary when waf
-        # spawns parallel compiler processes)
-        conf.env['CXXFLAGS'] += ['/FS']
+        conf.env['CXXFLAGS'] += ['/MTd']
+        # Include all debugging information in the .obj files.
+        # No .pdb files are produced to prevent warnings.
+        conf.env['CXXFLAGS'] += ['/Z7']
 
         conf.env['LINKFLAGS'] += ['/DEBUG']
     else:
