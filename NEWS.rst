@@ -7,6 +7,7 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Minor: Added mkspecs for clang 3.8, g++ 6.0 and g++ 6.1.
 
 3.5.1
 -----

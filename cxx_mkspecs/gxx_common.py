@@ -152,7 +152,6 @@ def mkspec_set_gxx_cxxflags(conf):
         conf.env['CXXFLAGS'] += ['-std=gnu++11']
 
 
-
 @conf
 def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix=None):
     """
