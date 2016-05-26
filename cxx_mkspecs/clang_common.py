@@ -166,6 +166,7 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     # Use the more restrictive c++11 option for linux
     if conf.is_mkspec_platform('linux'):
         conf.env['CXXFLAGS'] += ['-std=c++11']
+        conf.env['DEFINES'] += ['_GLIBCXX_USE_CXX11_ABI=0']
     else:
         # Other platforms might need some non-standard functions,
         # therefore we use gnu++11
