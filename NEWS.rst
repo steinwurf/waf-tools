@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+3.7.0
+-----
 * Minor: Added mkspecs for clang 3.6 sanitizers.
 
 3.6.1
