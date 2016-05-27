@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+3.6.1
+-----
 * Patch: Added the _GLIBCXX_USE_CXX11_ABI=0 define in clang_common to fix
   linking issues with clang on recent Linux systems where libstdc++ has an
   incompatible dual ABI.
