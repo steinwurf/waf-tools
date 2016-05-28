@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* Re-order search order for clang binaries. Such that more specific version
+* Patch: Re-order search order for clang binaries. Such that more specific version
   are searched for first.
 
 3.7.0
