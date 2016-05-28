@@ -208,7 +208,17 @@ def mkspec_get_clangxx_binary_name(conf, major, minor):
     clangxx_binary_names = ['clang++']
 
     if conf.is_mkspec_platform('linux'):
-        clangxx_binary_names += ['clang++-{0}.{1}'.format(major, minor)]
+        # Make sure the more specific binary name is first in the list
+        # e.g. ["clang-3.6", "clang"] instead of ["clang",
+        # "clang-3.6"].
+        #
+        # The reason is that waf's find_program code will search for the
+        # binary name from the beginning of the list so if your default
+        # clang is e.g. 3.8 and you try to configure with a mkspec that
+        # wants 3.6 you will find the default clang first and then we will
+        # fail because it does not have the required version.
+
+        clangxx_binary_names.insert(0,'clang++-{0}.{1}'.format(major, minor))
 
     return clangxx_binary_names
 
@@ -230,6 +240,8 @@ def mkspec_get_clang_binary_name(conf, major, minor):
     clang_binary_names = ['clang']
 
     if conf.is_mkspec_platform('linux'):
-        clang_binary_names += ['clang-{0}.{1}'.format(major, minor)]
+        # See note on the binary name order in the clangxx version of this
+        # function.
+        clang_binary_names.insert(0, 'clang-{0}.{1}'.format(major, minor))
 
     return clang_binary_names
