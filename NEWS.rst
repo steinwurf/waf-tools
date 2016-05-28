@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Re-order search order for clang binaries. Such that more specific version
+  are searched for first.
 
 3.7.0
 -----
