@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+3.8.0
+-----
 * Minor: Added cxx_gcov_default to configure gcov with the default g++.
 * Patch: Changed search order for clang binaries such that the more specific
   version is used first.
