@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+3.8.1
+-----
+* Patch: Fixed invalid parameter in mkspec_setup_gcov.
+
 3.8.0
 -----
 * Minor: Added cxx_gcov_default to configure gcov with the default g++.
