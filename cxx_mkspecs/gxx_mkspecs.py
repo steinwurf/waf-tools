@@ -89,7 +89,7 @@ def mkspec_setup_gcov(conf, major, minor, minimum=False):
     # Don't add any optimization flags (these might lead to incorrect results)
     conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
 
-    conf.mkspec_gxx_configure(major, minor, minimum)
+    conf.mkspec_gxx_configure(major, minor, minimum=minimum)
 
     # Set flag to compile and link code instrumented for coverage analysis
     conf.mkspec_add_common_flag('--coverage')
