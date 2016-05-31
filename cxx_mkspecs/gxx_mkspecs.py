@@ -82,15 +82,14 @@ def cxx_android5_gxx49_x64(conf):
 
 
 @conf
-def cxx_gcov_gxx49_x64(conf):
+def mkspec_setup_gcov(conf, major, minor, minimum=False):
     """
-    Configure g++ 4.9 (64 bit) for coverage analysis with gcov
+    Setup g++ for coverage analysis with gcov
     """
     # Don't add any optimization flags (these might lead to incorrect results)
     conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
 
-    conf.mkspec_gxx_configure(4, 9)
-    conf.mkspec_add_common_flag('-m64')
+    conf.mkspec_gxx_configure(major, minor, minimum)
 
     # Set flag to compile and link code instrumented for coverage analysis
     conf.mkspec_add_common_flag('--coverage')
@@ -100,6 +99,23 @@ def cxx_gcov_gxx49_x64(conf):
              '-fno-default-inline']
     conf.env['CFLAGS'] += flags
     conf.env['CXXFLAGS'] += flags
+
+
+@conf
+def cxx_gcov_gxx49_x64(conf):
+    """
+    Configure g++ 4.9 (64 bit) for coverage analysis with gcov
+    """
+    conf.mkspec_setup_gcov(4, 9)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_gcov_default(conf):
+    """
+    Configure the default g++ for coverage analysis with gcov
+    """
+    conf.mkspec_setup_gcov(4, 8, minimum=True)
 
 
 @conf
