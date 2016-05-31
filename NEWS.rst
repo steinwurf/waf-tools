@@ -6,8 +6,9 @@ of every change, see the Git log.
 
 Latest
 ------
-* Patch: Re-order search order for clang binaries. Such that more specific version
-  are searched for first.
+* Minor: Added cxx_gcov_default to configure gcov with the default g++.
+* Patch: Changed search order for clang binaries such that the more specific
+  version is used first.
 
 3.7.0
 -----
