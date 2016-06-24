@@ -238,27 +238,12 @@ def cxx_raspberry_gxx49_arm(conf):
 
 
 @conf
-def cxx_raspberry2_gxx49_arm(conf):
+def cxx_raspberry_gxx49_armv7(conf):
     """
-    Detect and setup the g++ cross-compiler for Raspberry Pi 2 (Linux)
+    Detect and setup the g++ 4.9 cross-compiler for Raspberry Pi (Linux)
+    running on armv7 compatible hardware (Raspberry Pi 2)
     """
-    conf.env['CXX'] = 'arm-linux-gnueabihf-g++-4.9'
-    conf.mkspec_gxx_configure(4, 9)
-    # atomic support that is required for std::threads (without this flag,
-    # the threading code might call pure virtual methods)
-    conf.env['LINKFLAGS'] += ['-march=armv7-a']
-    # Note: libstdc++ might not be available on the target platform
-    # Statically link with the C++ standard library
-    conf.env['LINKFLAGS'] += ['-static-libstdc++']
-
-
-@conf
-def cxx_raspberry2_gxx_arm(conf):
-    """
-    Detect and setup the g++ cross-compiler for Raspberry Pi 2 (Linux)
-    """
-    conf.env['CXX'] = 'arm-linux-gnueabihf-g++'
-    conf.mkspec_gxx_configure(4, 9, minimum=True)
+    conf.mkspec_gxx_configure(4, 9, 'raspberry-gxx49-arm')
     # atomic support that is required for std::threads (without this flag,
     # the threading code might call pure virtual methods)
     conf.env['LINKFLAGS'] += ['-march=armv7-a']
