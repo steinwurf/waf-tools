@@ -235,6 +235,8 @@ def cxx_raspberry_gxx49_arm(conf):
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
@@ -250,6 +252,8 @@ def cxx_raspberry_gxx49_armv7(conf):
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
