@@ -235,6 +235,25 @@ def cxx_raspberry_gxx49_arm(conf):
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_raspberry_gxx49_armv7(conf):
+    """
+    Detect and setup the g++ 4.9 cross-compiler for Raspberry Pi (Linux)
+    running on armv7 compatible hardware (Raspberry Pi 2)
+    """
+    conf.mkspec_gxx_configure(4, 9, 'raspberry-gxx49-arm')
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
 
 
 @conf

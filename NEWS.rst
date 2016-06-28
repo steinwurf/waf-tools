@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added the cxx_raspberry_gxx49_armv7 mkspec (for Raspberry Pi 2)
 
 3.8.1
 -----
