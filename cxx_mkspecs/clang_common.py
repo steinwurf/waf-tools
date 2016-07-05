@@ -41,7 +41,7 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
         conf.to_log('Using user defined environment variable CXX=%r' % cxx)
     else:
         # Find the clang++ compiler
-        clangxx_names = conf.mkspec_get_clangxx_binary_name(major, minor)
+        clangxx_names = conf.mkspec_get_clangxx_binary_name(major, minor, prefix)
         if minimum:
             clangxx_names = 'clang++'
         cxx = conf.find_program(clangxx_names, path_list=paths)
@@ -58,7 +58,7 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
         conf.to_log('Using user defined environment variable CC=%r' % cc)
     else:
         # Find clang as the C compiler
-        clang_names = conf.mkspec_get_clang_binary_name(major, minor)
+        clang_names = conf.mkspec_get_clang_binary_name(major, minor, prefix)
         if minimum:
             clang_names = 'clang'
         cc = conf.find_program(clang_names, path_list=paths)
@@ -192,17 +192,19 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
 
 
 @conf
-def mkspec_get_clangxx_binary_name(conf, major, minor):
+def mkspec_get_clangxx_binary_name(conf, major, minor, prefix):
     """
     :param major:  The major version number of the clang binary e.g. 3
     :param minor:  The minor version number of the clang binary e.g. 4
+    :param prefix:  Prefix to the compiler name, e.g. 'arm-linux-androideabi'
     :return:       A list with names of the clang++ binary we are looking for,
                    e.g. ['clang34++'] for clang++ 3.4 on Android
     """
 
-    if conf.is_mkspec_platform('android'):
+    # @todo not sure this is needed anymore
+    #if conf.is_mkspec_platform('android'):
         # The numbered clang is the only real binary in the Android toolchain
-        return ['clang{0}{1}++'.format(major, minor)]
+    #    return ['clang{0}{1}++'.format(major, minor)]
 
     # The default name works fine on most other platforms
     clangxx_binary_names = ['clang++']
@@ -218,21 +220,26 @@ def mkspec_get_clangxx_binary_name(conf, major, minor):
         # fail because it does not have the required version.
         clangxx_binary_names.insert(0,'clang++-{0}.{1}'.format(major, minor))
 
+    if prefix:
+        clangxx_binary_names = ['{0}-{1}'.format(prefix, b) for b in clangxx_binary_names]
+
     return clangxx_binary_names
 
 
 @conf
-def mkspec_get_clang_binary_name(conf, major, minor):
+def mkspec_get_clang_binary_name(conf, major, minor, prefix):
     """
     :param major:  The major version number of the clang binary e.g. 3
     :param minor:  The minor version number of the clang binary e.g. 4
+    :param prefix:  Prefix to the compiler name, e.g. 'arm-linux-androideabi'
     :return:       A list with names of the clang binary we are looking for,
                    e.g. ['clang34'] for clang 3.4 on Android
     """
 
-    if conf.is_mkspec_platform('android'):
+    # @todo not sure this is needed anymore
+    #if conf.is_mkspec_platform('android'):
         # The numbered clang is the only real binary in the Android toolchain
-        return ['clang{0}{1}'.format(major, minor)]
+    #    return ['clang{0}{1}'.format(major, minor)]
 
     # The default name works fine on most other platforms
     clang_binary_names = ['clang']
@@ -241,5 +248,8 @@ def mkspec_get_clang_binary_name(conf, major, minor):
         # See note on the binary name order in the clangxx version of this
         # function.
         clang_binary_names.insert(0, 'clang-{0}.{1}'.format(major, minor))
+
+    if prefix:
+        clangxx_binary_names = ['{0}-{1}'.format(prefix, b) for b in clang_binary_names]
 
     return clang_binary_names
