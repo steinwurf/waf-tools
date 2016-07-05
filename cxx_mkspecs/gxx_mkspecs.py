@@ -47,6 +47,46 @@ def cxx_android5_gxx48_armv7(conf):
 
 
 @conf
+def cxx_android_gxx49_arm(conf):
+    """
+    Detect and setup the Android g++ 4.9 compiler for ARM
+    """
+    conf.mkspec_gxx_android_configure(4, 9, 'arm-linux-androideabi')
+
+
+@conf
+def cxx_android_gxx49_armv7(conf):
+    """
+    Detect and setup the Android g++ 4.9 compiler for ARMv7
+    """
+    conf.mkspec_gxx_android_configure(4, 9, 'arm-linux-androideabi')
+    # Specify the ARMv7 architecture and the 'softfp' float ABI to compile for
+    # hardware FPU, but with software linkage (required for -mfpu=neon flag).
+    # The __ARM_NEON__ macro will be defined only if the -mfloat-abi=softfp and
+    # -mfpu=neon flags are used together.
+    flags = ['-march=armv7-a', '-mtune=generic-armv7-a', '-mfloat-abi=softfp']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+
+
+@conf
+def cxx_android5_gxx49_armv7(conf):
+    """
+    Detects and setup the Android 5.0+ g++ 4.9 compiler for ARMv7
+    """
+    conf.cxx_android_gxx49_armv7()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    conf.mkspec_add_common_flag('-fPIE')
+    conf.env['LINKFLAGS'] += ['-pie']
+
+
+@conf
 def cxx_android_gxx49_x86(conf):
     """
     Detect and setup the Android g++ 4.9 compiler for x86
