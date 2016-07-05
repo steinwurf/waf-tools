@@ -41,7 +41,8 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
         conf.to_log('Using user defined environment variable CXX=%r' % cxx)
     else:
         # Find the clang++ compiler
-        clangxx_names = conf.mkspec_get_clangxx_binary_name(major, minor, prefix)
+        clangxx_names = conf.mkspec_get_compiler_binary_name(
+            'clang++', major, minor, prefix)
         if minimum:
             clangxx_names = 'clang++'
         cxx = conf.find_program(clangxx_names, path_list=paths)
@@ -58,7 +59,8 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
         conf.to_log('Using user defined environment variable CC=%r' % cc)
     else:
         # Find clang as the C compiler
-        clang_names = conf.mkspec_get_clang_binary_name(major, minor, prefix)
+        clang_names = conf.mkspec_get_compiler_binary_name(
+            'clang', major, minor, prefix)
         if minimum:
             clang_names = 'clang'
         cc = conf.find_program(clang_names, path_list=paths)
@@ -96,16 +98,19 @@ def mkspec_clang_configure(conf, major, minor, prefix=None, minimum=False,
 
 
 @conf
-def mkspec_clang_android_configure(conf, major, minor, prefix, target):
+def mkspec_clang_android_configure(conf, major, minor, prefix, target=None):
     conf.set_mkspec_platform('android')
     conf.mkspec_clang_configure(major, minor, prefix)
     conf.mkspec_set_android_options()
 
-    # Specify the target architecture as required by clang
-    target_flags = ['-target', target]
-    conf.env['CFLAGS'] += target_flags
-    conf.env['CXXFLAGS'] += target_flags
-    conf.env['LINKFLAGS'] += target_flags
+    # Specify the target architecture if required. Newer Android toolchains
+    # explicitly set the target in the arm-linux-androideabi-clang++ script,
+    # so this is no longer needed.
+    if target:
+        target_flags = ['-target', target]
+        conf.env['CFLAGS'] += target_flags
+        conf.env['CXXFLAGS'] += target_flags
+        conf.env['LINKFLAGS'] += target_flags
 
 
 @conf
@@ -189,67 +194,3 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     if conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['CXXFLAGS'] += ['-stdlib=libc++']
         conf.env['LINKFLAGS'] += ['-lc++']
-
-
-@conf
-def mkspec_get_clangxx_binary_name(conf, major, minor, prefix):
-    """
-    :param major:  The major version number of the clang binary e.g. 3
-    :param minor:  The minor version number of the clang binary e.g. 4
-    :param prefix:  Prefix to the compiler name, e.g. 'arm-linux-androideabi'
-    :return:       A list with names of the clang++ binary we are looking for,
-                   e.g. ['clang34++'] for clang++ 3.4 on Android
-    """
-
-    # @todo not sure this is needed anymore
-    #if conf.is_mkspec_platform('android'):
-        # The numbered clang is the only real binary in the Android toolchain
-    #    return ['clang{0}{1}++'.format(major, minor)]
-
-    # The default name works fine on most other platforms
-    clangxx_binary_names = ['clang++']
-
-    if conf.is_mkspec_platform('linux'):
-        # Make sure the more specific binary name is first in the list
-        # e.g. ["clang-3.6", "clang"] instead of ["clang", "clang-3.6"].
-        #
-        # The reason is that waf's find_program code will search for the
-        # binary name from the beginning of the list so if your default
-        # clang is e.g. 3.8 and you try to configure with a mkspec that
-        # wants 3.6 you will find the default clang first and then we will
-        # fail because it does not have the required version.
-        clangxx_binary_names.insert(0,'clang++-{0}.{1}'.format(major, minor))
-
-    if prefix:
-        clangxx_binary_names = ['{0}-{1}'.format(prefix, b) for b in clangxx_binary_names]
-
-    return clangxx_binary_names
-
-
-@conf
-def mkspec_get_clang_binary_name(conf, major, minor, prefix):
-    """
-    :param major:  The major version number of the clang binary e.g. 3
-    :param minor:  The minor version number of the clang binary e.g. 4
-    :param prefix:  Prefix to the compiler name, e.g. 'arm-linux-androideabi'
-    :return:       A list with names of the clang binary we are looking for,
-                   e.g. ['clang34'] for clang 3.4 on Android
-    """
-
-    # @todo not sure this is needed anymore
-    #if conf.is_mkspec_platform('android'):
-        # The numbered clang is the only real binary in the Android toolchain
-    #    return ['clang{0}{1}'.format(major, minor)]
-
-    # The default name works fine on most other platforms
-    clang_binary_names = ['clang']
-
-    if conf.is_mkspec_platform('linux'):
-        # See note on the binary name order in the clangxx version of this
-        # function.
-        clang_binary_names.insert(0, 'clang-{0}.{1}'.format(major, minor))
-
-    if prefix:
-        clangxx_binary_names = ['{0}-{1}'.format(prefix, b) for b in clang_binary_names]
-
-    return clang_binary_names

@@ -15,14 +15,15 @@ def cxx_android_clang34_armv7(conf):
                                         target='armv7-linux-androideabi')
     conf.env['DEST_CPU'] = 'arm'
 
+
 @conf
-def cxx_android_clang38_armv7a(conf):
+def cxx_android_clang38_armv7(conf):
     """
-    Detect and setup the Android clang 3.8 compiler for ARMv7a
+    Detect and setup the Android clang 3.8 compiler for ARMv7
     """
-    conf.mkspec_clang_android_configure(3, 8, prefix='arm-linux-androideabi',
-                                        target='armv7a-none-linux-android')
+    conf.mkspec_clang_android_configure(3, 8, prefix='arm-linux-androideabi')
     conf.env['DEST_CPU'] = 'arm'
+
 
 @conf
 def cxx_apple_llvm70_x64(conf):

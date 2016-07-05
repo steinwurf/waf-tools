@@ -41,7 +41,8 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
         conf.to_log('Using user defined environment variable CXX=%r' % cxx)
     else:
         # Find g++ first
-        gxx_names = conf.mkspec_get_gnu_binary_name('g++', major, minor, prefix)
+        gxx_names = conf.mkspec_get_compiler_binary_name(
+            'g++', major, minor, prefix)
         if minimum:
             gxx_names = 'g++'
         cxx = conf.find_program(gxx_names, path_list=paths)
@@ -58,7 +59,8 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
         conf.to_log('Using user defined environment variable CC=%r' % cc)
     else:
         # Also find gcc
-        gcc_names = conf.mkspec_get_gnu_binary_name('gcc', major, minor, prefix)
+        gcc_names = conf.mkspec_get_compiler_binary_name(
+            'gcc', major, minor, prefix)
         if minimum:
             gcc_names = 'gcc'
         cc = conf.find_program(gcc_names, path_list=paths)
@@ -150,33 +152,3 @@ def mkspec_set_gxx_cxxflags(conf):
         # For Android see: http://stackoverflow.com/questions/9247151
         # For MinGW: http://stackoverflow.com/questions/6312151
         conf.env['CXXFLAGS'] += ['-std=gnu++11']
-
-
-@conf
-def mkspec_get_gnu_binary_name(conf, base, major, minor, prefix=None):
-    """
-    :param base:    'gcc' or 'g++'
-    :param major:   The major version number of the g++/gcc binary e.g. 4
-    :param minor:   The minor version number of the g++/gcc binary e.g. 6
-    :param prefix:  Prefix to compiler name, e.g. 'arm-linux-androideabi'
-    :return:        A list with names of the g++ binary we are looking for,
-                    e.g. ['g++-4.6', 'g++-mp-4.6'] for g++ version 4.6 on
-                    mac/darwin
-    """
-
-    # The first option is a binary that includes the version number
-    # (this is available on Debian and Ubuntu)
-    binary = ['{0}-{1}.{2}'.format(base, major, minor)]
-
-    if prefix:
-        # Toolchains use a specific prefix
-        return ['{0}-{1}'.format(prefix, base)]
-
-    if conf.is_mkspec_platform('mac'):
-
-        # If the compiler is installed using macports
-        return binary + ['{0}-mp-{1}.{2}'.format(base, major, minor)]
-
-    # The default binary should be available on all platforms, which should
-    # be the second candidate after the versioned name
-    return binary + [base]
