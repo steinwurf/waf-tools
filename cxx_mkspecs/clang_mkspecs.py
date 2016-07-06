@@ -17,6 +17,31 @@ def cxx_android_clang34_armv7(conf):
 
 
 @conf
+def cxx_android_clang38_armv7(conf):
+    """
+    Detect and setup the Android clang 3.8 compiler for ARMv7
+    """
+    conf.mkspec_clang_android_configure(3, 8, prefix='arm-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_android5_clang38_armv7(conf):
+    """
+    Detects and setup the Android 5.0+ clang 3.8 compiler for ARMv7
+    """
+    conf.cxx_android_clang38_armv7()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    conf.mkspec_add_common_flag('-fPIE')
+    # Only add the -pie flag when building programs (otherwise we get
+    # a warning when building libraries)
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+@conf
 def cxx_apple_llvm70_x64(conf):
     """
     Detect and setup the 64-bit Apple LLVM 7.0 compiler
