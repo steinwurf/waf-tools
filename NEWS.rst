@@ -7,6 +7,10 @@ of every change, see the Git log.
 Latest
 ------
 * tdb
+* Minor: Added the cxx_android_gxx49_armv7, cxx_android5_gxx49_armv7,
+  cxx_android_clang38_armv7, cxx_android5_clang38_armv7 mkspecs to support
+  g++ 4.9 and clang 3.8 in the Android NDK r12b. The clang mkspecs are still
+  experimental: runtime failures are expected when using std::thread.
 
 3.9.0
 -----
