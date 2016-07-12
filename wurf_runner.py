@@ -40,7 +40,9 @@ def build(bld):
 
 import os
 
+from waflib import Errors
 from waflib import Logs
+from waflib import Utils
 from waflib.TaskGen import feature, after_method
 
 from runners.android_runner import AndroidRunner
@@ -129,6 +131,29 @@ def make_benchmark(self):
             print(self.link_task.outputs[0].name)
 
 
+def to_source_nodes(lst, path):
+    """
+    Convert the input list into a list of source nodes.
+    It is used to only find original source files, as opposed to the
+    task_gen.to_nodes() method that prefers files in the build folder.
+
+    :param lst: input list (of string or node)
+    :param path: path from which to search the nodes
+    """
+    tmp = []
+
+    # either a list or a string, convert to a list of nodes
+    for x in Utils.to_list(lst):
+        if isinstance(x, str):
+            node = path.find_node(x)
+        else:
+            node = x
+        if not node:
+            raise Errors.WafError("Source not found: %r in %r" % (x, path))
+        tmp.append(node)
+    return tmp
+
+
 def make_run(taskgen, run_type):
     """
     Create the run task.
@@ -156,7 +181,7 @@ def make_run(taskgen, run_type):
 
         # Check if the executable requires any test files
         test_files = getattr(taskgen, 'test_files', [])
-        task.test_inputs = taskgen.to_nodes(test_files)
+        task.test_inputs = to_source_nodes(test_files, taskgen.path)
 
         # Locate any shared libs that are needed to run this binary, and
         # add these to the test_inputs list

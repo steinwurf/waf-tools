@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tdb
+* Patch: Fixed the test_files property in wurf_runner, so that the input files
+  are always located in the source folder. Previously the files in the build
+  folder had priority, and these files might be out-of-date.
 
 3.10.0
 ------
