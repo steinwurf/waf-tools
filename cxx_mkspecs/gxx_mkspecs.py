@@ -231,6 +231,24 @@ def cxx_gxx53_x86(conf):
 
 
 @conf
+def cxx_gxx54_x64(conf):
+    """
+    Detect and setup the g++ 5.4 compiler for 64 bit
+    """
+    conf.mkspec_gxx_configure(5, 4)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_gxx54_x86(conf):
+    """
+    Detect and setup the g++ 5.4 compiler for 32 bit
+    """
+    conf.mkspec_gxx_configure(5, 4)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_gxx60_x64(conf):
     """
     Detect and setup the g++ 6.0 compiler for 64 bit
