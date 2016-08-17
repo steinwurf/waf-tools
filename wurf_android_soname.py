@@ -47,7 +47,7 @@ def set_andoid_soname(self):
 
     """
 
-    if not bld.is_mkspec_platform('android'):
+    if not self.bld.is_mkspec_platform('android'):
         return
 
     print("LINK " + self.link_task.outputs[0].relpath())
