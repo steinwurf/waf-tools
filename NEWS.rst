@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+3.12.1
+------
+* Patch: Remove print statement in Android mkspecs
+
 3.12.0
 ------
 * Minor: Added wurf_android_soname.py. For Android builds sets the soname of the
