@@ -6,6 +6,7 @@ import wurf_cxx_mkspec
 import wurf_runner
 import wurf_install_path
 import wurf_project_generator
+import wurf_android_soname
 
 from waflib.Configure import conf
 
@@ -35,6 +36,7 @@ def configure(conf):
 
     if not conf.env['DISABLE_WURF_CXX_MKSPEC']:
         conf.load('wurf_cxx_mkspec')
+
     conf.load('wurf_runner')
     conf.load('wurf_install_path')
     conf.load('wurf_project_generator')

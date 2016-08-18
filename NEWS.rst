@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tdb
+* Minor: Added wurf_android_soname.py. For Android builds sets the soname of the
+  shared libraries built to the library name itself.
 
 3.11.0
 ------
