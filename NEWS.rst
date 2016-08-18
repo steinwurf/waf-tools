@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+3.12.0
+------
 * Minor: Added wurf_android_soname.py. For Android builds sets the soname of the
   shared libraries built to the library name itself.
 
