@@ -129,9 +129,6 @@ def mkspec_set_android_options(conf):
     # The Android toolchain will select the appropriate standard library
     # conf.env.LIB_ANDROID = ['gnustl_static']
 
-    
-
-    print(conf.env)
 
 
 @conf
