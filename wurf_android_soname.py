@@ -2,52 +2,49 @@
 # encoding: utf-8
 
 """
-Copies chosen targets to the specified install path.
+For Android builds sets the soname of the shared libraries built to the library
+name itself.
 
-The install path can be set with the install_path option:
-    python waf --install_path="~/my_binaries"
+Not setting the soname can cause problems, see this issue:
+https://github.com/android-ndk/ndk/issues/177 as this may result in invalid
+DT_NEEDED entries in the resulting binary.
 
-If you also pass the install_relative option waf will preserve the folder
-structure when installing, e.g.:
-    python waf --install_path="~/my_binaries" --install_relative
+According to this pull-request:
+https://github.com/moritz-wundke/Boost-for-Android/issues/44, and the links to
+the various discussion forums in it, Android will not support versioning in the
+soname so for this reason we should not use the waf vnum feature for Android
+libraries.
+
+Instead we should simply specify the real file e.g. libfoo.so as soname.
+
+To verify the soname is correctly specified you can use readelf:
+
+    readelf -d build/cxx_android_gxx49_armv7/libfoo.so
+
+The -d will show the dynamic section of the ELF binary, look for an entry in the
+type column saying (SONAME) and check its Name/Value column.
 """
 
 import os
 from waflib.TaskGen import feature, before_method, after_method
 
-
-#def resolve(ctx):
-#
-#    opts = ctx.opt.add_option_group('Install path options')
-#
-#    opts.add_option(
-#        '--install_path', default=None, dest='install_path',
-#        help="Copy the compiled C/C++ binaries to the specified path")
-#
-#    opts.add_option(
-#        '--install_relative', default=None, dest='install_relative',
-#        action='store_true', help="Preserve the folder structure "
-#                                  "when copying binaries")
-#
-#    opts.add_option(
-#        '--install_shared_libs', default=None, dest='install_shared_libs',
-#        action='store_true', help="Copy the compiled C/C++ shared libraries "
-#                                  "(used with --install_path)")
-#
-#    opts.add_option(
-#        '--install_static_libs', default=None, dest='install_static_libs',
-#        action='store_true', help="Copy the compiled C/C++ static libraries "
-#                                  "(used with --install_path)")
-
-
 @feature('cshlib', 'cxxshlib')
-@before_method('apply_link')
+@after_method('apply_link')
 def set_andoid_soname(self):
     """
-
+    Task generator method, which will run after the apply_link method. The
+    apply_link method is the one creating the link_task
     """
 
+    # We only set the soname if this is an Android build.
     if not self.bld.is_mkspec_platform('android'):
         return
 
-    print("LINK " + self.link_task.outputs[0].relpath())
+    # Fetch the library name
+    node = self.link_task.outputs[0]
+
+    # Add the soname for the ld linker - to disable, unset env.SONAME_ST
+    if self.env.SONAME_ST:
+        linker_flag = self.env.SONAME_ST % node.name
+        self.env.append_value('LINKFLAGS', linker_flag)
+        

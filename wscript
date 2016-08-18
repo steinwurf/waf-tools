@@ -40,7 +40,6 @@ def configure(conf):
     conf.load('wurf_runner')
     conf.load('wurf_install_path')
     conf.load('wurf_project_generator')
-    conf.load('wurf_android_soname')
 
 
 # Required for automatic recursion
