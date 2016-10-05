@@ -285,6 +285,24 @@ def cxx_gxx61_x86(conf):
 
 
 @conf
+def cxx_gxx62_x64(conf):
+    """
+    Detect and setup the g++ 6.2 compiler for 64 bit
+    """
+    conf.mkspec_gxx_configure(6, 2)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_gxx62_x86(conf):
+    """
+    Detect and setup the g++ 6.2 compiler for 32 bit
+    """
+    conf.mkspec_gxx_configure(6, 2)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_raspberry_gxx49_arm(conf):
     """
     Detect and setup the g++ 4.9 cross-compiler for Raspberry Pi (Linux)
@@ -331,6 +349,28 @@ def cxx_openwrt_gxx48_mips(conf):
     Detect and setup the g++ 4.8 cross-compiler for 32-bit MIPS OpenWRT
     """
     conf.mkspec_gxx_configure(4, 8, 'mips-openwrt-linux')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
+def cxx_openwrt_gxx53_arm(conf):
+    """
+    Detect and setup the g++ 5.3 cross-compiler for OpenWRT ARM
+    """
+    conf.mkspec_gxx_configure(5, 3, 'arm-openwrt-linux')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
+def cxx_openwrt_gxx53_mips(conf):
+    """
+    Detect and setup the g++ 5.3 cross-compiler for OpenWRT MIPS
+    """
+    conf.mkspec_gxx_configure(5, 3, 'mips-openwrt-linux')
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']

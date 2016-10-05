@@ -7,6 +7,8 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Minor: Added mkspecs for g++ 6.2.
+* Minor: Added the cxx_openwrt_gxx53_arm and cxx_openwrt_gxx53_mips mkspecs.
 
 3.12.1
 ------
