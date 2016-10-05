@@ -143,12 +143,5 @@ def mkspec_set_gxx_cxxflags(conf):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    # Use the more restrictive c++11 standard on Linux
-    if conf.is_mkspec_platform('linux'):
-        conf.env['CXXFLAGS'] += ['-std=c++11']
-    else:
-        # Other platforms might need some non-standard functions,
-        # therefore we use gnu++11
-        # For Android see: http://stackoverflow.com/questions/9247151
-        # For MinGW: http://stackoverflow.com/questions/6312151
-        conf.env['CXXFLAGS'] += ['-std=gnu++11']
+    # Use the C++14 language features
+    conf.env['CXXFLAGS'] += ['-std=c++14']

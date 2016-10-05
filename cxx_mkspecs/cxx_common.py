@@ -205,19 +205,19 @@ def mkspec_get_compiler_binary_name(conf, base, major, minor, prefix):
     :param minor:  The minor version number of the compiler, e.g. 8
     :param prefix: Prefix to the compiler name, e.g. 'arm-linux-androideabi'
     :return:       A list of possible compiler names that should be tested,
-                   e.g. ['clang-3.8', 'clang'] for clang 3.8
+                   e.g. ['g++-5.4', 'g++-5', 'g++'] for g++ 5.4
     """
-
-    # The first option is a binary that includes the version number.
-    # The more specific binary name should be the first in the list
-    # e.g. ["clang-3.8", "clang"], as waf will test the binaries in order.
-    binary = ['{0}-{1}.{2}'.format(base, major, minor)]
-
     if prefix:
         # Toolchains use a specific prefix, and this should be the only
         # binary name that is tested
         return ['{0}-{1}'.format(prefix, base)]
 
+    # waf will test the binary names in order, so the first candidates should
+    # include the version number. The list should start with the more
+    # specific binary names, e.g. ['g++-5.4', 'g++-5', 'g++']
+    binary = ['{0}-{1}.{2}'.format(base, major, minor),
+              '{0}-{1}'.format(base, major)]
+
     # The default binary should be available on all platforms, which should
-    # be the second candidate after the versioned name
+    # be the last candidate after the versioned names
     return binary + [base]
