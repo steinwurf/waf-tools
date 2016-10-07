@@ -7,6 +7,10 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Minor: Enabled the -std=c++14 flag for clang and g++.
+* Minor: Set the minimum required compiler versions to g++ 4.9, clang 3.6 and
+  msvc 14.0 (Visual Studio 2015).
+* Patch: Properly handle missing taskgen properties in wurf_runner.
 
 3.13.0
 ------
