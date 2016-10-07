@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+3.14.0
+------
 * Minor: Enabled the -std=c++14 flag for clang and g++.
 * Minor: Set the minimum required compiler versions to g++ 4.9, clang 3.6 and
   msvc 14.0 (Visual Studio 2015).
