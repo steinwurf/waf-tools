@@ -168,26 +168,20 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    if conf.is_mkspec_platform('linux'):
-        # Use the more restrictive c++11 option for linux
-        conf.env['CXXFLAGS'] += ['-std=c++11']
-        # clang is currently incompatible with the Dual ABI of libstdc++ that
-        # was introduced by g++ 5.1. Every library that uses libstdc++ should
-        # be compiled with -D_GLIBCXX_USE_CXX11_ABI=0 until the clang
-        # developers add support for the new ABI.
-        # This also means that we cannot link to other system libraries (which
-        # are compiled without this flag).
-        # Further explanation and relevant bug reports:
-        # http://allanmcrae.com/2015/06/the-case-of-gcc-5-1-and-the-two-c-abis/
-        # https://llvm.org/bugs/show_bug.cgi?id=23529
-        # https://bugs.launchpad.net/ubuntu/+source/llvm-toolchain-3.6/+bug/1488254
-        conf.env['DEFINES'] += ['_GLIBCXX_USE_CXX11_ABI=0']
-    else:
-        # Other platforms might need some non-standard functions,
-        # therefore we use gnu++11
-        # For Android see: http://stackoverflow.com/questions/9247151
-        # For MinGW: http://stackoverflow.com/questions/6312151
-        conf.env['CXXFLAGS'] += ['-std=gnu++11']
+    # Use the C++14 language features
+    conf.env['CXXFLAGS'] += ['-std=c++14']
+
+    # clang is currently incompatible with the Dual ABI of libstdc++ that
+    # was introduced by g++ 5.1. Every library that uses libstdc++ should
+    # be compiled with -D_GLIBCXX_USE_CXX11_ABI=0 until the clang
+    # developers add support for the new ABI.
+    # This also means that we cannot link to other system libraries (which
+    # are compiled without this flag).
+    # Further explanation and relevant bug reports:
+    # http://allanmcrae.com/2015/06/the-case-of-gcc-5-1-and-the-two-c-abis/
+    # https://llvm.org/bugs/show_bug.cgi?id=23529
+    # https://bugs.launchpad.net/ubuntu/+source/llvm-toolchain-3.6/+bug/1488254
+    conf.env['DEFINES'] += ['_GLIBCXX_USE_CXX11_ABI=0']
 
     # Use clang's own C++ standard library on Mac OSX and iOS
     # Add other platforms when the library becomes stable there
