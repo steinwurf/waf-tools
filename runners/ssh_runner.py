@@ -176,23 +176,23 @@ class SSHRunner(BasicRunner):
         if bld.has_tool_option('ssh_output_file'):
             # Run the target binary and capture its output
             output_file = bld.get_tool_option('ssh_output_file')
-            result = self.run_cmd(
-                ssh_cmd + ["cd {0};{1} &> {2};echo shellexit:$?".format(
+            result = self.run_cmd(ssh_cmd +
+                ["cd {0};{1} &> {2};echo shellexit:$? >> {2}".format(
                     dest_dir, run_binary_cmd, output_file)])
             results.append(result)
             failed_run = (result['return_code'] != 0)
 
             # Copy the output file to the host
-            scp_result = self.run_cmd(
+            result = self.run_cmd(
                 scp_cmd + ['{0}:{1}'.format(ssh_target, output_file), '.'])
-            results.append(scp_result)
-            failed_run = failed_run or (scp_result['return_code'] != 0)
+            results.append(result)
+            failed_run = failed_run or (result['return_code'] != 0)
 
             # Print the contents of the output file to stdout
             output_basename = os.path.basename(output_file)
-            cat_result = self.run_cmd(["cat", output_basename])
-            results.append(cat_result)
-            failed_run = failed_run or (cat_result['return_code'] != 0)
+            result = self.run_cmd(["cat", output_basename])
+            results.append(result)
+            failed_run = failed_run or (result['return_code'] != 0)
 
             # Abort execution if any of the previous steps failed
             if failed_run:
