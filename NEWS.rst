@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+3.14.1
+------
 * Patch: If ssh_output_file used, then append the shellexit line to the
   output file. This is useful if the SSH output is truncated from some reason.
 * Patch: The configure step should fail when the specified version of msvc
