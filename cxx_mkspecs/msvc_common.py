@@ -30,7 +30,8 @@ def mkspec_msvc_configure(conf, version):
     except conf.errors.ConfigurationError as e:
         conf.env.revert()
         conf.end_msg(False)
-        debug('msvc_common: %r' % e)
+        # The error should be raised again to make the configure step fail
+        raise e
     else:
         conf.end_msg(conf.env.get_flat('CXX'))
         conf.end_msg(False)

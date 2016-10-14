@@ -27,7 +27,7 @@ def load_compiler(conf, compiler, arch):
             conf.env.MSVC_TARGETS = ['x86_amd64']
 
         conf.load('msvc')
-        # Note: the waf msvc tool also load msvc as a C compiler
+        # Note: the waf msvc tool also loads msvc as a C compiler
         conf.mkspec_check_minimum_msvc_version(14.0)
         conf.mkspec_set_msvc_flags()
     else:

@@ -7,6 +7,8 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Patch: The configure step should fail when the specified version of msvc
+  is not found.
 
 3.14.0
 ------
