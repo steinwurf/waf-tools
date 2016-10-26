@@ -68,6 +68,19 @@ def cxx_apple_llvm73_x64(conf):
 
 
 @conf
+def cxx_apple_llvm80_x64(conf):
+    """
+    Detect and setup the 64-bit Apple LLVM 8.0 compiler
+    """
+    if conf.is_mkspec_platform('mac'):
+        conf.mkspec_clang_configure(8, 0)
+        conf.mkspec_add_common_flag('-m64')
+    else:
+        conf.fatal("This mkspec is not supported on {0}.".format(
+            conf.get_mkspec_platform()))
+
+
+@conf
 def cxx_clang35_x64(conf):
     """
     Detect and setup the clang 3.5 compiler for 64 bit

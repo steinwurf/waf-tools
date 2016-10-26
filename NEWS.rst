@@ -7,6 +7,7 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Minor: Added the cxx_apple_llvm80_x64 mkspec (to support XCode 8.0).
 
 3.14.1
 ------
