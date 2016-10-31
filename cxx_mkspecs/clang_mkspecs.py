@@ -254,6 +254,22 @@ def cxx_clang36_address_sanitizer_x86(conf):
 
 
 @conf
+def cxx_clang38_address_sanitizer_x64(conf):
+    """
+    Configure clang 3.8 (64-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 8, '-m64')
+
+
+@conf
+def cxx_clang38_address_sanitizer_x86(conf):
+    """
+    Configure clang 3.8 (32-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 8, '-m32')
+
+
+@conf
 def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch):
     """
     To get a reasonable performance add -O1 or higher. To get
@@ -306,6 +322,22 @@ def cxx_clang36_memory_sanitizer_x86(conf):
 
 
 @conf
+def cxx_clang38_memory_sanitizer_x64(conf):
+    """
+    Configure clang 3.8 (64-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 8, '-m64')
+
+
+@conf
+def cxx_clang38_memory_sanitizer_x86(conf):
+    """
+    Configure clang 3.8 (32-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 8, '-m32')
+
+
+@conf
 def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch):
     """
     http://clang.llvm.org/docs/ThreadSanitizer.html
@@ -346,3 +378,19 @@ def cxx_clang36_thread_sanitizer_x86(conf):
     Configure clang 3.6 (32-bit) using the thread sanitizer
     """
     conf.mkspec_setup_clang_thread_sanitizer(3, 6, '-m32')
+
+
+@conf
+def cxx_clang38_thread_sanitizer_x64(conf):
+    """
+    Configure clang 3.8 (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 8, '-m64')
+
+
+@conf
+def cxx_clang38_thread_sanitizer_x86(conf):
+    """
+    Configure clang 3.8 (32-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 8, '-m32')
