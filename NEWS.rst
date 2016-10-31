@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+3.16.0
+------
+* Minor: Added mkspecs for clang 3.8 sanitizers.
+* Minor: Removed the temporary _GLIBCXX_USE_CXX11_ABI=0 define in clang_common,
+  since the libstdc++ incompatibility issue was fixed in clang 3.8.
+
 3.15.0
 ------
 * Minor: Added the cxx_apple_llvm80_x64 mkspec (to support XCode 8.0).
