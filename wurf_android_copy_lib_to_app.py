@@ -40,8 +40,7 @@ def android_copy_lib_to_app(self):
 
     if 'copy_path' not in dir(self):
         raise Errors.WafError(
-            'android_copy_lib_to_app build missing required '
-            '"copy_path" option.')
+            '{} build missing required "copy_path" option.'.format(self.name))
 
     input_libraries = self.link_task.outputs
     output_libraries = []
