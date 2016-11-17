@@ -6,8 +6,12 @@ of every change, see the Git log.
 
 Latest
 ------
-* Minor: Added wurf_android_copy_lib_to_app.py. A tool for copying jni libraries
-  to the appropriate Android app folder.
+* tbd
+
+3.17.0
+------
+* Minor: Added wurf_copy_binary.py. A tool for copying binaries to a
+  configurable folder.
 
 3.16.0
 ------
