@@ -14,10 +14,9 @@ from waflib.Configure import conf
 @conf
 def load_external_waf_tool(ctx, name):
     """
-    This helper function can be used to load an additional external tool
-    from the top-level wscript of a project (if that tool is not loaded
-    by default for all projects)
-    :param ctx: the resolve or configuration context
+    Load an additional external tool from the top-level wscript of a project.
+
+    :param ctx: the resolve, build or configuration context
     """
     import inspect
     this_file = inspect.getfile(inspect.currentframe())
