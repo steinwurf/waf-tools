@@ -39,7 +39,7 @@ def copy_binary(self):
         output_library = self.bld.root.make_node(os.path.join(
             self.path.abspath(),
             self.copy_path,
-            os.path.basename(input_library.abspath())))
+            input_library.name))
         output_libraries.append(output_library)
 
     copy_task = self.create_task('CopyFileTask')
@@ -86,7 +86,6 @@ class CopyFileTask(Task.Task):
             Logs.info("{n}{s}Copying {c}{source}{n} -> {c}{target}{n}".format(
                 c=Logs.colors(CopyFileTask.color),
                 s=' ' * 10,
-                source=os.path.basename(source_node.abspath()),
+                source=source_node.name,
                 target=target_node.relpath(),
-                n=Logs.colors.NORMAL
-            ))
+                n=Logs.colors.NORMAL))
