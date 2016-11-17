@@ -2,19 +2,19 @@
 # encoding: utf-8
 
 """
-Tool for copying jni libraries to the appropriate Android app folder.
+Tool for copying binaries to a given folder.
 
-The app folder must be provided by the build in the form of an option called
+The folder must be provided by the build in the form of an option called
 copy_path.
-This means a build with the feature android_copy_lib_to_app should look similar
+This means a build with the feature copy_binary should look similar
 to this:
 
-    bld(features='... android_copy_lib_to_app',
+    bld(features='... copy_binary',
         ...
         copy_path='app/src/main/jniLibs/armeabi',
         ...)
 
-Note the copy_path is relative to the project.
+Note the copy_path is relative to the wscript or wscript_build file.
 """
 
 import os
@@ -25,43 +25,31 @@ from waflib.TaskGen import after_method
 from waflib import Task, Errors, Logs
 
 
-@feature('android_copy_lib_to_app')
+@feature('copy_binary')
 @after_method('apply_link')
-def android_copy_lib_to_app(self):
-    """
-    Copy library to Android application.
-
-    When building an Android application from the IDE native libraries placed
-    in the libs folder will be packaged in the APK. So we copy the shared libs
-    we build there.
-    """
-    if not self.bld.is_mkspec_platform('android'):
-        return
-
-    if 'copy_path' not in dir(self):
+def copy_binary(self):
+    """Copy binary created by the link task to a given location."""
+    if not hasattr(self, 'copy_path'):
         raise Errors.WafError(
             '{} build missing required "copy_path" option.'.format(self.name))
 
     input_libraries = self.link_task.outputs
     output_libraries = []
     for input_library in input_libraries:
-        project_path = self.path.parent.abspath()
-        output_library = os.path.basename(input_library.abspath())
-        output_library = self.bld.root.make_node(
-            os.path.abspath(os.path.join(
-                project_path,
-                self.copy_path,
-                output_library)))
+        output_library = self.bld.root.make_node(os.path.join(
+            self.path.abspath(),
+            self.copy_path,
+            os.path.basename(input_library.abspath())))
         output_libraries.append(output_library)
 
-    copy_task = self.create_task('AndroidCopyFileTask')
+    copy_task = self.create_task('CopyFileTask')
     copy_task.set_inputs(input_libraries)
     copy_task.set_outputs(output_libraries)
     copy_task.chmod = self.link_task.chmod
 
 
-class AndroidCopyFileTask(Task.Task):
-    """Perform the copying of generated files to the Android project."""
+class CopyFileTask(Task.Task):
+    """Perform the copying of generated files."""
 
     color = 'PINK'
 
@@ -95,9 +83,10 @@ class AndroidCopyFileTask(Task.Task):
                     Logs.error('File %r does not exist' % source)
                 raise Errors.WafError('Could not install the file %r' % target)
 
-            Logs.info("{n}    Copied: {c}{src}{n} -> {c}{tgt}{n}".format(
-                c=Logs.colors(AndroidCopyFileTask.color),
-                src=source_node.relpath(),
-                tgt=target_node.relpath(),
+            Logs.info("{n}{s}Copying {c}{source}{n} -> {c}{target}{n}".format(
+                c=Logs.colors(CopyFileTask.color),
+                s=' ' * 10,
+                source=os.path.basename(source_node.abspath()),
+                target=target_node.relpath(),
                 n=Logs.colors.NORMAL
             ))
