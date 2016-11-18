@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+3.17.1
+------
+* Patch: Use a waf Node object for the copy_path parameter in wurf_copy_binary.
+
 3.17.0
 ------
 * Minor: Added wurf_copy_binary.py. A tool for copying binaries to a
