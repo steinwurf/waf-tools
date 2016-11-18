@@ -4,16 +4,26 @@
 """
 Tool for copying binaries to a given folder.
 
-The folder is specified with the copy_path option, and it must be a
-waf Node object. To specify a path relative to the current top-level wscript
-(the root folder of the current project), you can use bld.srcnode like this:
+The folder is specified with the copy_path option, and it must be a string or
+a waf Node object.
+
+If copy_path is a string, then it denotes a path relative to the wscript or
+wscript_build file where the build task is defined:
 
     bld(features='... copy_binary',
         ...
-        copy_path=bld.srcnode.find_dir('app/src/main/jniLibs/armeabi'),
+        copy_path='../app/src/main/jniLibs/armeabi',
         ...)
 
-To set a path relative to the current file, use bld.path.find_dir().
+If copy_path is a Node, then the usual waf methods can be used to specify the
+target folder. To specify a path relative to the current top-level wscript
+(i.e. the root folder of the top-level project), you can use bld.srcnode
+like this (find_or_declare makes sure that the folder is created if needed):
+
+    bld(features='... copy_binary',
+        ...
+        copy_path=bld.srcnode.find_or_declare('app/src/main/jniLibs/armeabi'),
+        ...)
 """
 
 import os
@@ -32,14 +42,20 @@ def copy_binary(self):
     if not hasattr(self, 'copy_path'):
         raise Errors.WafError(
             '{}: missing required "copy_path" option.'.format(self.name))
-    if not isinstance(self.copy_path, Node.Node):
+
+    if isinstance(self.copy_path, str):
+        base_path = os.path.join(self.path.abspath(), self.copy_path)
+    elif isinstance(self.copy_path, Node.Node):
+        base_path = self.copy_path.abspath()
+    else:
         raise Errors.WafError(
-            '{}: copy_path must be a Node object.'.format(self.name))
+            '{}: copy_path must be an str or Node object.'.format(self.name))
 
     input_libraries = self.link_task.outputs
     output_libraries = []
     for input_library in input_libraries:
-        output_library = self.copy_path.make_node(input_library.name)
+        output_library = self.bld.root.make_node(
+            os.path.join(base_path, input_library.name))
         output_libraries.append(output_library)
 
     copy_task = self.create_task('CopyFileTask')
