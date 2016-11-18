@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+3.17.2
+------
+* Patch: Allow both str and Node objects as copy_path in wurf_copy_binary.
+
 3.17.1
 ------
 * Patch: Use a waf Node object for the copy_path parameter in wurf_copy_binary.
