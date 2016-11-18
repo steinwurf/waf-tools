@@ -4,17 +4,16 @@
 """
 Tool for copying binaries to a given folder.
 
-The folder must be provided by the build in the form of an option called
-copy_path.
-This means a build with the feature copy_binary should look similar
-to this:
+The folder is specified with the copy_path option, and it must be a
+waf Node object. To specify a path relative to the current top-level wscript
+(the root folder of the current project), you can use bld.srcnode like this:
 
     bld(features='... copy_binary',
         ...
-        copy_path='app/src/main/jniLibs/armeabi',
+        copy_path=bld.srcnode.find_dir('app/src/main/jniLibs/armeabi'),
         ...)
 
-Note the copy_path is relative to the wscript or wscript_build file.
+To set a path relative to the current file, use bld.path.find_dir().
 """
 
 import os
@@ -22,24 +21,25 @@ import shutil
 from waflib.TaskGen import feature
 from waflib.TaskGen import after_method
 
-from waflib import Task, Errors, Logs
+from waflib import Task, Errors, Node, Logs
 
 
 @feature('copy_binary')
 @after_method('apply_link')
 def copy_binary(self):
     """Copy binary created by the link task to a given location."""
+
     if not hasattr(self, 'copy_path'):
         raise Errors.WafError(
-            '{} build missing required "copy_path" option.'.format(self.name))
+            '{}: missing required "copy_path" option.'.format(self.name))
+    if not isinstance(self.copy_path, Node.Node):
+        raise Errors.WafError(
+            '{}: copy_path must be a Node object.'.format(self.name))
 
     input_libraries = self.link_task.outputs
     output_libraries = []
     for input_library in input_libraries:
-        output_library = self.bld.root.make_node(os.path.join(
-            self.path.abspath(),
-            self.copy_path,
-            input_library.name))
+        output_library = self.copy_path.make_node(input_library.name)
         output_libraries.append(output_library)
 
     copy_task = self.create_task('CopyFileTask')
@@ -81,7 +81,7 @@ class CopyFileTask(Task.Task):
                     os.stat(source)
                 except (OSError, IOError):
                     Logs.error('File %r does not exist' % source)
-                raise Errors.WafError('Could not install the file %r' % target)
+                raise Errors.WafError('Could not copy the file %r' % target)
 
             Logs.info("{n}{s}Copying {c}{source}{n} -> {c}{target}{n}".format(
                 c=Logs.colors(CopyFileTask.color),

@@ -29,7 +29,7 @@ from waflib.TaskGen import feature, after_method
 
 @feature('cshlib', 'cxxshlib')
 @after_method('apply_link')
-def set_andoid_soname(self):
+def set_android_soname(self):
     """
     Task generator method, which will run after the apply_link method.
 

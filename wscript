@@ -7,6 +7,7 @@ import wurf_runner
 import wurf_install_path
 import wurf_project_generator
 import wurf_android_soname
+import wurf_copy_binary
 
 from waflib.Configure import conf
 
