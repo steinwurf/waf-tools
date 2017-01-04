@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+3.18.0
+------
 * Minor: Added mkspecs for clang 3.9.
 
 3.17.2
