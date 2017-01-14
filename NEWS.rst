@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+3.19.0
+------
 * Minor: Added mkspecs for g++ 6.3.
 
 3.18.0
