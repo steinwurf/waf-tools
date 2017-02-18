@@ -16,9 +16,9 @@ import os
 from waflib.TaskGen import feature, before_method, after_method
 
 
-def resolve(ctx):
+def options(opt):
 
-    opts = ctx.opt.add_option_group('Install path options')
+    opts = opt.add_option_group('Install path options')
 
     opts.add_option(
         '--install_path', default=None, dest='install_path',
