@@ -82,7 +82,7 @@ import re
 import sys
 import uuid  # requires python 2.5
 from pprint import pprint
-from waflib.Build import BuildContext
+from waflib.extras.wurf.waf_build_context import WafBuildContext
 from waflib import Utils, TaskGen, Logs, Task, Context, Node, Options
 
 HEADERS_GLOB = '**/(*.h|*.hpp|*.H|*.inl)'
@@ -820,7 +820,7 @@ symlinks
 
 
 
-class msvs_generator(BuildContext):
+class msvs_generator(WafBuildContext):
 
     '''generates a Visual Studio 2010 solution'''
     cmd = 'msvs2010'
@@ -952,20 +952,20 @@ class msvs_generator(BuildContext):
                     continue
 
                 print(str.format("Processing: {}", tg))
-                pprint(tg, indent=2)
 
                 tg.post()
-                pprint(tg.__dict__, indent=2)
-                #pprint(str(tg.env), indent=2)
+
                 if not getattr(tg, 'link_task', None):
                     continue
                 # Skip any projects that are outside the project directory
                 if not tg.path.is_child_of(self.srcnode):
                     continue
 
+                pprint(tg.__dict__, indent=2)
+
                 self.main_project.collect_incpaths(tg)
                 if not self.main_project.target_found:
-                    type = getattr(tg, '_type', None) or getattr(tg, 'typ', None)
+                    type = getattr(tg, 'typ', None)
                     if type == 'program':
                         print("MAIN PROGRAM FOUND:\n\t{}".format(tg))
                         self.main_project.collect_properties(tg)
