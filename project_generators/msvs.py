@@ -722,34 +722,15 @@ class vsnode_target(vsnode_project):
         """
         return self.get_waf()
 
-    def set_includes_search_path(self, ctx):
-        bldpath = ctx.bldnode.abspath()
-        # Skip dirs in the 'build' directory
-        lst = [d for d in self.include_dirs if not d.startswith(bldpath)]
-        # Add path to all dirs containing header files in the project
-        # Otherwise VS2010 IntelliSense will not find includes in current dir
-        if ctx.vsver == '2010':
-            for x in self.source:
-                d = x.parent.abspath()
-                if d not in lst:
-                    lst.append(d)
-        lst.sort()
-##        lst = list(self.include_dirs)
+    def set_includes_search_path(self):
+
         print("INCLUDE SEARCH PATH:")
+        lst = sorted(self.include_dirs)
         pprint(lst, indent=2)
         # Create a string from the list of include dirs
         inc_str = ';'.join(lst)
         for x in self.build_properties:
             x.includes_search_path = inc_str
-
-    #def collect_headers(self, ctx):
-    #    # Get all the header files in the project tree
-    #    all_headers = ctx.path.ant_glob(HEADERS_GLOB)
-    #    # Skip include files in the 'build' directory
-    #    filtered = [h for h in all_headers if not h.is_child_of(ctx.bldnode)]
-    #    # Add the headers to the project source tree
-    #    self.source.extend(filtered)
-    #    self.source.sort(key=lambda x: x.abspath())
 
     def collect_source(self):
 
@@ -763,7 +744,7 @@ waf3-*
 **/*.pyc
 build
 bundle_dependencies
-symlinks
+build_symlinks
 **/*.sln
 **/*.vcxproj*
 **/*.sdf
@@ -773,29 +754,18 @@ symlinks
 **/*.log
 		'''
 
+        # Try to include all existing files in the project
         self.source = self.ctx.srcnode.ant_glob('**', excl=exclude_files)
-
-#        source_files = tg.to_nodes(getattr(tg, 'source', []))
-##        include_dirs = Utils.to_list(getattr(tg, 'msvs_includes', []))
-##        print(tg.path.abspath()+' Include dirs: '+str(include_dirs))
-##        include_files = []
-# for x in include_dirs:
-# if isinstance(x, str):
-##                x = tg.path.find_node(x)
-# if x:
-##                lst = [y for y in x.ant_glob(HEADERS_GLOB, flat=False)]
-# include_files.extend(lst)
-
-        # Remove duplicates
-        #self.source.extend(list(set(source_files)))
         self.source.sort(key=lambda x: x.abspath())
 
-    def collect_incpaths(self, tg):
-        print('TARGET INCPATH: ')
-        pprint(tg.env.INCPATHS, indent=2)
-        self.include_dirs |= set(tg.env.INCPATHS)
-        # if x and not x.is_child_of(self.bldnode):
-        # self.include_dirs.add(x)
+    def collect_include_dirs(self, tg):
+        #print('TARGET INCLUDES: ')
+        includes = tg.to_list(getattr(tg, 'includes', []))
+        #pprint(includes, indent=2)
+        for include in includes:
+            # Skip include dirs in the 'build' directory
+            if not include.is_child_of(self.ctx.bldnode):
+                self.include_dirs.add(include.abspath())
 
     def collect_properties(self, tg):
         """
@@ -894,7 +864,7 @@ class msvs_generator(WafBuildContext):
 
         self.collect_targets()
         self.main_project.collect_source()
-        self.main_project.set_includes_search_path(self)
+        self.main_project.set_includes_search_path()
         self.all_projects.append(self.main_project)
 
     def write_files(self):
@@ -957,13 +927,15 @@ class msvs_generator(WafBuildContext):
 
                 if not getattr(tg, 'link_task', None):
                     continue
-                # Skip any projects that are outside the project directory
+                # Skip any taskgens that are outside the project directory
                 if not tg.path.is_child_of(self.srcnode):
                     continue
 
-                pprint(tg.__dict__, indent=2)
+                #pprint(tg.__dict__, indent=2)
 
-                self.main_project.collect_incpaths(tg)
+                # Load include dirs from all local taskgens
+                self.main_project.collect_include_dirs(tg)
+
                 if not self.main_project.target_found:
                     type = getattr(tg, 'typ', None)
                     if type == 'program':
