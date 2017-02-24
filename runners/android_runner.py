@@ -49,7 +49,7 @@ class AndroidRunner(BasicRunner):
                 return
 
         # Push the binary
-        binary = str(self.inputs[0])
+        binary = str(self.inputs[0].name)
         adb_push_bin = adb_push + [self.inputs[0].abspath(), dest_dir + binary]
 
         result = self.run_cmd(adb_push_bin)

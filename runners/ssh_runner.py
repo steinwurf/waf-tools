@@ -165,7 +165,7 @@ class SSHRunner(BasicRunner):
                 self.save_result(results, ssh_cmd)
                 return
 
-        run_binary_cmd = "./{0}".format(binary)
+        run_binary_cmd = "./{0}".format(binary.name)
 
         # Format the run command
         run_binary_cmd = self.format_command(run_binary_cmd)
