@@ -764,7 +764,8 @@ build_symlinks
         #pprint(includes, indent=2)
         for include in includes:
             # Skip include dirs in the 'build' directory
-            if not include.is_child_of(self.ctx.bldnode):
+            if isinstance(include, Node.Node) and \
+               not include.is_child_of(self.ctx.bldnode):
                 self.include_dirs.add(include.abspath())
 
     def collect_properties(self, tg):
@@ -929,6 +930,10 @@ class msvs_generator(WafBuildContext):
                     continue
                 # Skip any taskgens that are outside the project directory
                 if not tg.path.is_child_of(self.srcnode):
+                    continue
+
+                # Also skip the taskgens in the 'build_symlinks' directory
+                if 'build_symlinks' in tg.path.abspath():
                     continue
 
                 #pprint(tg.__dict__, indent=2)
