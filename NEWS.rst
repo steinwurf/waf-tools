@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+3.19.1
+------
+* Patch: Removed the unnecessary -fPIE flag from cxx_android5_clang38_armv7,
+  so the mkspec can be used to build both shared libraries and executables.
+
 3.19.0
 ------
 * Minor: Added mkspecs for g++ 6.3.
