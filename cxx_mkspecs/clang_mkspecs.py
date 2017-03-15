@@ -34,9 +34,8 @@ def cxx_android5_clang38_armv7(conf):
     # Only position independent executables (PIE) are supported on Android 5
     # and above. The oldest version that can run a PIE binary is Android 4.1,
     # so the binary will segfault on all older platforms.
-    conf.mkspec_add_common_flag('-fPIE')
-    # Only add the -pie flag when building programs (otherwise we get
-    # a warning when building libraries)
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
     conf.env['LINKFLAGS_cprogram'] = ['-pie']
     conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
 
