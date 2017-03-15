@@ -7,16 +7,6 @@ from . import clang_common
 
 
 @conf
-def cxx_android_clang34_armv7(conf):
-    """
-    Detect and setup the Android clang 3.4 compiler for ARMv7
-    """
-    conf.mkspec_clang_android_configure(3, 4, prefix='arm-linux-androideabi',
-                                        target='armv7-linux-androideabi')
-    conf.env['DEST_CPU'] = 'arm'
-
-
-@conf
 def cxx_android_clang38_armv7(conf):
     """
     Detect and setup the Android clang 3.8 compiler for ARMv7
@@ -41,32 +31,6 @@ def cxx_android5_clang38_armv7(conf):
 
 
 @conf
-def cxx_apple_llvm70_x64(conf):
-    """
-    Detect and setup the 64-bit Apple LLVM 7.0 compiler
-    """
-    if conf.is_mkspec_platform('mac'):
-        conf.mkspec_clang_configure(7, 0)
-        conf.mkspec_add_common_flag('-m64')
-    else:
-        conf.fatal("This mkspec is not supported on {0}.".format(
-            conf.get_mkspec_platform()))
-
-
-@conf
-def cxx_apple_llvm73_x64(conf):
-    """
-    Detect and setup the 64-bit Apple LLVM 7.3 compiler
-    """
-    if conf.is_mkspec_platform('mac'):
-        conf.mkspec_clang_configure(7, 3)
-        conf.mkspec_add_common_flag('-m64')
-    else:
-        conf.fatal("This mkspec is not supported on {0}.".format(
-            conf.get_mkspec_platform()))
-
-
-@conf
 def cxx_apple_llvm80_x64(conf):
     """
     Detect and setup the 64-bit Apple LLVM 8.0 compiler
@@ -77,24 +41,6 @@ def cxx_apple_llvm80_x64(conf):
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
-
-
-@conf
-def cxx_clang35_x64(conf):
-    """
-    Detect and setup the clang 3.5 compiler for 64 bit
-    """
-    conf.mkspec_clang_configure(3, 5)
-    conf.mkspec_add_common_flag('-m64')
-
-
-@conf
-def cxx_clang35_x86(conf):
-    """
-    Detect and setup the clang 3.5 compiler for 32 bit
-    """
-    conf.mkspec_clang_configure(3, 5)
-    conf.mkspec_add_common_flag('-m32')
 
 
 @conf
@@ -170,15 +116,6 @@ def cxx_clang39_x86(conf):
 
 
 @conf
-def cxx_ios50_apple_llvm_armv7(conf):
-    """
-    Detect and setup the default Apple LLVM compiler for iOS 5.0 armv7
-    """
-    conf.mkspec_clang_ios_configure(6, 1, '5.0', 'armv7', minimum=True)
-    conf.env['DEST_CPU'] = 'arm'
-
-
-@conf
 def cxx_ios70_apple_llvm_armv7(conf):
     """
     Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
@@ -239,38 +176,6 @@ def mkspec_setup_clang_address_sanitizer(conf, major, minor, arch):
 
 
 @conf
-def cxx_clang35_address_sanitizer_x64(conf):
-    """
-    Configure clang 3.5 (64-bit) using the address sanitizer
-    """
-    conf.mkspec_setup_clang_address_sanitizer(3, 5, '-m64')
-
-
-@conf
-def cxx_clang35_address_sanitizer_x86(conf):
-    """
-    Configure clang 3.5 (32-bit) using the address sanitizer
-    """
-    conf.mkspec_setup_clang_address_sanitizer(3, 5, '-m32')
-
-
-@conf
-def cxx_clang36_address_sanitizer_x64(conf):
-    """
-    Configure clang 3.6 (64-bit) using the address sanitizer
-    """
-    conf.mkspec_setup_clang_address_sanitizer(3, 6, '-m64')
-
-
-@conf
-def cxx_clang36_address_sanitizer_x86(conf):
-    """
-    Configure clang 3.6 (32-bit) using the address sanitizer
-    """
-    conf.mkspec_setup_clang_address_sanitizer(3, 6, '-m32')
-
-
-@conf
 def cxx_clang38_address_sanitizer_x64(conf):
     """
     Configure clang 3.8 (64-bit) using the address sanitizer
@@ -307,38 +212,6 @@ def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch):
 
 
 @conf
-def cxx_clang35_memory_sanitizer_x64(conf):
-    """
-    Configure clang 3.5 (64-bit) using the memory sanitizer
-    """
-    conf.mkspec_setup_clang_memory_sanitizer(3, 5, '-m64')
-
-
-@conf
-def cxx_clang35_memory_sanitizer_x86(conf):
-    """
-    Configure clang 3.5 (32-bit) using the memory sanitizer
-    """
-    conf.mkspec_setup_clang_memory_sanitizer(3, 5, '-m32')
-
-
-@conf
-def cxx_clang36_memory_sanitizer_x64(conf):
-    """
-    Configure clang 3.6 (64-bit) using the memory sanitizer
-    """
-    conf.mkspec_setup_clang_memory_sanitizer(3, 6, '-m64')
-
-
-@conf
-def cxx_clang36_memory_sanitizer_x86(conf):
-    """
-    Configure clang 3.6 (32-bit) using the memory sanitizer
-    """
-    conf.mkspec_setup_clang_memory_sanitizer(3, 6, '-m32')
-
-
-@conf
 def cxx_clang38_memory_sanitizer_x64(conf):
     """
     Configure clang 3.8 (64-bit) using the memory sanitizer
@@ -363,38 +236,6 @@ def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch):
     conf.mkspec_add_common_flag(arch)
 
     conf.mkspec_add_common_flag('-fsanitize=thread')
-
-
-@conf
-def cxx_clang35_thread_sanitizer_x64(conf):
-    """
-    Configure clang 3.5 (64-bit) using the thread sanitizer
-    """
-    conf.mkspec_setup_clang_thread_sanitizer(3, 5, '-m64')
-
-
-@conf
-def cxx_clang35_thread_sanitizer_x86(conf):
-    """
-    Configure clang 3.5 (32-bit) using the thread sanitizer
-    """
-    conf.mkspec_setup_clang_thread_sanitizer(3, 5, '-m32')
-
-
-@conf
-def cxx_clang36_thread_sanitizer_x64(conf):
-    """
-    Configure clang 3.6 (64-bit) using the thread sanitizer
-    """
-    conf.mkspec_setup_clang_thread_sanitizer(3, 6, '-m64')
-
-
-@conf
-def cxx_clang36_thread_sanitizer_x86(conf):
-    """
-    Configure clang 3.6 (32-bit) using the thread sanitizer
-    """
-    conf.mkspec_setup_clang_thread_sanitizer(3, 6, '-m32')
 
 
 @conf
