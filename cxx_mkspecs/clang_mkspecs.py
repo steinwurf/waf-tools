@@ -139,7 +139,7 @@ def cxx_ios70_apple_llvm_arm64(conf):
     Detect and setup the Apple LLVM compiler for iOS 7.0 arm64
     """
     conf.mkspec_clang_ios_configure(6, 1, '7.0', 'arm64', minimum=True)
-    conf.env['DEST_CPU'] = 'arm'
+    conf.env['DEST_CPU'] = 'arm64'
 
 
 @conf
