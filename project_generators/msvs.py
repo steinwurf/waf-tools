@@ -743,8 +743,8 @@ waf3-*
 .lock-*
 **/*.pyc
 build
+resolve_symlinks
 resolved_dependencies
-build_symlinks
 **/*.sln
 **/*.vcxproj*
 **/*.sdf
