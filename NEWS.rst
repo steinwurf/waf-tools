@@ -8,6 +8,13 @@ Latest
 ------
 * tbd
 
+4.0.0
+-----
+* Major: Changed the option definitions to work with the new waf resolver.
+* Major: Updated the MSVS project generator to support the new waf.
+* Major: Removed the mkspecs that are no longer supported.
+* Minor: Added wurf_configure_output.py that was previously in the waf repo.
+
 3.19.1
 ------
 * Patch: Removed the unnecessary -fPIE flag from cxx_android5_clang38_armv7,
