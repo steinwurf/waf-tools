@@ -48,9 +48,9 @@ def is_mkspec_platform(conf, platform):
     return conf.get_mkspec_platform() == platform
 
 
-def resolve(ctx):
+def options(opt):
 
-    opts = ctx.opt.add_option_group('Makespec options')
+    opts = opt.add_option_group('Makespec options')
 
     opts.add_option(
         '--cxx_mkspec', default=None, dest='cxx_mkspec',

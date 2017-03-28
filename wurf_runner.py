@@ -55,9 +55,9 @@ from runners.emscripten_runner import EmscriptenRunner
 run_tasks = []
 
 
-def resolve(ctx):
+def options(opt):
 
-    opts = ctx.opt.add_option_group('Runner options')
+    opts = opt.add_option_group('Runner options')
 
     opts.add_option(
         '--run_tests', default=None, dest='run_tests',
@@ -103,7 +103,7 @@ def resolve(ctx):
         help='Specify the ID of the target Android device '
              '(used with ADB when multiple devices are available)')
 
-    ctx.load('runners.ssh_runner')
+    opt.load('runners.ssh_runner')
 
 
 @feature('test')

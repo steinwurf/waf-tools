@@ -59,17 +59,18 @@ def mkspec_validate_cc_version(conf, major, minor, minimum=False):
     """
     cc_major = int(conf.env['CC_VERSION'][0])
     cc_minor = int(conf.env['CC_VERSION'][1])
+    cc_version = '.'.join(conf.env['CC_VERSION'])
 
     if minimum:
         if cc_major < major or (cc_major == major and cc_minor < minor):
             conf.fatal("Compiler version: {0}, "
-                       "required minimum version: major={1} and minor={2}."
-                       .format(conf.env['CC_VERSION'], major, minor))
+                       "required minimum version: {1}.{2}"
+                       .format(cc_version, major, minor))
     else:
         if cc_major != major or cc_minor != minor:
             conf.fatal("Wrong compiler version: {0}, "
-                       "expected version: major={1} and minor={2}."
-                       .format(conf.env['CC_VERSION'], major, minor))
+                       "expected version: {1}.{2}"
+                       .format(cc_version, major, minor))
 
 
 @conf

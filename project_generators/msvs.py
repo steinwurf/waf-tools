@@ -82,7 +82,7 @@ import re
 import sys
 import uuid  # requires python 2.5
 from pprint import pprint
-from waflib.Build import BuildContext
+from waflib.extras.wurf.waf_build_context import WafBuildContext
 from waflib import Utils, TaskGen, Logs, Task, Context, Node, Options
 
 HEADERS_GLOB = '**/(*.h|*.hpp|*.H|*.inl)'
@@ -138,6 +138,8 @@ PROJECT_TEMPLATE = r'''<?xml version="1.0" encoding="UTF-8"?>
         <NMakeCleanCommandLine>${xml:project.get_clean_command(b)}</NMakeCleanCommandLine>
         <NMakeIncludeSearchPath>${xml:b.includes_search_path}</NMakeIncludeSearchPath>
         <NMakePreprocessorDefinitions>${xml:b.preprocessor_definitions};$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+        <IntDir>build\VSProjects\$(Configuration)\</IntDir>
+        <BaseIntermediateOutputPath>build\VSProjects\</BaseIntermediateOutputPath>
 
         ${if getattr(b, 'output_file', None)}
         <NMakeOutput>${xml:b.output_file}</NMakeOutput>
@@ -699,7 +701,7 @@ waf3-1.7.*/**
 class vsnode_target(vsnode_project):
 
     """
-    Visual studio project representing a targets (programs, libraries, etc)
+    Visual studio project representing a target (programs, libraries, etc)
     """
 
     def __init__(self, ctx, name):
@@ -713,74 +715,58 @@ class vsnode_target(vsnode_project):
         self.name = quote(name)
         self.include_dirs = set()  # set of dirs for includes search path
         self.target_found = False
-##        self.include_dirs = []
-
-# def __init__(self, ctx, tg):
-# """
-# A project is more or less equivalent to a file/folder
-# """
-##        base = getattr(ctx, 'projects_dir', None) or tg.path
-## the project file as a Node
-# node = base.make_node(quote(tg.name) + ctx.project_extension)
-##        vsnode_project.__init__(self, ctx, node)
-##        self.name = quote(tg.name)
-# self.tg     = tg  # task generator
 
     def get_build_params(self, props):
         """
         Override the default to add the target name
         """
-##        opt = '--execsolution=%s' % self.ctx.get_solution_node().abspath()
-# if getattr(self, 'tg', None):
-##            opt += " --targets=%s" % self.tg.name
-##        opt = ''
-# return (self.get_waf(), opt)
         return self.get_waf()
 
-    def set_includes_search_path(self, ctx):
-        bldpath = ctx.bldnode.abspath()
-        # Skip dirs in the 'build' directory
-        lst = [d for d in self.include_dirs if not d.startswith(bldpath)]
-        # Add path to all dirs containing header files in the project
-        # Otherwise VS2010 IntelliSense will not find includes in current dir
-        if ctx.vsver == '2010':
-            for x in self.source:
-                d = x.parent.abspath()
-                if d not in lst:
-                    lst.append(d)
-        lst.sort()
-##        lst = list(self.include_dirs)
+    def set_includes_search_path(self):
+
         print("INCLUDE SEARCH PATH:")
+        lst = sorted(self.include_dirs)
         pprint(lst, indent=2)
         # Create a string from the list of include dirs
         inc_str = ';'.join(lst)
         for x in self.build_properties:
             x.includes_search_path = inc_str
 
-    def collect_headers(self, ctx):
-        # Get all the header files in the project tree
-        all_headers = ctx.path.ant_glob(HEADERS_GLOB, flat=False)
-        # Skip include files in the 'build' directory
-        filtered = [h for h in all_headers if not h.is_child_of(ctx.bldnode)]
-        # Add the headers to the project source tree
-        self.source.extend(filtered)
+    def collect_source(self):
+
+        exclude_files = Node.exclude_regs + '''
+waf
+waf-*
+waf3-*
+.waf-*
+.waf3-*
+.lock-*
+**/*.pyc
+build
+resolve_symlinks
+resolved_dependencies
+**/*.sln
+**/*.vcxproj*
+**/*.sdf
+**/*.suo
+**/*.ncb
+**/*.bat
+**/*.log
+		'''
+
+        # Try to include all existing files in the project
+        self.source = self.ctx.srcnode.ant_glob('**', excl=exclude_files)
         self.source.sort(key=lambda x: x.abspath())
 
-    def collect_source(self, tg):
-        source_files = tg.to_nodes(getattr(tg, 'source', []))
-##        include_dirs = Utils.to_list(getattr(tg, 'msvs_includes', []))
-##        print(tg.path.abspath()+' Include dirs: '+str(include_dirs))
-##        include_files = []
-# for x in include_dirs:
-# if isinstance(x, str):
-##                x = tg.path.find_node(x)
-# if x:
-##                lst = [y for y in x.ant_glob(HEADERS_GLOB, flat=False)]
-# include_files.extend(lst)
-
-        # Remove duplicates
-        self.source.extend(list(set(source_files)))
-        self.source.sort(key=lambda x: x.abspath())
+    def collect_include_dirs(self, tg):
+        #print('TARGET INCLUDES: ')
+        includes = tg.to_list(getattr(tg, 'includes', []))
+        #pprint(includes, indent=2)
+        for include in includes:
+            # Skip include dirs in the 'build' directory
+            if isinstance(include, Node.Node) and \
+               not include.is_child_of(self.ctx.bldnode):
+                self.include_dirs.add(include.abspath())
 
     def collect_properties(self, tg):
         """
@@ -802,12 +788,10 @@ class vsnode_target(vsnode_project):
                 print('OUTPUT PATH:\n\t' + tsk.outputs[0].abspath())
                 x.output_file = tsk.outputs[0].abspath()
                 x.preprocessor_definitions = ';'.join(tsk.env.DEFINES)
-                print('TARGET INCPATH: ')
-                pprint(tg.env.INCPATHS, indent=2)
-                self.include_dirs = set(tg.env.INCPATHS)
 
 
-class msvs_generator(BuildContext):
+
+class msvs_generator(WafBuildContext):
 
     '''generates a Visual Studio 2010 solution'''
     cmd = 'msvs2010'
@@ -836,9 +820,7 @@ class msvs_generator(BuildContext):
             self.solution_name = getattr(
                 Context.g_module, Context.APPNAME, 'project') + '_2010.sln'
         if not getattr(self, 'projects_dir', None):
-##            self.projects_dir = self.srcnode
-            self.projects_dir = self.srcnode.make_node('VSProjects')
-            self.projects_dir.mkdir()
+            self.projects_dir = self.srcnode
 
         # bind the classes to the object, so that subclass can provide custom
         # generators
@@ -869,8 +851,9 @@ class msvs_generator(BuildContext):
         # user initialization
         self.init()
 
-        # two phases for creating the solution
-        self.collect_projects()  # add project objects into "self.all_projects"
+        # two phases for creating the solution:
+        # add project objects into "self.all_projects"
+        self.collect_projects()
         # write the corresponding project and solution files
         self.write_files()
 
@@ -881,17 +864,9 @@ class msvs_generator(BuildContext):
         """
 
         self.collect_targets()
-        self.main_project.collect_headers(self)
-        self.main_project.set_includes_search_path(self)
+        self.main_project.collect_source()
+        self.main_project.set_includes_search_path()
         self.all_projects.append(self.main_project)
-        # self.add_aliases()
-        # self.collect_dirs()
-##        default_project = getattr(self, 'default_project', None)
-# def sortfun(x):
-# if x.name == default_project:
-# return ''
-# return getattr(x, 'path', None) and x.path.abspath() or x.name
-# self.all_projects.sort(key=sortfun)
 
     def write_files(self):
         """
@@ -944,105 +919,33 @@ class msvs_generator(BuildContext):
         """
         for g in self.groups:
             for tg in g:
-
-                print(str.format("Processing: {}", tg))
                 if not isinstance(tg, TaskGen.task_gen):
                     continue
 
-                if not hasattr(tg, 'msvs_includes'):
-                    tg.msvs_includes = tg.to_list(
-                        getattr(tg, 'includes', [])) + tg.to_list(
-                        getattr(tg, 'export_includes', []))
-# for x in tg.msvs_includes:
-# if isinstance(x, str):
-##                            x = tg.path.find_node(x)
-# Skip include dirs in the 'build' directory
-# if x and not x.is_child_of(self.bldnode):
-# self.include_dirs.add(x)
+                print(str.format("Processing: {}", tg))
 
                 tg.post()
-##                from pprint import pprint
-##                pprint(tg.__dict__, indent=2)
+
                 if not getattr(tg, 'link_task', None):
                     continue
-                # Skip any projects that are outside the project directory
+                # Skip any taskgens that are outside the project directory
                 if not tg.path.is_child_of(self.srcnode):
                     continue
-# if tg.name.endswith('_tests'):
-##                print(str.format("Collecting sources: {}", tg))
-##                    p = self.vsnode_target(self, tg)
-                # delegate this processing
-                self.main_project.collect_source(tg)
+
+                # Also skip the taskgens in the 'build_symlinks' directory
+                if 'build_symlinks' in tg.path.abspath():
+                    continue
+
+                #pprint(tg.__dict__, indent=2)
+
+                # Load include dirs from all local taskgens
+                self.main_project.collect_include_dirs(tg)
+
                 if not self.main_project.target_found:
-                    if hasattr(tg, '_type') and tg._type == 'program':
+                    type = getattr(tg, 'typ', None)
+                    if type == 'program':
                         print("MAIN PROGRAM FOUND:\n\t{}".format(tg))
                         self.main_project.collect_properties(tg)
-# self.all_projects.append(p)
-
-# def add_aliases(self):
-# """
-# Add a specific target that emulates the "make all" necessary for Visual
-# studio when pressing F7
-# We also add an alias for "make install" (disabled by default)
-# """
-##        base = getattr(self, 'projects_dir', None) or self.tg.path
-#
-# node_project = base.make_node('build_all_projects' + self.project_extension)
-##        p_build = self.vsnode_build_all(self, node_project)
-# p_build.collect_properties()
-# self.all_projects.append(p_build)
-#
-# node_project = base.make_node(
-#     'install_all_projects' + self.project_extension) # Node
-##        p_install = self.vsnode_install_all(self, node_project)
-# p_install.collect_properties()
-# self.all_projects.append(p_install)
-#
-# node_project = base.make_node('project_view' + self.project_extension) # Node
-##        p_view = self.vsnode_project_view(self, node_project)
-# p_view.collect_source()
-# p_view.collect_properties()
-# self.all_projects.append(p_view)
-#
-##        n = self.vsnode_vsdir(self, make_uuid(
-##            self.srcnode.abspath() + 'build_aliases'), "build_aliases")
-##        p_build.parent = p_install.parent = p_view.parent = n
-# self.all_projects.append(n)
-
-# def collect_dirs(self):
-# """
-# Create the folder structure in the Visual studio project view
-# """
-##        seen = {}
-# def make_parents(proj):
-# look at a project, try to make a parent
-# if getattr(proj, 'parent', None):
-# aliases already have parents
-# return
-##            x = proj.iter_path
-# if x in seen:
-##                proj.parent = seen[x]
-# return
-#
-# There is not vsnode_vsdir for x.
-# So create a project representing the folder "x"
-##            n = proj.parent = seen[x] = self.vsnode_vsdir(
-##                self, make_uuid(x.abspath()), x.name)
-##            n.iter_path = x.parent
-# self.all_projects.append(n)
-#
-# recurse up to the project directory
-# if x.height() > self.srcnode.height() + 1:
-# make_parents(n)
-#
-# for p in self.all_projects[:]: # iterate over a copy of all projects
-# if not getattr(p, 'tg', None):
-# but only projects that have a task generator
-# continue
-#
-# make a folder for each task generator
-##            p.iter_path = p.tg.path
-# make_parents(p)
 
 
 def wrap_2008(cls):
@@ -1167,40 +1070,3 @@ class msvs_2012_generator(msvs_generator):
                 Context.g_module, Context.APPNAME, 'project') + '_2012.sln'
 
         msvs_generator.init(self)
-
-
-# NO NEED FOR THIS - WE WILL HAVE ONLY ONE PROJECT PER REPOSITORY
-# def options(ctx):
-# """
-# If the msvs option is used, try to detect if the build is made from visua
-# studio
-# """
-##    ctx.add_option('--execsolution', action='store', help='when building with
-##        visual studio, use a build state file')
-#
-##    old = BuildContext.execute
-# def override_build_state(ctx):
-# def lock(rm, add):
-##            uns = ctx.options.execsolution.replace('.sln', rm)
-##            uns = ctx.root.make_node(uns)
-# try:
-# uns.delete()
-# except:
-# pass
-#
-##            uns = ctx.options.execsolution.replace('.sln', add)
-##            uns = ctx.root.make_node(uns)
-# try:
-# uns.write('')
-# except:
-# pass
-#
-# if ctx.options.execsolution:
-# ctx.launch_dir = Context.top_dir # force a build for the whole project
-# (invalid cwd when called by visual studio)
-##            lock('.lastbuildstate', '.unsuccessfulbuild')
-# old(ctx)
-##            lock('.unsuccessfulbuild', '.lastbuildstate')
-# else:
-# old(ctx)
-##    BuildContext.execute = override_build_state

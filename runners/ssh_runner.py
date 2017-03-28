@@ -9,9 +9,9 @@ from waflib import Utils, Logs
 from .basic_runner import BasicRunner
 
 
-def resolve(ctx):
+def options(opt):
 
-    opts = ctx.opt.add_option_group('SSH/iOS runner options')
+    opts = opt.add_option_group('SSH/iOS runner options')
 
     opts.add_option(
         '--ssh_runner', default=None, dest='ssh_runner', action='store_true',
@@ -165,7 +165,7 @@ class SSHRunner(BasicRunner):
                 self.save_result(results, ssh_cmd)
                 return
 
-        run_binary_cmd = "./{0}".format(binary)
+        run_binary_cmd = "./{0}".format(binary.name)
 
         # Format the run command
         run_binary_cmd = self.format_command(run_binary_cmd)
