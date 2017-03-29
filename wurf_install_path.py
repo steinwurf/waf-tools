@@ -49,7 +49,6 @@ def update_shlib_install_path(self):
     compiled C and C++ shared libraries to facilitate the integration
     with other build systems.
     """
-
     if self.bld.has_tool_option('install_path') and \
        self.bld.has_tool_option('install_shared_libs'):
         install_path = self.bld.get_tool_option('install_path')
@@ -65,7 +64,6 @@ def update_stlib_install_path(self):
     compiled C and C++ static libraries to facilitate the integration
     with other build systems.
     """
-
     if self.bld.has_tool_option('install_path') and \
        self.bld.has_tool_option('install_static_libs'):
         install_path = self.bld.get_tool_option('install_path')
@@ -80,7 +78,6 @@ def update_install_path(self):
     executing the apply_link method. This will override the install_path
     otherwise used.
     """
-
     if self.bld.has_tool_option('install_path'):
         install_path = self.bld.get_tool_option('install_path')
         self.install_path = os.path.abspath(os.path.expanduser(install_path))
@@ -90,11 +87,20 @@ def update_install_path(self):
 @after_method('apply_link')
 def change_relative_path_option(self):
     """
-    If an install_task exists this will update the relative_trick
-    options, which will make waf preserve the folder structure
+    Overwrite the output paths for the install_task to preserver the
+    the folder structure (relative to the project root)
     """
-
     install_relative = self.bld.has_tool_option('install_relative')
 
-    if getattr(self, 'install_task', None):
-        self.install_task.relative_trick = install_relative
+    if getattr(self, 'install_task', None) and install_relative:
+        # Note that we need to manually overwrite the outputs using the
+        # desired relative path, because install_task.relative_trick=True
+        # does not work (the outputs are already calculated)
+        dest = self.install_task.get_install_path()
+        outputs = []
+        for y in self.install_task.inputs:
+            # Preserve the relative path from the project root within the
+            # install folder
+            destfile = os.path.join(dest, y.path_from(self.bld.srcnode))
+            outputs.append(self.bld.root.make_node(destfile))
+        self.install_task.outputs = outputs
