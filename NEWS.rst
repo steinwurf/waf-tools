@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+4.0.1
+-----
 * Patch: Reimplemented the install_relative option to work with the new
   version of waf.
 
