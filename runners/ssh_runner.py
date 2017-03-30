@@ -127,7 +127,7 @@ class SSHRunner(BasicRunner):
         # Delete all files from the destination folder if requested
         if bld.has_tool_option('ssh_clean_dir'):
             result = self.run_cmd(
-                ssh_cmd + ["rm", "-f", "{0}/*".format(dest_dir)])
+                ssh_cmd + ["rm", "-rf", "{0}/*".format(dest_dir)])
             results.append(result)
 
         # Make sure the destination folder exists
