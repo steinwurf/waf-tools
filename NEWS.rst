@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.0.2
+-----
+* Patch: Fixed the SSHRunner to avoid a non-zero return code when the
+  ssh_clean_dir option is used to clean a folder that contains another folder.
+
 4.0.1
 -----
 * Patch: Reimplemented the install_relative option to work with the new
