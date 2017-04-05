@@ -116,7 +116,7 @@ PROJECT_TEMPLATE = r'''<?xml version="1.0" encoding="UTF-8"?>
     ${for b in project.build_properties}
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='${b.configuration}|${b.platform}'" Label="Configuration">
         <ConfigurationType>Makefile</ConfigurationType>
-        <OutDir>${b.outdir}</OutDir>
+        <OutDir>build\VSProjects\$(Configuration)\</OutDir>
         <PlatformToolset>${project.platformver}</PlatformToolset>
     </PropertyGroup>
     ${endfor}
@@ -926,26 +926,30 @@ class msvs_generator(WafBuildContext):
 
                 tg.post()
 
+                # Load include dirs from all active taskgens
+                self.main_project.collect_include_dirs(tg)
+
                 if not getattr(tg, 'link_task', None):
                     continue
                 # Skip any taskgens that are outside the project directory
                 if not tg.path.is_child_of(self.srcnode):
                     continue
-
-                # Also skip the taskgens in the 'build_symlinks' directory
-                if 'build_symlinks' in tg.path.abspath():
+                # Also skip the taskgens in the 'resolve_symlinks' directory
+                if 'resolve_symlinks' in tg.path.abspath():
                     continue
 
                 #pprint(tg.__dict__, indent=2)
-
-                # Load include dirs from all local taskgens
-                self.main_project.collect_include_dirs(tg)
 
                 if not self.main_project.target_found:
                     type = getattr(tg, 'typ', None)
                     if type == 'program':
                         print("MAIN PROGRAM FOUND:\n\t{}".format(tg))
                         self.main_project.collect_properties(tg)
+
+        # If no main program was found, then create a build configuration
+        # with an empty taskgen (the debugging target should be set manually)
+        if not self.main_project.target_found:
+            self.main_project.collect_properties(None)
 
 
 def wrap_2008(cls):
