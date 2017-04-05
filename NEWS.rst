@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.0.3
+-----
+* Patch: Handle projects without a top-level program in the MSVS project
+  generator (the debugging command should be set manually in this case).
+
 4.0.2
 -----
 * Patch: Fixed the SSHRunner to avoid a non-zero return code when the
