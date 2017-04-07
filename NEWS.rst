@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.0.4
+-----
+* Patch: Fixed emscripten_common to work with the new waf.
+
 4.0.3
 -----
 * Patch: Handle projects without a top-level program in the MSVS project
