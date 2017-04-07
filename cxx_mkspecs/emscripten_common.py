@@ -16,6 +16,8 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
     """
     :param force_debug: Always compile with debugging flags, if true
     """
+    conf.set_mkspec_platform('emscripten')
+
     # The path to the emscripten compiler
     paths = conf.get_tool_option('emscripten_path')
 
@@ -40,25 +42,36 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
 
     # Find the archiver
     conf.find_program('emar', path_list=paths, var='AR')
-    conf.env.ARFLAGS = 'rcs'
+    conf.env.ARFLAGS = ['rcs']
 
     # Set up C++ tools and flags
     conf.gxx_common_flags()
-    #conf.gxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
 
     # Also set up C tools and flags
     conf.gcc_common_flags()
-    #conf.gcc_modifier_platform()
     conf.cc_load_tools()
     conf.cc_add_flags()
 
     # Add linker flags
     conf.link_add_flags()
 
+    # Add the special flags required for emscripten
+    conf.env.cshlib_PATTERN = '%s.js'
+    conf.env.cxxshlib_PATTERN = '%s.js'
+    conf.env.cstlib_PATTERN = '%s.a'
+    conf.env.cxxstlib_PATTERN = '%s.a'
+    conf.env.cprogram_PATTERN = conf.env.cxxprogram_PATTERN = '%s.js'
+    conf.env.CXX_TGT_F = ['-c', '-o', '']
+    conf.env.CC_TGT_F = ['-c', '-o', '']
+    conf.env.CXXLNK_TGT_F = ['-o', '']
+    conf.env.CCLNK_TGT_F = ['-o', '']
+    conf.env.append_value('LINKFLAGS',['-Wl,--enable-auto-import'])
+
     # Add our own cxx flags
-    conf.env['CXXFLAGS'] += ['-O2', '-Wextra', '-Wall']
+    conf.env['CXXFLAGS'] += \
+        ['-O2', '-Wextra', '-Wall', '-Wno-warn-absolute-paths']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CXXFLAGS'] += ['-g']
@@ -67,20 +80,17 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
-    conf.env['CXXFLAGS'] += ['-std=c++0x']
+    conf.env['CXXFLAGS'] += ['-std=c++11']
 
     # Add our own cc flags
-    conf.env['CFLAGS'] += ['-O2', '-Wextra', '-Wall']
+    conf.env['CFLAGS'] += \
+        ['-O2', '-Wextra', '-Wall', '-Wno-warn-absolute-paths']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CFLAGS'] += ['-g']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
-
-    conf.env['cprogram_PATTERN'] = conf.env['cxxprogram_PATTERN'] = '%s.js'
-
-    conf.set_mkspec_platform('emscripten')
 
 
 @conf
@@ -95,13 +105,15 @@ def check_emscripten_version(conf, emscripten_cc, major, minor, minimum):
     except:
         conf.fatal('could not determine the compiler version')
 
+    cc_version = "{}.{}".format(cc_major, cc_minor)
+
     if minimum:
         if cc_major < major or (cc_major == major and cc_minor < minor):
-            conf.fatal("Compiler version: major={1} and minor={2}, "
-                       "required minimum: major={1} and minor={2}."
-                       .format(cc_major, cc_minor, major, minor))
+            conf.fatal("Compiler version: {0}, "
+                       "required minimum version: {1}.{2}"
+                       .format(cc_version, major, minor))
     else:
         if cc_major != major or cc_minor != minor:
-            conf.fatal("Wrong version number: major={0} and minor={1}, "
-                       "expected major={2} and minor={3}."
-                       .format(cc_major, cc_minor, major, minor))
+            conf.fatal("Wrong compiler version: {0}, "
+                       "expected version: {1}.{2}"
+                       .format(cc_version, major, minor))
