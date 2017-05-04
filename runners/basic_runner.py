@@ -183,11 +183,13 @@ class BasicRunner(Task.Task):
                 cmd = cmd.decode('utf-8')
 
             combined_stdout += u'Running: {0}\n'.format(cmd)
+
             if result["stdout"]:
                 combined_stdout += result["stdout"].replace('\r\n', '\n')
 
             if result["stderr"]:
-                combined_stderr += u'Running: {0}\n{1}'.format(cmd,
+                combined_stderr += u'Running: {0}\n{1}'.format(
+                    cmd,
                     result["stderr"].replace('\r\n', '\n'))
 
             if result['return_code'] != 0:
@@ -203,28 +205,37 @@ class BasicRunner(Task.Task):
         try:
             bld = self.generator.bld
             Logs.debug(u"wr: %r", result)
-            try:
+
+            if hasattr(bld, "runner_results"):
                 bld.runner_results.append(combined_result)
-            except AttributeError:
+            else:
                 bld.runner_results = [combined_result]
+
         finally:
             testlock.release()
 
     def run_cmd(self, cmd):
 
         Logs.debug("wr: running %r", cmd)
-
         proc = Utils.subprocess.Popen(
             cmd,
             cwd=self.inputs[0].parent.abspath(),
             stdin=Utils.subprocess.PIPE,
             stderr=Utils.subprocess.PIPE,
             stdout=Utils.subprocess.PIPE)
+        all_stdout = []
+        while True:
+            stdout = proc.stdout.readline()
+            if stdout == '' and proc.poll() is not None:
+                break
+            if stdout:
+                all_stdout.append(stdout)
+                print(stdout.strip())
 
-        (stdout, stderr) = proc.communicate()
+        all_stderr = proc.stderr.readline()
 
-        result = {'cmd': cmd, 'return_code': proc.returncode,
-                  'stdout': stdout.decode('utf-8'),
-                  'stderr': stderr.decode('utf-8')}
+        result = {'cmd': cmd, 'return_code': proc.poll(),
+                  'stdout': "".join(all_stdout).decode('utf-8'),
+                  'stderr': "".join(all_stderr).decode('utf-8')}
 
         return result
