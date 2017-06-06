@@ -31,9 +31,9 @@ def cxx_android5_clang38_armv7(conf):
 
 
 @conf
-def cxx_android5_clang38_armv8(conf):
+def cxx_android5_clang38_arm64(conf):
     """
-    Detects and setup the Android 5.0+ clang 3.8 compiler for ARMv8
+    Detects and setup the Android 5.0+ clang 3.8 compiler for ARM64
     """
     # Note: The arm64 platform was introduced in Android 5 (API Level 21).
     # Therefore the standalone toolchain must be created with the

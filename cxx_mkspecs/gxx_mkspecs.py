@@ -47,9 +47,9 @@ def cxx_android5_gxx49_armv7(conf):
 
 
 @conf
-def cxx_android5_gxx49_armv8(conf):
+def cxx_android5_gxx49_arm64(conf):
     """
-    Detects and setup the Android 5.0+ g++ 4.9 compiler for ARMv8
+    Detects and setup the Android 5.0+ g++ 4.9 compiler for ARM64
     """
     # Note: The arm64 platform was introduced in Android 5 (API Level 21).
     # Therefore the standalone toolchain must be created with the
@@ -58,6 +58,7 @@ def cxx_android5_gxx49_armv8(conf):
     conf.mkspec_gxx_android_configure(4, 9, 'aarch64-linux-android')
     conf.mkspec_add_common_flag('-fPIE')
     conf.env['LINKFLAGS'] += ['-pie']
+    conf.env['DEST_CPU'] = 'arm64'
 
 
 @conf
