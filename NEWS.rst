@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.1.0
+-----
+* Minor: Added cxx_android5_gxx49_arm64 and cxx_android5_clang38_arm64 mkspecs
+  for 64-bit ARM Android targets.
+
 4.0.4
 -----
 * Patch: Fixed emscripten_common to work with the new waf.
