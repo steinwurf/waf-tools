@@ -31,6 +31,23 @@ def cxx_android5_clang38_armv7(conf):
 
 
 @conf
+def cxx_android5_clang38_arm64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 3.8 compiler for ARM64
+    """
+    # Note: The arm64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    conf.mkspec_clang_android_configure(3, 8, prefix='aarch64-linux-android')
+    conf.env['DEST_CPU'] = 'arm64'
+    # Only position independent executables (PIE) are supported on Android 5.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+@conf
 def cxx_apple_llvm80_x64(conf):
     """
     Detect and setup the 64-bit Apple LLVM 8.0 compiler
