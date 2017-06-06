@@ -47,6 +47,20 @@ def cxx_android5_gxx49_armv7(conf):
 
 
 @conf
+def cxx_android5_gxx49_armv8(conf):
+    """
+    Detects and setup the Android 5.0+ g++ 4.9 compiler for ARMv8
+    """
+    # Note: The arm64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    # Only position independent executables (PIE) are supported on Android 5.
+    conf.mkspec_gxx_android_configure(4, 9, 'aarch64-linux-android')
+    conf.mkspec_add_common_flag('-fPIE')
+    conf.env['LINKFLAGS'] += ['-pie']
+
+
+@conf
 def cxx_android_gxx49_x86(conf):
     """
     Detect and setup the Android g++ 4.9 compiler for x86
@@ -74,7 +88,7 @@ def cxx_android5_gxx49_x64(conf):
     """
     # Note: The x86_64 platform was introduced in Android 5 (API Level 21).
     # Therefore the standalone toolchain must be created with the
-    # --platform=android-21 option (or above).
+    # --api=21 option (or above).
     conf.mkspec_gxx_android_configure(4, 9, 'x86_64-linux-android')
     # The PIE binary must be the default in this case
     conf.mkspec_add_common_flag('-fPIE')
