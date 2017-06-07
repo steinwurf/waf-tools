@@ -45,6 +45,10 @@ def cxx_android5_clang38_arm64(conf):
     # add the -pie flag. This is only necessary when building programs.
     conf.env['LINKFLAGS_cprogram'] = ['-pie']
     conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Default "bfd" linker for the arm64 toolchain has an issue with linking
+    # shared libraries: https://github.com/android-ndk/ndk/issues/148
+    # Force the use of the "gold" linker until it becomes the default
+    conf.env['LINKFLAGS'] += ['-fuse-ld=gold']
 
 
 @conf

@@ -7,6 +7,8 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Patch: Use the gold linker for 64-bit ARM Android targets to fix issues
+  with linking shared libraries.
 
 4.1.0
 -----

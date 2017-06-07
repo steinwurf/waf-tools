@@ -58,6 +58,10 @@ def cxx_android5_gxx49_arm64(conf):
     conf.mkspec_gxx_android_configure(4, 9, 'aarch64-linux-android')
     conf.mkspec_add_common_flag('-fPIE')
     conf.env['LINKFLAGS'] += ['-pie']
+    # Default "bfd" linker for the arm64 toolchain has an issue with linking
+    # shared libraries: https://github.com/android-ndk/ndk/issues/148
+    # Force the use of the "gold" linker until it becomes the default
+    conf.env['LINKFLAGS'] += ['-fuse-ld=gold']
     conf.env['DEST_CPU'] = 'arm64'
 
 
