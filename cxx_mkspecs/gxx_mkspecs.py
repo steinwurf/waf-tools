@@ -271,6 +271,37 @@ def cxx_gxx63_x86(conf):
     conf.mkspec_gxx_configure(6, 3)
     conf.mkspec_add_common_flag('-m32')
 
+@conf
+def cxx_gxx63_armv7(conf):
+    """
+    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on armv7
+    compatible hardware without support for hardware floating operations
+    """
+    conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabi')
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
+
+@conf
+def cxx_gxx63_armv7_hf(conf):
+    """
+    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on armv7
+    compatible hardware with support for hardware floating operations
+    """
+    conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabihf')
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
 
 @conf
 def cxx_raspberry_gxx49_arm(conf):
