@@ -271,11 +271,35 @@ def cxx_gxx63_x86(conf):
     conf.mkspec_gxx_configure(6, 3)
     conf.mkspec_add_common_flag('-m32')
 
+
 @conf
 def cxx_gxx63_armv7(conf):
     """
-    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on armv7
-    compatible hardware without support for hardware floating operations
+    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on ARMv7
+    CPU with a hardware FPU. The 'g++-arm-linux-gnueabihf' Debian package
+    should provide a compatible toolchain, or the standalone version can be
+    downloaded from the Linaro releases:
+    https://releases.linaro.org/components/toolchain/binaries/latest/arm-linux-gnueabihf/
+    """
+    conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabihf')
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_gxx63_armv7_softfloat(conf):
+    """
+    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on ARMv7
+    CPU without a hardware FPU. The 'g++-arm-linux-gnueabi' Debian package
+    should provide a compatible toolchain, or the standalone version can be
+    downloaded from the Linaro releases:
+    https://releases.linaro.org/components/toolchain/binaries/latest/arm-linux-gnueabi/
     """
     conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabi')
     # atomic support that is required for std::threads (without this flag,
@@ -287,21 +311,6 @@ def cxx_gxx63_armv7(conf):
     # Set the target CPU
     conf.env['DEST_CPU'] = 'arm'
 
-@conf
-def cxx_gxx63_armv7_hf(conf):
-    """
-    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on armv7
-    compatible hardware with support for hardware floating operations
-    """
-    conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabihf')
-    # atomic support that is required for std::threads (without this flag,
-    # the threading code might call pure virtual methods)
-    conf.env['LINKFLAGS'] += ['-march=armv7-a']
-    # Note: libstdc++ might not be available on the target platform
-    # Statically link with the C++ standard library
-    conf.env['LINKFLAGS'] += ['-static-libstdc++']
-    # Set the target CPU
-    conf.env['DEST_CPU'] = 'arm'
 
 @conf
 def cxx_raspberry_gxx49_arm(conf):
@@ -320,7 +329,7 @@ def cxx_raspberry_gxx49_arm(conf):
 def cxx_raspberry_gxx49_armv7(conf):
     """
     Detect and setup the g++ 4.9 cross-compiler for Raspberry Pi (Linux)
-    running on armv7 compatible hardware (Raspberry Pi 2)
+    running on ARMv7 compatible hardware (Raspberry Pi 2)
     """
     conf.mkspec_gxx_configure(4, 9, 'raspberry-gxx49-arm')
     # atomic support that is required for std::threads (without this flag,
