@@ -282,6 +282,7 @@ def cxx_gxx63_armv7(conf):
     https://releases.linaro.org/components/toolchain/binaries/latest/arm-linux-gnueabihf/
     """
     conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabihf')
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
     # atomic support that is required for std::threads (without this flag,
     # the threading code might call pure virtual methods)
     conf.env['LINKFLAGS'] += ['-march=armv7-a']
@@ -293,15 +294,24 @@ def cxx_gxx63_armv7(conf):
 
 
 @conf
-def cxx_gxx63_armv7_softfloat(conf):
+def cxx_gxx63_armv7_softfp(conf):
     """
     Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on ARMv7
-    CPU without a hardware FPU. The 'g++-arm-linux-gnueabi' Debian package
-    should provide a compatible toolchain, or the standalone version can be
-    downloaded from the Linaro releases:
+    CPU with a hardware FPU, but on a system where a soft-float ABI is required.
+    The 'g++-arm-linux-gnueabi' Debian package should provide a compatible
+    toolchain, or the standalone version can be  downloaded from the Linaro
+    releases:
     https://releases.linaro.org/components/toolchain/binaries/latest/arm-linux-gnueabi/
     """
     conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabi')
+    # Specify the ARMv7 architecture and the 'softfp' float ABI to compile for
+    # hardware FPU, but with software linkage (required for -mfpu=neon flag).
+    # The __ARM_NEON__ macro will be defined only if the -mfloat-abi=softfp and
+    # -mfpu=neon flags are used together.
+    flags = ['-march=armv7-a', '-mfloat-abi=softfp']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
     # atomic support that is required for std::threads (without this flag,
     # the threading code might call pure virtual methods)
     conf.env['LINKFLAGS'] += ['-march=armv7-a']
