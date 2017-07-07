@@ -273,3 +273,18 @@ def cxx_clang38_thread_sanitizer_x86(conf):
     Configure clang 3.8 (32-bit) using the thread sanitizer
     """
     conf.mkspec_setup_clang_thread_sanitizer(3, 8, '-m32')
+
+@conf
+def cxx_clang39_thread_sanitizer_x86(conf):
+    """
+    Configure clang 3.9 (32-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 9, '-m32')
+
+
+@conf
+def cxx_clang39_thread_sanitizer_x64(conf):
+    """
+    Configure clang 3.9 (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 9, '-m64')
