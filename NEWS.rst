@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+4.2.0
+-----
+* Minor: Added mkspecs for clang 3.9 sanitizers.
+* Minor: Added cxx_gxx63_armv7 and cxx_gxx63_armv7_softfp mkspecs to target
+  generic cross-compilers for ARMv7 systems.
+
 4.1.1
 -----
 * Patch: Use the gold linker for 64-bit ARM Android targets to fix issues
