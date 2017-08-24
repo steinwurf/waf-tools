@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.3.0
+-----
+* Minor: Added mkspecs for clang 5.0 in the Android NDK r15.
+* Minor: Added the cxx_apple_llvm81_x64 mkspec.
+
 4.2.0
 -----
 * Minor: Added mkspecs for clang 3.9 sanitizers.
