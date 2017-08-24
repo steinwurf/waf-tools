@@ -16,11 +16,35 @@ def cxx_android_clang38_armv7(conf):
 
 
 @conf
+def cxx_android_clang50_armv7(conf):
+    """
+    Detect and setup the Android clang 5.0 compiler for ARMv7
+    """
+    conf.mkspec_clang_android_configure(5, 0, prefix='arm-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
 def cxx_android5_clang38_armv7(conf):
     """
     Detects and setup the Android 5.0+ clang 3.8 compiler for ARMv7
     """
     conf.cxx_android_clang38_armv7()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+@conf
+def cxx_android5_clang50_armv7(conf):
+    """
+    Detects and setup the Android 5.0+ clang 5.0 compiler for ARMv7
+    """
+    conf.cxx_android_clang50_armv7()
     # Only position independent executables (PIE) are supported on Android 5
     # and above. The oldest version that can run a PIE binary is Android 4.1,
     # so the binary will segfault on all older platforms.
@@ -39,6 +63,27 @@ def cxx_android5_clang38_arm64(conf):
     # Therefore the standalone toolchain must be created with the
     # --api=21 option (or above).
     conf.mkspec_clang_android_configure(3, 8, prefix='aarch64-linux-android')
+    conf.env['DEST_CPU'] = 'arm64'
+    # Only position independent executables (PIE) are supported on Android 5.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Default "bfd" linker for the arm64 toolchain has an issue with linking
+    # shared libraries: https://github.com/android-ndk/ndk/issues/148
+    # Force the use of the "gold" linker until it becomes the default
+    conf.env['LINKFLAGS'] += ['-fuse-ld=gold']
+
+
+@conf
+def cxx_android5_clang50_arm64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 5.0 compiler for ARM64
+    """
+    # Note: The arm64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    conf.mkspec_clang_android_configure(5, 0, prefix='aarch64-linux-android')
     conf.env['DEST_CPU'] = 'arm64'
     # Only position independent executables (PIE) are supported on Android 5.
     # The -fPIC flag is automatically enabled for Android, so we only have to
