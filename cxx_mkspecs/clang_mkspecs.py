@@ -16,6 +16,15 @@ def cxx_android_clang38_armv7(conf):
 
 
 @conf
+def cxx_android_clang50_armv7(conf):
+    """
+    Detect and setup the Android clang 5.0 compiler for ARMv7
+    """
+    conf.mkspec_clang_android_configure(5, 0, prefix='arm-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
 def cxx_android5_clang38_armv7(conf):
     """
     Detects and setup the Android 5.0+ clang 3.8 compiler for ARMv7
@@ -31,12 +40,82 @@ def cxx_android5_clang38_armv7(conf):
 
 
 @conf
+def cxx_android5_clang50_armv7(conf):
+    """
+    Detects and setup the Android 5.0+ clang 5.0 compiler for ARMv7
+    """
+    conf.cxx_android_clang50_armv7()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+@conf
+def cxx_android5_clang38_arm64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 3.8 compiler for ARM64
+    """
+    # Note: The arm64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    conf.mkspec_clang_android_configure(3, 8, prefix='aarch64-linux-android')
+    conf.env['DEST_CPU'] = 'arm64'
+    # Only position independent executables (PIE) are supported on Android 5.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Default "bfd" linker for the arm64 toolchain has an issue with linking
+    # shared libraries: https://github.com/android-ndk/ndk/issues/148
+    # Force the use of the "gold" linker until it becomes the default
+    conf.env['LINKFLAGS'] += ['-fuse-ld=gold']
+
+
+@conf
+def cxx_android5_clang50_arm64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 5.0 compiler for ARM64
+    """
+    # Note: The arm64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    conf.mkspec_clang_android_configure(5, 0, prefix='aarch64-linux-android')
+    conf.env['DEST_CPU'] = 'arm64'
+    # Only position independent executables (PIE) are supported on Android 5.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Default "bfd" linker for the arm64 toolchain has an issue with linking
+    # shared libraries: https://github.com/android-ndk/ndk/issues/148
+    # Force the use of the "gold" linker until it becomes the default
+    conf.env['LINKFLAGS'] += ['-fuse-ld=gold']
+
+
+@conf
 def cxx_apple_llvm80_x64(conf):
     """
     Detect and setup the 64-bit Apple LLVM 8.0 compiler
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(8, 0)
+        conf.mkspec_add_common_flag('-m64')
+    else:
+        conf.fatal("This mkspec is not supported on {0}.".format(
+            conf.get_mkspec_platform()))
+
+
+@conf
+def cxx_apple_llvm81_x64(conf):
+    """
+    Detect and setup the 64-bit Apple LLVM 8.1 compiler
+    """
+    if conf.is_mkspec_platform('mac'):
+        conf.mkspec_clang_configure(8, 1)
         conf.mkspec_add_common_flag('-m64')
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
@@ -192,6 +271,22 @@ def cxx_clang38_address_sanitizer_x86(conf):
 
 
 @conf
+def cxx_clang39_address_sanitizer_x64(conf):
+    """
+    Configure clang 3.9 (64-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 9, '-m64')
+
+
+@conf
+def cxx_clang39_address_sanitizer_x86(conf):
+    """
+    Configure clang 3.9 (32-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 9, '-m32')
+
+
+@conf
 def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch):
     """
     To get a reasonable performance add -O1 or higher. To get
@@ -228,6 +323,22 @@ def cxx_clang38_memory_sanitizer_x86(conf):
 
 
 @conf
+def cxx_clang39_memory_sanitizer_x64(conf):
+    """
+    Configure clang 3.9 (64-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 9, '-m64')
+
+
+@conf
+def cxx_clang39_memory_sanitizer_x86(conf):
+    """
+    Configure clang 3.9 (32-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 9, '-m32')
+
+
+@conf
 def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch):
     """
     http://clang.llvm.org/docs/ThreadSanitizer.html
@@ -252,3 +363,19 @@ def cxx_clang38_thread_sanitizer_x86(conf):
     Configure clang 3.8 (32-bit) using the thread sanitizer
     """
     conf.mkspec_setup_clang_thread_sanitizer(3, 8, '-m32')
+
+
+@conf
+def cxx_clang39_thread_sanitizer_x64(conf):
+    """
+    Configure clang 3.9 (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 9, '-m64')
+
+
+@conf
+def cxx_clang39_thread_sanitizer_x86(conf):
+    """
+    Configure clang 3.9 (32-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 9, '-m32')

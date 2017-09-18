@@ -8,6 +8,27 @@ Latest
 ------
 * tbd
 
+4.3.0
+-----
+* Minor: Added mkspecs for clang 5.0 in the Android NDK r15.
+* Minor: Added the cxx_apple_llvm81_x64 mkspec.
+
+4.2.0
+-----
+* Minor: Added mkspecs for clang 3.9 sanitizers.
+* Minor: Added cxx_gxx63_armv7 and cxx_gxx63_armv7_softfp mkspecs to target
+  generic cross-compilers for ARMv7 systems.
+
+4.1.1
+-----
+* Patch: Use the gold linker for 64-bit ARM Android targets to fix issues
+  with linking shared libraries.
+
+4.1.0
+-----
+* Minor: Added cxx_android5_gxx49_arm64 and cxx_android5_clang38_arm64 mkspecs
+  for 64-bit ARM Android targets.
+
 4.0.4
 -----
 * Patch: Fixed emscripten_common to work with the new waf.

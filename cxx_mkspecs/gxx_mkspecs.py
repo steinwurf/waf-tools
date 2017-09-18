@@ -47,6 +47,25 @@ def cxx_android5_gxx49_armv7(conf):
 
 
 @conf
+def cxx_android5_gxx49_arm64(conf):
+    """
+    Detects and setup the Android 5.0+ g++ 4.9 compiler for ARM64
+    """
+    # Note: The arm64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    # Only position independent executables (PIE) are supported on Android 5.
+    conf.mkspec_gxx_android_configure(4, 9, 'aarch64-linux-android')
+    conf.mkspec_add_common_flag('-fPIE')
+    conf.env['LINKFLAGS'] += ['-pie']
+    # Default "bfd" linker for the arm64 toolchain has an issue with linking
+    # shared libraries: https://github.com/android-ndk/ndk/issues/148
+    # Force the use of the "gold" linker until it becomes the default
+    conf.env['LINKFLAGS'] += ['-fuse-ld=gold']
+    conf.env['DEST_CPU'] = 'arm64'
+
+
+@conf
 def cxx_android_gxx49_x86(conf):
     """
     Detect and setup the Android g++ 4.9 compiler for x86
@@ -74,7 +93,7 @@ def cxx_android5_gxx49_x64(conf):
     """
     # Note: The x86_64 platform was introduced in Android 5 (API Level 21).
     # Therefore the standalone toolchain must be created with the
-    # --platform=android-21 option (or above).
+    # --api=21 option (or above).
     conf.mkspec_gxx_android_configure(4, 9, 'x86_64-linux-android')
     # The PIE binary must be the default in this case
     conf.mkspec_add_common_flag('-fPIE')
@@ -254,6 +273,56 @@ def cxx_gxx63_x86(conf):
 
 
 @conf
+def cxx_gxx63_armv7(conf):
+    """
+    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on ARMv7
+    CPU with a hardware FPU. The 'g++-arm-linux-gnueabihf' Debian package
+    should provide a compatible toolchain, or the standalone version can be
+    downloaded from the Linaro releases:
+    https://releases.linaro.org/components/toolchain/binaries/latest/arm-linux-gnueabihf/
+    """
+    conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabihf')
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_gxx63_armv7_softfp(conf):
+    """
+    Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on ARMv7
+    CPU with a hardware FPU, but on a system where a soft-float ABI is required.
+    The 'g++-arm-linux-gnueabi' Debian package should provide a compatible
+    toolchain, or the standalone version can be  downloaded from the Linaro
+    releases:
+    https://releases.linaro.org/components/toolchain/binaries/latest/arm-linux-gnueabi/
+    """
+    conf.mkspec_gxx_configure(6, 3, 'arm-linux-gnueabi')
+    # Specify the ARMv7 architecture and the 'softfp' float ABI to compile for
+    # hardware FPU, but with software linkage (required for -mfpu=neon flag).
+    # The __ARM_NEON__ macro will be defined only if the -mfloat-abi=softfp and
+    # -mfpu=neon flags are used together.
+    flags = ['-march=armv7-a', '-mfloat-abi=softfp']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
 def cxx_raspberry_gxx49_arm(conf):
     """
     Detect and setup the g++ 4.9 cross-compiler for Raspberry Pi (Linux)
@@ -270,7 +339,7 @@ def cxx_raspberry_gxx49_arm(conf):
 def cxx_raspberry_gxx49_armv7(conf):
     """
     Detect and setup the g++ 4.9 cross-compiler for Raspberry Pi (Linux)
-    running on armv7 compatible hardware (Raspberry Pi 2)
+    running on ARMv7 compatible hardware (Raspberry Pi 2)
     """
     conf.mkspec_gxx_configure(4, 9, 'raspberry-gxx49-arm')
     # atomic support that is required for std::threads (without this flag,
