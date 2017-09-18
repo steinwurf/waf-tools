@@ -230,10 +230,10 @@ def make_run(taskgen, run_type):
     # test fails.
     post_funs = getattr(taskgen.bld, 'post_funs', None)
     if post_funs:
-        if summary not in post_funs:
-            taskgen.bld.add_post_fun(summary)
         if set_exit_code not in post_funs:
             taskgen.bld.add_post_fun(set_exit_code)
+        if summary not in post_funs:
+            taskgen.bld.add_post_fun(summary)
     else:
         taskgen.bld.add_post_fun(set_exit_code)
         taskgen.bld.add_post_fun(summary)
@@ -241,7 +241,7 @@ def make_run(taskgen, run_type):
 
 def summary(bld):
     """
-    Display an execution summary::
+    Display an execution summary:
 
     def build(bld):
         bld(features='cxx cxxprogram test', source='main.c', target='app')
@@ -256,33 +256,20 @@ def summary(bld):
         fail = len([x for x in lst if x[1]])
 
         Logs.pprint('CYAN', '  successful runs %d/%d' % (total - fail, total))
-        for (filename, return_code, stdout, stderr) in lst:
+        for (filename, return_code, stdout) in lst:
             if return_code == 0:
                 Logs.pprint('CYAN', '    %s' % filename)
 
         if fail != 0:
             Logs.pprint('CYAN', '  failed runs %d/%d' % (fail, total))
-            for (filename, return_code, stdout, stderr) in lst:
+            for (filename, return_code, stdout) in lst:
                 if return_code != 0:
                     Logs.pprint('CYAN', '     %s' % filename)
 
 
-def assemble_output(stdout, stderr):
-    """Helper function to assemble output message from the test results"""
-    msg = []
-
-    if stdout:
-        msg.append(u'\nstdout:\n\n{}'.format(stdout))
-
-    if stderr:
-        msg.append(u'\nstderr:\n\n{}'.format(stderr))
-
-    return msg
-
-
 def set_exit_code(bld):
     """
-    If any of the tests fails waf will exit with that exit code.
+    If any of the tests fails, waf will output the corresponding exit code.
     This is useful if you have an automated build system which need
     to report on errors from the tests.
     You may use it like this:
@@ -293,10 +280,10 @@ def set_exit_code(bld):
         bld.add_post_fun(waf_unit_test.set_exit_code)
     """
     lst = getattr(bld, 'runner_results', [])
-    for (filename, return_code, stdout, stderr) in lst:
+    for (cmd, return_code, stdout) in lst:
         if return_code:
-            msg = assemble_output(stdout, stderr)
-            bld.fatal(os.linesep.join(msg))
-        elif not bld.has_tool_option('run_silent'):
-            msg = assemble_output(stdout, stderr)
-            Logs.pprint('WHITE', os.linesep.join(msg))
+            # If this was a "silent" run, we should print the full output
+            if bld.has_tool_option('run_silent'):
+                Logs.pprint('RED', stdout)
+            bld.fatal('Command "{}" failed with return code: {}'.format(
+                cmd, return_code))

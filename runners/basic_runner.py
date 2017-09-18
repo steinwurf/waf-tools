@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import os
+import sys
 import shutil
 from waflib import Utils, Task, Logs
 
@@ -170,7 +171,6 @@ class BasicRunner(Task.Task):
         Stores the result in the self.generator.bld.runner_results
         """
         combined_stdout = u""
-        combined_stderr = u""
         combined_return_code = 0
 
         for result in results:
@@ -185,21 +185,16 @@ class BasicRunner(Task.Task):
             combined_stdout += u'Running: {0}\n'.format(cmd)
 
             if result["stdout"]:
-                combined_stdout += result["stdout"].replace('\r\n', '\n')
-
-            if result["stderr"]:
-                combined_stderr += u'Running: {0}\n{1}'.format(
-                    cmd,
-                    result["stderr"].replace('\r\n', '\n'))
+                combined_stdout += result["stdout"]
 
             if result['return_code'] != 0:
-                combined_return_code = -1
+                # Save the last non-zero return code
+                combined_return_code = result['return_code']
 
         combined_result = (
             self.format_command(self.inputs[0]),
             combined_return_code,
-            combined_stdout,
-            combined_stderr)
+            combined_stdout)
 
         testlock.acquire()
         try:
@@ -216,26 +211,36 @@ class BasicRunner(Task.Task):
 
     def run_cmd(self, cmd):
 
-        Logs.debug("wr: running %r", cmd)
+        bld = self.generator.bld
+        run_silent = bld.has_tool_option('run_silent')
+
+        print("Running: {}\n".format(cmd))
+
         proc = Utils.subprocess.Popen(
             cmd,
             cwd=self.inputs[0].parent.abspath(),
+            universal_newlines=True,
             stdin=Utils.subprocess.PIPE,
-            stderr=Utils.subprocess.PIPE,
-            stdout=Utils.subprocess.PIPE)
+            stdout=Utils.subprocess.PIPE,
+            # stderr should go into the same handle as stdout:
+            stderr=Utils.subprocess.STDOUT)
+
         all_stdout = []
-        while True:
-            stdout = proc.stdout.readline()
-            if stdout == '' and proc.poll() is not None:
-                break
-            if stdout:
-                all_stdout.append(stdout)
-                print(stdout.strip())
+        # iter() is used to read lines as soon as they are written to
+        # work around the read-ahead bug in Python 2:
+        # https://bugs.python.org/issue3907
+        for line in iter(proc.stdout.readline, ""):
+            all_stdout.append(line)
+            if not run_silent:
+                print(line.rstrip())
 
-        all_stderr = proc.stderr.readline()
+        proc.stdout.close()
+        return_code = proc.wait()
 
-        result = {'cmd': cmd, 'return_code': proc.poll(),
-                  'stdout': "".join(all_stdout).decode('utf-8'),
-                  'stderr': "".join(all_stderr).decode('utf-8')}
+        if return_code:
+            print("\nReturn code: {}\n".format(return_code))
+
+        result = {'cmd': cmd, 'return_code': return_code,
+                  'stdout': "".join(all_stdout).decode('utf-8')}
 
         return result
