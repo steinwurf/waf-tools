@@ -95,8 +95,13 @@ class SSHRunner(BasicRunner):
         if return_code:
             print("\nReturn code: {}\n".format(return_code))
 
+        stdout = "".join(all_stdout)
+        if hasattr(stdout, "decode"):
+            # This is needed in Python 2 to allow unicode output
+            stdout = stdout.decode('utf-8')
+
         result = {'cmd': cmd, 'return_code': return_code,
-                  'stdout': "".join(all_stdout).decode('utf-8')}
+                  'stdout': stdout}
 
         return result
 
