@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+4.4.0
+-----
+* Minor: The test runners now produce live output instead of capturing all
+  lines and only displaying them at the end. The live output is especially
+  useful if the test process gets stuck at a certain point.
+
 4.3.0
 -----
 * Minor: Added mkspecs for clang 5.0 in the Android NDK r15.
