@@ -88,6 +88,7 @@ class SSHRunner(BasicRunner):
             all_stdout.append(line)
             if not run_silent:
                 print(line.rstrip())
+                sys.stdout.flush()
 
         proc.stdout.close()
         return_code = proc.wait()
