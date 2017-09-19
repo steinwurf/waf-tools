@@ -80,18 +80,24 @@ class AndroidRunner(BasicRunner):
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
-            result = {'cmd': 'Looking for shell exit', 'return_code': -1,
-                      'stdout': '', 'stderr': 'Failed to find exitcode'}
+            error_msg = 'Failed to find return code in output!\n'
+            print(error_msg)
+
+            result = {'cmd': 'Looking for shell exit',
+                      'return_code': -1,
+                      'stdout': error_msg}
 
             results.append(result)
             self.save_result(results)
             return
 
         if match.group(1) != "0":
-            result = {'cmd': 'Shell exit indicates error',
+            error_msg = 'Command return code:{}\n'.format(match.group(1))
+            print(error_msg)
+
+            result = {'cmd': 'Checking return code for command',
                       'return_code': match.group(1),
-                      'stdout': '',
-                      'stderr': 'Exit code was %s' % match.group(1)}
+                      'stdout': error_msg}
 
             results.append(result)
             self.save_result(results)

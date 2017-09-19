@@ -54,7 +54,10 @@ class SSHRunner(BasicRunner):
 
     def run_cmd(self, cmd):
 
-        Logs.debug("wr: running %r", cmd)
+        bld = self.generator.bld
+        run_silent = bld.has_tool_option('run_silent')
+
+        print("Running: {}\n".format(cmd))
 
         # The pty module only works on Unix systems
         stdin_target = Utils.subprocess.PIPE
@@ -71,15 +74,35 @@ class SSHRunner(BasicRunner):
         proc = Utils.subprocess.Popen(
             cmd,
             cwd=self.inputs[0].parent.abspath(),
+            universal_newlines=True,
             stdin=stdin_target,
-            stderr=Utils.subprocess.PIPE,
-            stdout=Utils.subprocess.PIPE)
+            stdout=Utils.subprocess.PIPE,
+            # stderr should go into the same handle as stdout:
+            stderr=Utils.subprocess.STDOUT)
 
-        (stdout, stderr) = proc.communicate()
+        all_stdout = []
+        # iter() is used to read lines as soon as they are written to
+        # work around the read-ahead bug in Python 2:
+        # https://bugs.python.org/issue3907
+        for line in iter(proc.stdout.readline, ""):
+            all_stdout.append(line)
+            if not run_silent:
+                print(line.rstrip())
+                sys.stdout.flush()
 
-        result = {'cmd': cmd, 'return_code': proc.returncode,
-                  'stdout': stdout.decode('utf-8'),
-                  'stderr': stderr.decode('utf-8')}
+        proc.stdout.close()
+        return_code = proc.wait()
+
+        if return_code:
+            print("\nReturn code: {}\n".format(return_code))
+
+        stdout = "".join(all_stdout)
+        if hasattr(stdout, "decode"):
+            # This is needed in Python 2 to allow unicode output
+            stdout = stdout.decode('utf-8')
+
+        result = {'cmd': cmd, 'return_code': return_code,
+                  'stdout': stdout}
 
         return result
 
@@ -214,18 +237,24 @@ class SSHRunner(BasicRunner):
         match = re.search('shellexit:(\d+)', result['stdout'])
 
         if not match:
-            result = {'cmd': 'Looking for shell exit', 'return_code': -1,
-                      'stdout': '', 'stderr': 'Failed to find exitcode'}
+            error_msg = 'Failed to find return code in output!\n'
+            print(error_msg)
+
+            result = {'cmd': 'Looking for shell exit',
+                      'return_code': -1,
+                      'stdout': error_msg}
 
             results.append(result)
             self.save_result(results, ssh_cmd)
             return
 
         if match.group(1) != "0":
-            result = {'cmd': 'Shell exit indicates error',
+            error_msg = 'Command return code:{}\n'.format(match.group(1))
+            print(error_msg)
+
+            result = {'cmd': 'Checking return code for command',
                       'return_code': match.group(1),
-                      'stdout': '',
-                      'stderr': 'Exit code was %s' % match.group(1)}
+                      'stdout': error_msg}
 
             results.append(result)
             self.save_result(results, ssh_cmd)
