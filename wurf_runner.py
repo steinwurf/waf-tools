@@ -223,6 +223,8 @@ def make_run(taskgen, run_type):
             module_task = taskgen.bld.get_tgen_by_name(module).tasks[0]
             # Get the first target of the task (i.e. the kernel object)
             task.kernel_objects.append(module_task.outputs[0])
+            # Make sure that the tests run after building the kernel module
+            task.set_run_after(module_task)
 
     # We are creating a new task which should run an executable after
     # a build finishes. Here we add two functions to the BuildContext
