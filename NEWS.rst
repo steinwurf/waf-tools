@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.5.1
+-----
+* Patch: The tests should only run after building the required kernel modules.
+
 4.5.0
 -----
 * Minor: Added mkspecs for Android x86: cxx_android5_clang38_x86 and
