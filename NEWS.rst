@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.6.0
+-----
+* Minor: Added the cxx_emscripten137 mkspec.
+
 4.5.1
 -----
 * Patch: The tests should only run after building the required kernel modules.
