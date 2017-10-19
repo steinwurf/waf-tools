@@ -52,3 +52,11 @@ def cxx_emscripten134(conf):
     Detect and setup the em++ 1.34 compiler
     """
     conf.mkspec_emscripten_configure(1, 34)
+
+
+@conf
+def cxx_emscripten137(conf):
+    """
+    Detect and setup the em++ 1.37 compiler
+    """
+    conf.mkspec_emscripten_configure(1, 37)

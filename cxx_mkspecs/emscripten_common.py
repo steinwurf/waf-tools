@@ -102,8 +102,8 @@ def check_emscripten_version(conf, emscripten_cc, major, minor, minimum):
             stderr=subprocess.PIPE)
         out = p.communicate()[0]
         cc_major, cc_minor, _ = [int(v) for v in out.split()[4].split('.')]
-    except:
-        conf.fatal('could not determine the compiler version')
+    except Exception as e:
+        conf.fatal('Could not determine the compiler version: {}'.format(e))
 
     cc_version = "{}.{}".format(cc_major, cc_minor)
 
