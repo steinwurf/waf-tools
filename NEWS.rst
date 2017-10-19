@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.7.0
+-----
+* Minor: Added the cxx_apple_llvm90_x64 mkspec (to support XCode 9.0).
+
 4.6.0
 -----
 * Minor: Added the cxx_emscripten137 mkspec.
