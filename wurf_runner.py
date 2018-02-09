@@ -103,6 +103,11 @@ def options(opt):
         help='Specify the ID of the target Android device '
              '(used with ADB when multiple devices are available)')
 
+    opts.add_option(
+        '--test_filter', default=None, dest='test_filter',
+        help='Only compile the test source files that include the specified '
+             'substring (wildcards are allowed)')
+
     opt.load('runners.ssh_runner')
 
 
