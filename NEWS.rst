@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.8.0
+-----
+* Minor: Added the test_filter option to only compile a part of the test source
+  files. This is useful in a project with a lot of test files.
+
 4.7.0
 -----
 * Minor: Added the cxx_apple_llvm90_x64 mkspec (to support XCode 9.0).
