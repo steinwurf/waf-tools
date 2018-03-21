@@ -6,7 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Patch: Use correct `DEST_CPU` value for ARMv7.
+* Minor: Added the cxx_android5_clang50_x86_64 and cxx_android5_clang38_x86_64
+  mkspec.
+* Minor: Added the cxx_android5_clang arm mkspecs.
 
 4.8.0
 -----

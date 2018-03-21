@@ -7,12 +7,67 @@ from . import clang_common
 
 
 @conf
+def cxx_android_clang38_arm(conf):
+    """
+    Detect and setup the Android clang 3.8 compiler for ARM
+    """
+    conf.mkspec_clang_android_configure(3, 8, prefix='arm-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_android_clang50_arm(conf):
+    """
+    Detect and setup the Android clang 5.0 compiler for ARM
+    """
+    conf.mkspec_clang_android_configure(5, 0, prefix='arm-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_android5_clang38_arm(conf):
+    """
+    Detects and setup the Android 5.0+ clang 3.8 compiler for ARM
+    """
+    conf.cxx_android_clang38()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+@conf
+def cxx_android5_clang50_arm(conf):
+    """
+    Detects and setup the Android 5.0+ clang 5.0 compiler for ARM
+    """
+    conf.cxx_android_clang50()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+
+@conf
 def cxx_android_clang38_armv7(conf):
     """
     Detect and setup the Android clang 3.8 compiler for ARMv7
     """
     conf.mkspec_clang_android_configure(3, 8, prefix='arm-linux-androideabi')
-    conf.env['DEST_CPU'] = 'arm'
+
+    flags = ['-march=armv7-a']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+    conf.env['LINKFLAGS'] += flags
+
+    conf.env['DEST_CPU'] = 'armeabi-v7a'
 
 
 @conf
@@ -21,7 +76,13 @@ def cxx_android_clang50_armv7(conf):
     Detect and setup the Android clang 5.0 compiler for ARMv7
     """
     conf.mkspec_clang_android_configure(5, 0, prefix='arm-linux-androideabi')
-    conf.env['DEST_CPU'] = 'arm'
+
+    flags = ['-march=armv7-a']
+    conf.env['CFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+    conf.env['LINKFLAGS'] += flags
+
+    conf.env['DEST_CPU'] = 'armeabi-v7a'
 
 
 @conf
@@ -111,6 +172,8 @@ def cxx_android5_clang38_x86(conf):
     conf.env['LINKFLAGS_cprogram'] = ['-pie']
     conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
 
+    conf.env['DEST_CPU'] = 'x86'
+
 
 @conf
 def cxx_android5_clang50_x86(conf):
@@ -126,6 +189,44 @@ def cxx_android5_clang50_x86(conf):
     # add the -pie flag. This is only necessary when building programs.
     conf.env['LINKFLAGS_cprogram'] = ['-pie']
     conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+    conf.env['DEST_CPU'] = 'x86'
+
+
+@conf
+def cxx_android5_clang38_x86_64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 3.8 compiler for x64
+    """
+    conf.mkspec_clang_android_configure(3, 8, prefix='x86_64-linux-android')
+
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+    conf.env['DEST_CPU'] = 'x86_x64'
+
+
+@conf
+def cxx_android5_clang50_x86_64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 5.0 compiler for x64
+    """
+    conf.mkspec_clang_android_configure(5, 0, prefix='x86_64-linux-android')
+
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+    conf.env['DEST_CPU'] = 'x86_x64'
 
 
 @conf

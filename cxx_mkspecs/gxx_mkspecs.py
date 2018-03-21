@@ -12,6 +12,7 @@ def cxx_android_gxx49_arm(conf):
     Detect and setup the Android g++ 4.9 compiler for ARM
     """
     conf.mkspec_gxx_android_configure(4, 9, 'arm-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
 
 
 @conf
@@ -31,6 +32,8 @@ def cxx_android_gxx49_armv7(conf):
     # atomic support that is required for std::threads (without this flag,
     # the threading code might call pure virtual methods)
     conf.env['LINKFLAGS'] += ['-march=armv7-a']
+
+    conf.env['DEST_CPU'] = 'armeabi-v7a'
 
 
 @conf
@@ -72,6 +75,8 @@ def cxx_android_gxx49_x86(conf):
     """
     conf.mkspec_gxx_android_configure(4, 9, 'i686-linux-android')
 
+    conf.env['DEST_CPU'] = 'x86'
+
 
 @conf
 def cxx_android5_gxx49_x86(conf):
@@ -98,6 +103,8 @@ def cxx_android5_gxx49_x64(conf):
     # The PIE binary must be the default in this case
     conf.mkspec_add_common_flag('-fPIE')
     conf.env['LINKFLAGS'] += ['-pie']
+
+    conf.env['DEST_CPU'] = 'x86_64'
 
 
 @conf
@@ -290,7 +297,7 @@ def cxx_gxx63_armv7(conf):
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
     # Set the target CPU
-    conf.env['DEST_CPU'] = 'arm'
+    conf.env['DEST_CPU'] = 'armeabi-v7a'
 
 
 @conf
@@ -319,7 +326,7 @@ def cxx_gxx63_armv7_softfp(conf):
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
     # Set the target CPU
-    conf.env['DEST_CPU'] = 'arm'
+    conf.env['DEST_CPU'] = 'armeabi-v7a'
 
 
 @conf
@@ -349,7 +356,7 @@ def cxx_raspberry_gxx49_armv7(conf):
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
     # Set the target CPU
-    conf.env['DEST_CPU'] = 'arm'
+    conf.env['DEST_CPU'] = 'armeabi-v7a'
 
 
 @conf
