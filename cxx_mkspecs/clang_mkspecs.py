@@ -129,6 +129,44 @@ def cxx_android5_clang50_x86(conf):
 
 
 @conf
+def cxx_android5_clang38_x64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 3.8 compiler for x64
+    """
+    # Note: The x86_64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    conf.mkspec_clang_android_configure(3, 8, prefix='x86_64-linux-android')
+
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+@conf
+def cxx_android5_clang50_x64(conf):
+    """
+    Detects and setup the Android 5.0+ clang 5.0 compiler for x64
+    """
+    # Note: The x86_64 platform was introduced in Android 5 (API Level 21).
+    # Therefore the standalone toolchain must be created with the
+    # --api=21 option (or above).
+    conf.mkspec_clang_android_configure(5, 0, prefix='x86_64-linux-android')
+
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+
+
+@conf
 def cxx_apple_llvm80_x64(conf):
     """
     Detect and setup the 64-bit Apple LLVM 8.0 compiler
