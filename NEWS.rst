@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+4.9.0
+-----
 * Minor: Added mkspecs for Android x86_64: cxx_android5_clang38_x64 and
   cxx_android5_clang50_x64.
 
