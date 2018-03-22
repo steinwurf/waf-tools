@@ -112,6 +112,12 @@ def mkspec_clang_android_configure(conf, major, minor, prefix, target=None):
         conf.env['CXXFLAGS'] += target_flags
         conf.env['LINKFLAGS'] += target_flags
 
+    if major == 5 and minor == 0:
+        # This warning is broken in clang 5.0.300080 (Android NDK r16b).
+        # The flag is not needed for newer versions that include this patch:
+        # https://reviews.llvm.org/D33526
+        conf.env['CXXFLAGS'] += ['-Wno-unused-lambda-capture']
+
 
 @conf
 def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu,
