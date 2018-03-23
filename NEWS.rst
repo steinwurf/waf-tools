@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.9.1
+------
+* Patch: Disabled the incorrect unused-lambda-capture warning for clang 5.0
+  in the Android NDK r16b.
+
 4.9.0
 -----
 * Minor: Added mkspecs for Android x86_64: cxx_android5_clang38_x64 and
