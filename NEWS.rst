@@ -7,6 +7,7 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Minor: Added the cxx_apple_llvm91_x64 mkspec (to support XCode 9.3).
 
 4.9.1
 ------
