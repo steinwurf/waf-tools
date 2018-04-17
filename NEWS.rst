@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.11.0
+------
+* Minor: Added mkspecs for clang 4.0, 5.0, 6.0 and g++ 7.2, 7.3.
+
 4.10.0
 ------
 * Minor: Added the cxx_apple_llvm91_x64 mkspec (to support XCode 9.3).
