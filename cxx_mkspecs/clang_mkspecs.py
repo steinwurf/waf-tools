@@ -291,6 +291,60 @@ def cxx_clang39_x86(conf):
 
 
 @conf
+def cxx_clang40_x64(conf):
+    """
+    Detect and setup the clang 4.0 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(4, 0)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_clang40_x86(conf):
+    """
+    Detect and setup the clang 4.0 compiler for 32 bit
+    """
+    conf.mkspec_clang_configure(4, 0)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
+def cxx_clang50_x64(conf):
+    """
+    Detect and setup the clang 5.0 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(5, 0)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_clang50_x86(conf):
+    """
+    Detect and setup the clang 5.0 compiler for 32 bit
+    """
+    conf.mkspec_clang_configure(5, 0)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
+def cxx_clang60_x64(conf):
+    """
+    Detect and setup the clang 6.0 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(6, 0)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_clang60_x86(conf):
+    """
+    Detect and setup the clang 6.0 compiler for 32 bit
+    """
+    conf.mkspec_clang_configure(6, 0)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_ios70_apple_llvm_armv7(conf):
     """
     Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
