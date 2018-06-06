@@ -117,7 +117,7 @@ def mkspec_set_gcc_ccflags(conf):
     conf.env['CFLAGS'] += ['-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CFLAGS'] += ['-g', '-fno-omit-frame-pointer']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
@@ -136,7 +136,7 @@ def mkspec_set_gxx_cxxflags(conf):
     conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
-        conf.env['CXXFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g', '-fno-omit-frame-pointer']
     elif not conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['LINKFLAGS'] += ['-s']
 

@@ -743,6 +743,7 @@ waf3-*
 .lock-*
 **/*.pyc
 build
+build_current
 resolve_symlinks
 resolved_dependencies
 **/*.sln
