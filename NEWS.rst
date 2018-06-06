@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.12.0
+------
+* Minor: Added the -fno-omit-frame-pointer flag to g++ debug builds (this is
+  needed for running various profiling tools).
+
 4.11.0
 ------
 * Minor: Added mkspecs for clang 4.0, 5.0, 6.0 and g++ 7.2, 7.3.
