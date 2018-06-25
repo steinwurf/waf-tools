@@ -8,6 +8,12 @@ Latest
 ------
 * tbd
 
+4.13.0
+------
+* Minor: Added the limit_includes waf feature that is useful to constrain the
+  available include paths to the export_includes of the top-level task
+  generators in the program's "use" list.
+
 4.12.0
 ------
 * Minor: Added the -fno-omit-frame-pointer flag to g++ debug builds (this is
