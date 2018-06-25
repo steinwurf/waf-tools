@@ -10,6 +10,7 @@ import wurf_install_path
 import wurf_project_generator
 import wurf_android_soname
 import wurf_copy_binary
+import wurf_limit_includes
 
 from waflib import Options
 from waflib.Configure import conf
