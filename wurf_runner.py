@@ -167,7 +167,6 @@ def make_run(taskgen, run_type):
     """
     if hasattr(taskgen, 'link_task'):
 
-        taskgen.bld.add_group()
         if taskgen.bld.has_tool_option('ssh_runner'):
             task = taskgen.create_task('SSHRunner',
                                        taskgen.link_task.outputs)
