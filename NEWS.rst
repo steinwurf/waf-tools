@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+4.13.1
+------
 * Patch: Make wurf_runner compatible with waf 2.0.
 
 4.13.0
