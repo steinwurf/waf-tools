@@ -7,6 +7,7 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Patch: Run wurf_runner features after process_use (waf 2.0 compatibility).
 
 4.13.1
 ------
