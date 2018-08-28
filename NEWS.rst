@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.14.0
+------
+* Minor: Added mkspecs for g++ 8.1 and 8.2.
+
 4.13.2
 ------
 * Patch: Run wurf_runner features after process_use (waf 2.0 compatibility).
