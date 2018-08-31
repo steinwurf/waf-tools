@@ -65,7 +65,7 @@ def cxx_msvc15_x64(conf):
     """
     if conf.is_mkspec_platform('windows'):
         conf.env.MSVC_TARGETS = ['x64']
-        conf.mkspec_msvc_configure('15.0')
+        conf.mkspec_msvc_configure('15.8')
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
@@ -78,7 +78,7 @@ def cxx_msvc15_x86(conf):
     """
     if conf.is_mkspec_platform('windows'):
         conf.env.MSVC_TARGETS = ['x86']
-        conf.mkspec_msvc_configure('15.0')
+        conf.mkspec_msvc_configure('15.8')
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
