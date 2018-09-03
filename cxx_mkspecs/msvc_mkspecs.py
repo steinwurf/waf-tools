@@ -64,6 +64,10 @@ def cxx_msvc15_x64(conf):
     Detect and setup the Microsoft Visual C++ 2017 compiler for 64-bit
     """
     if conf.is_mkspec_platform('windows'):
+        # The x64 native toolchain is preferred over the x86_amd64 toolchain
+        # which is a 32-bit compiler that cross-compiles to 64-bit (Visual
+        # Studio 2017 Express only provides x86_amd64, but other versions
+        # provide both options)
         conf.env.MSVC_TARGETS = ['x64', 'x86_amd64']
         conf.mkspec_msvc_configure('15.8')
     else:
@@ -77,6 +81,9 @@ def cxx_msvc15_x86(conf):
     Detect and setup the Microsoft Visual C++ 2017 compiler for 32-bit
     """
     if conf.is_mkspec_platform('windows'):
+        # Use the native x86 toolchain when available, future versions of
+        # Visual Studio might only provide amd64_x86, which is a 64-bit
+        # compiler that cross-compiles to 32-bit
         conf.env.MSVC_TARGETS = ['x86', 'amd64_x86']
         conf.mkspec_msvc_configure('15.8')
     else:
