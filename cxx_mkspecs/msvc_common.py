@@ -34,7 +34,6 @@ def mkspec_msvc_configure(conf, version):
         raise e
     else:
         conf.end_msg(conf.env.get_flat('CXX'))
-        conf.end_msg(False)
         conf.mkspec_set_msvc_flags()
 
 
