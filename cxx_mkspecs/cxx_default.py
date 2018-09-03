@@ -24,7 +24,7 @@ def load_compiler(conf, compiler, arch):
         if arch == 'x86':
             conf.env.MSVC_TARGETS = ['x86']
         elif arch == 'x64':
-            conf.env.MSVC_TARGETS = ['x86_amd64']
+            conf.env.MSVC_TARGETS = ['x64', 'x86_amd64']
 
         conf.load('msvc')
         # Note: the waf msvc tool also loads msvc as a C compiler
