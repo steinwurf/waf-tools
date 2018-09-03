@@ -7,6 +7,8 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+* Minor: Added mkspecs cxx_msvc15_x86 and cxx_msvc15_x64 to support the
+  Visual Studio 2017 compiler (including the VS Build Tools).
 
 4.14.0
 ------
