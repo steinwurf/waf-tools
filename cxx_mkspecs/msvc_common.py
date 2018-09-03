@@ -47,9 +47,6 @@ def mkspec_find_installed_msvc_version(conf, major_version):
         return current_version
 
     try:
-        if sys.version_info[0] < 3:
-            txt = txt.decode(Utils.console_encoding())
-
         data = json.loads(txt)
         # Make sure that the latest version comes first
         data.sort(key=lambda x: x['installationVersion'], reverse=True)
