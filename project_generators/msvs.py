@@ -840,6 +840,17 @@ class msvs_generator(WafBuildContext):
             self.main_project = self.vsnode_target(
                 self, getattr(Context.g_module, Context.APPNAME, 'project'))
 
+    def pre_recurse(self, node):
+
+        super(msvs_generator, self).pre_recurse(node)
+
+        # Call build() in all dependencies before executing build()
+        # in the top-level wscript: this allows us to go through all
+        # task generators from the dependencies and save all available
+        # include directories for the main project's includes_search_path
+        if self.is_toplevel():
+            self.recurse_dependencies()
+
     def execute(self):
         """
         Entry point
