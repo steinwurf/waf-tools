@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.15.1
+------
+* Patch: Correctly enumerate dependencies in the MSVS project generator
+  to collect all available include directories.
+
 4.15.0
 ------
 * Minor: Added mkspecs cxx_msvc15_x86 and cxx_msvc15_x64 to support the
