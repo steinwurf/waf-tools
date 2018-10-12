@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.16.0
+------
+* Minor: Added the cxx_apple_llvm100_x64 mkspec (to support XCode 10.0).
+
 4.15.1
 ------
 * Patch: Correctly enumerate dependencies in the MSVS project generator
