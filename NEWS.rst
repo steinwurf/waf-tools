@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.17.1
+------
+* Patch: Added missing -static-libstdc++ flag in cxx_android_clang70_armv7.
+
 4.17.0
 ------
 * Minor: Added mkspecs for clang 7.0 in the Android NDK r18b.
