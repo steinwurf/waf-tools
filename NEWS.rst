@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.17.0
+------
+* Minor: Added mkspecs for clang 7.0 in the Android NDK r18b.
+
 4.16.0
 ------
 * Minor: Added the cxx_apple_llvm100_x64 mkspec (to support XCode 10.0).
