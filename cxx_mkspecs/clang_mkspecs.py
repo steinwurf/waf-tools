@@ -31,6 +31,10 @@ def cxx_android_clang70_armv7(conf):
     """
     conf.mkspec_clang_android_configure(7, 0, prefix='arm-linux-androideabi')
     conf.env['DEST_CPU'] = 'arm'
+    # Note: libc++_shared.so is not available on the target platform, so
+    # we force the linker to select the static version of libstdc++ (which is
+    # actually libc++ in NDK r17+)
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
 
 @conf
