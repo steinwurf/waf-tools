@@ -76,6 +76,10 @@ def cxx_android5_clang70_armv7(conf):
     # add the -pie flag. This is only necessary when building programs.
     conf.env['LINKFLAGS_cprogram'] = ['-pie']
     conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Note: libc++_shared.so is not available on the target platform, so
+    # we force the linker to select the static version of libstdc++ (which is
+    # actually libc++ in NDK r17+)
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
 
 @conf
@@ -139,6 +143,10 @@ def cxx_android5_clang70_arm64(conf):
     # shared libraries: https://github.com/android-ndk/ndk/issues/148
     # Force the use of the "gold" linker until it becomes the default
     conf.env['LINKFLAGS'] += ['-fuse-ld=gold']
+    # Note: libc++_shared.so is not available on the target platform, so
+    # we force the linker to select the static version of libstdc++ (which is
+    # actually libc++ in NDK r17+)
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
 
 @conf
@@ -187,6 +195,10 @@ def cxx_android5_clang70_x86(conf):
     # add the -pie flag. This is only necessary when building programs.
     conf.env['LINKFLAGS_cprogram'] = ['-pie']
     conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Note: libc++_shared.so is not available on the target platform, so
+    # we force the linker to select the static version of libstdc++ (which is
+    # actually libc++ in NDK r17+)
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
 
 @conf
@@ -244,6 +256,10 @@ def cxx_android5_clang70_x64(conf):
     # add the -pie flag. This is only necessary when building programs.
     conf.env['LINKFLAGS_cprogram'] = ['-pie']
     conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Note: libc++_shared.so is not available on the target platform, so
+    # we force the linker to select the static version of libstdc++ (which is
+    # actually libc++ in NDK r17+)
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
 
 
 @conf
