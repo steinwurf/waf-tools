@@ -501,7 +501,8 @@ def cxx_ios70_apple_llvm_x86_64(conf):
 
 
 @conf
-def mkspec_setup_clang_address_sanitizer(conf, major, minor, arch):
+def mkspec_setup_clang_address_sanitizer(conf, major, minor, arch,
+                                         minimum=False):
     """
     To get a reasonable performance add -O1 or higher. To get nicer
     stack traces in error messages add -fno-omit-frame-pointer. To get
@@ -509,12 +510,29 @@ def mkspec_setup_clang_address_sanitizer(conf, major, minor, arch):
     -O1) and tail call elimination (-fno-optimize-sibling-calls).
     http://clang.llvm.org/docs/AddressSanitizer.html
     """
-    conf.mkspec_clang_configure(major, minor, force_debug=True)
+    conf.mkspec_clang_configure(major, minor, minimum=minimum,
+                                force_debug=True)
     conf.mkspec_add_common_flag(arch)
 
     conf.mkspec_add_common_flag('-fsanitize=address')
     conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
     conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
+
+
+@conf
+def cxx_clang_address_sanitizer_x64(conf):
+    """
+    Configure clang (64-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 6, '-m64', minimum=True)
+
+
+@conf
+def cxx_clang_address_sanitizer_x86(conf):
+    """
+    Configure clang (32-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(3, 6, '-m32', minimum=True)
 
 
 @conf
@@ -550,7 +568,8 @@ def cxx_clang39_address_sanitizer_x86(conf):
 
 
 @conf
-def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch):
+def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch,
+                                        minimum=False):
     """
     To get a reasonable performance add -O1 or higher. To get
     meaningful stack traces in error messages add
@@ -559,14 +578,30 @@ def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch):
     (-fno-optimize-sibling-calls).
     http://clang.llvm.org/docs/MemorySanitizer.html
     """
-
-    conf.mkspec_clang_configure(major, minor, force_debug=True)
+    conf.mkspec_clang_configure(major, minor, minimum=minimum,
+                                force_debug=True)
     conf.mkspec_add_common_flag(arch)
 
     conf.mkspec_add_common_flag('-fsanitize=memory')
     conf.mkspec_add_common_flag('-fsanitize-memory-track-origins')
     conf.mkspec_add_common_flag('-fno-omit-frame-pointer')
     conf.mkspec_add_common_flag('-fno-optimize-sibling-calls')
+
+
+@conf
+def cxx_clang_memory_sanitizer_x64(conf):
+    """
+    Configure clang (64-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 6, '-m64', minimum=True)
+
+
+@conf
+def cxx_clang_memory_sanitizer_x86(conf):
+    """
+    Configure clang (32-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(3, 6, '-m32', minimum=True)
 
 
 @conf
@@ -602,14 +637,32 @@ def cxx_clang39_memory_sanitizer_x86(conf):
 
 
 @conf
-def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch):
+def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch,
+                                        minimum=False):
     """
     http://clang.llvm.org/docs/ThreadSanitizer.html
     """
-    conf.mkspec_clang_configure(major, minor, force_debug=True)
+    conf.mkspec_clang_configure(major, minor, minimum=minimum,
+                                force_debug=True)
     conf.mkspec_add_common_flag(arch)
 
     conf.mkspec_add_common_flag('-fsanitize=thread')
+
+
+@conf
+def cxx_clang_thread_sanitizer_x64(conf):
+    """
+    Configure clang (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 6, '-m64', minimum=True)
+
+
+@conf
+def cxx_clang_thread_sanitizer_x86(conf):
+    """
+    Configure clang (32-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(3, 6, '-m32', minimum=True)
 
 
 @conf
