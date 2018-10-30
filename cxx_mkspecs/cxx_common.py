@@ -106,6 +106,10 @@ def mkspec_get_toolchain_paths(conf):
 
         return toolchain
 
+    if conf.has_tool_option('toolchain_path'):
+
+        path_list = [conf.get_tool_option('toolchain_path')] + path_list
+
     return path_list
 
 
@@ -129,7 +133,6 @@ def mkspec_set_android_options(conf):
     # No need to specify 'gnustl_static' or 'gnustl_shared'
     # The Android toolchain will select the appropriate standard library
     # conf.env.LIB_ANDROID = ['gnustl_static']
-
 
 
 @conf
