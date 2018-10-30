@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.18.0
+------
+* Minor: Added versionless clang sanitizer mkspecs.
+
 4.17.1
 ------
 * Patch: Added missing -static-libstdc++ flag in cxx_android_clang70_armv7.
