@@ -109,7 +109,7 @@ def options(opt):
         help="Path to the Emscripten compiler (em++)")
 
     opts.add_option(
-        '--toolchain_path', default=None, dest='toolchain_path',
+        '--poky_sdk_path', default=None, dest='poky_sdk_path',
         help="Path that should be searched when looking for the toolchaing e.g."
         "compiler, linker, etc.")
 

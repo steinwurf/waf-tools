@@ -106,9 +106,13 @@ def mkspec_get_toolchain_paths(conf):
 
         return toolchain
 
-    if conf.has_tool_option('toolchain_path'):
+    if conf.has_tool_option('poky_sdk_path'):
+        sdk_path = conf.get_tool_option('poky_sdk_path')
+        cross_compiler = os.path.join(
+            sdk_path, 'sysroots', 'x86_64-pokysdk-linux',
+            'usr', 'bin', 'arm-poky-linux-gnueabi')
 
-        path_list = [conf.get_tool_option('toolchain_path')] + path_list
+        path_list = [cross_compiler] + path_list
 
     return path_list
 
