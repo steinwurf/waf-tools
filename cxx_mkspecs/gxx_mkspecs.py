@@ -449,7 +449,7 @@ def cxx_openwrt_gxx53_mips(conf):
 
 
 @conf
-def cxx_poky_gxx63_arm7(conf):
+def cxx_poky_gxx63_armv7(conf):
     """
     Detect and setup the g++ 6.3 cross compiler for the
     Yocto based Poky distribution.

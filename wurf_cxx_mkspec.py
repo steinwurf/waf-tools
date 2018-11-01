@@ -110,8 +110,8 @@ def options(opt):
 
     opts.add_option(
         '--poky_sdk_path', default=None, dest='poky_sdk_path',
-        help="Path that should be searched when looking for the toolchaing e.g."
-        "compiler, linker, etc.")
+        help="Configure toolchain (cross compiler etc.) for the Yocto based "
+             "Poky distribution. Tested with the Gateworks Yocto SDK.")
 
 
 def configure(conf):
