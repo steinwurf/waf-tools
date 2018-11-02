@@ -106,6 +106,14 @@ def mkspec_get_toolchain_paths(conf):
 
         return toolchain
 
+    if conf.has_tool_option('poky_sdk_path'):
+        sdk_path = conf.get_tool_option('poky_sdk_path')
+        cross_compiler = os.path.join(
+            sdk_path, 'sysroots', 'x86_64-pokysdk-linux',
+            'usr', 'bin', 'arm-poky-linux-gnueabi')
+
+        path_list = [cross_compiler] + path_list
+
     return path_list
 
 
@@ -129,7 +137,6 @@ def mkspec_set_android_options(conf):
     # No need to specify 'gnustl_static' or 'gnustl_shared'
     # The Android toolchain will select the appropriate standard library
     # conf.env.LIB_ANDROID = ['gnustl_static']
-
 
 
 @conf

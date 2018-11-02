@@ -108,6 +108,11 @@ def options(opt):
         '--emscripten_path', default=None, dest='emscripten_path',
         help="Path to the Emscripten compiler (em++)")
 
+    opts.add_option(
+        '--poky_sdk_path', default=None, dest='poky_sdk_path',
+        help="Path to the Yocto-based cross-compiler toolchain for the "
+             "Poky distribution. Tested with the Gateworks Yocto SDK.")
+
 
 def configure(conf):
 

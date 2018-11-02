@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import os
+
 from waflib.Configure import conf
 
 from . import gxx_common
@@ -444,3 +446,35 @@ def cxx_openwrt_gxx53_mips(conf):
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
+def cxx_poky_gxx63_armv7(conf):
+    """
+    Detect and setup the g++ 6.3 cross compiler for the
+    Yocto based Poky distribution.
+    """
+
+    conf.mkspec_gxx_configure(
+        major=6, minor=3, prefix='arm-poky-linux-gnueabi')
+
+    # Note: A static version of libstdc++ is not available in the
+    # poky SDK so we cannot use -static-libstdc++ for statically
+    # linking.
+
+    flags = ['-march=armv7-a', '-marm', '-mfpu=neon',
+             '-mfloat-abi=hard', '-mcpu=cortex-a9']
+
+    if conf.has_tool_option('poky_sdk_path'):
+        sdk_path = conf.get_tool_option('poky_sdk_path')
+
+        sysroot = os.path.join(
+            sdk_path, 'sysroots', 'cortexa9hf-neon-poky-linux-gnueabi')
+
+        flags.append('--sysroot=%s' % sysroot)
+
+    conf.env['LINKFLAGS'] += flags
+    conf.env['CXXFLAGS'] += flags
+
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
