@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.19.0
+------
+* Minor: Added the cxx_poky_gxx63_armv7 mkspec to support the Yocto-based
+  Poky distribution (Gateworks Yocto SDK).
+
 4.18.0
 ------
 * Minor: Added versionless clang sanitizer mkspecs.
