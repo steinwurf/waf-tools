@@ -746,6 +746,7 @@ build
 build_current
 resolve_symlinks
 resolved_dependencies
+**/.vs
 **/*.sln
 **/*.vcxproj*
 **/*.sdf
@@ -753,7 +754,7 @@ resolved_dependencies
 **/*.ncb
 **/*.bat
 **/*.log
-		'''
+        '''
 
         # Try to include all existing files in the project
         self.source = self.ctx.srcnode.ant_glob('**', excl=exclude_files)
@@ -1084,5 +1085,25 @@ class msvs_2012_generator(msvs_generator):
         if not getattr(self, 'solution_name', None):
             self.solution_name = getattr(
                 Context.g_module, Context.APPNAME, 'project') + '_2012.sln'
+
+        msvs_generator.init(self)
+
+
+class msvs_2017_generator(msvs_generator):
+
+    '''generates a Visual Studio 2017 solution'''
+    cmd = 'msvs2017'
+    fun = msvs_generator.fun
+
+    def init(self):
+        self.numver = '12.00'
+        self.vsver = '15'
+        self.platformver = 'v141'
+
+        if not getattr(self, 'project_extension', None):
+            self.project_extension = '_2017.vcxproj'
+        if not getattr(self, 'solution_name', None):
+            self.solution_name = getattr(
+                Context.g_module, Context.APPNAME, 'project') + '_2017.sln'
 
         msvs_generator.init(self)
