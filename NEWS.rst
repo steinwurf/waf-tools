@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.20.1
+------
+* Patch: Set the correct debugger working directory in the project generator
+  for Visual Studio 2017.
+
 4.20.0
 ------
 * Minor: Added a project generator for Visual Studio 2017.
