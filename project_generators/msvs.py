@@ -118,6 +118,12 @@ PROJECT_TEMPLATE = r'''<?xml version="1.0" encoding="UTF-8"?>
         <ConfigurationType>Makefile</ConfigurationType>
         <OutDir>build\VSProjects\$(Configuration)\</OutDir>
         <PlatformToolset>${project.platformver}</PlatformToolset>
+        ${if getattr(project, 'debugger_command', None)}
+        <LocalDebuggerCommand>${xml:project.debugger_command}</LocalDebuggerCommand>
+        ${endif}
+        ${if getattr(project, 'debugger_command_args', None)}
+        <LocalDebuggerCommandArguments>${xml:project.debugger_command_args}</LocalDebuggerCommandArguments>
+        ${endif}
     </PropertyGroup>
     ${endfor}
 
@@ -143,6 +149,9 @@ PROJECT_TEMPLATE = r'''<?xml version="1.0" encoding="UTF-8"?>
 
         ${if getattr(b, 'output_file', None)}
         <NMakeOutput>${xml:b.output_file}</NMakeOutput>
+        ${endif}
+        ${if getattr(b, 'working_dir', None)}
+        <LocalDebuggerWorkingDirectory>${xml:b.working_dir}</LocalDebuggerWorkingDirectory>
         ${endif}
         ${if getattr(b, 'deploy_dir', None)}
         <RemoteRoot>${xml:b.deploy_dir}</RemoteRoot>
@@ -789,8 +798,8 @@ resolved_dependencies
                 self.target_found = True
                 print('OUTPUT PATH:\n\t' + tsk.outputs[0].abspath())
                 x.output_file = tsk.outputs[0].abspath()
+                x.working_dir = tsk.outputs[0].parent.abspath()
                 x.preprocessor_definitions = ';'.join(tsk.env.DEFINES)
-
 
 
 class msvs_generator(WafBuildContext):
@@ -960,9 +969,12 @@ class msvs_generator(WafBuildContext):
                         self.main_project.collect_properties(tg)
 
         # If no main program was found, then create a build configuration
-        # with an empty taskgen (the debugging target should be set manually)
+        # with an empty taskgen
         if not self.main_project.target_found:
             self.main_project.collect_properties(None)
+            # Set the default debugger command to "python waf --run_tests"
+            self.main_project.debugger_command = 'python.exe'
+            self.main_project.debugger_command_args = 'waf --run_tests'
 
 
 def wrap_2008(cls):
