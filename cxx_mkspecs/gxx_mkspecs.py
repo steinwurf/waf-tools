@@ -449,6 +449,28 @@ def cxx_openwrt_gxx53_mips(conf):
 
 
 @conf
+def cxx_openwrt_gxx73_arm(conf):
+    """
+    Detect and setup the g++ 7.3 cross-compiler for OpenWRT ARM
+    """
+    conf.mkspec_gxx_configure(7, 3, 'arm-openwrt-linux')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
+def cxx_openwrt_gxx73_mips(conf):
+    """
+    Detect and setup the g++ 7.3 cross-compiler for OpenWRT MIPS
+    """
+    conf.mkspec_gxx_configure(7, 3, 'mips-openwrt-linux')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
 def cxx_poky_gxx63_armv7(conf):
     """
     Detect and setup the g++ 6.3 cross compiler for the
