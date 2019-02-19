@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.21.0
+------
+* Minor: Added the cxx_openwrt_gxx73_armv7 and cxx_openwrt_gxx73_mips mkspecs.
+
 4.20.1
 ------
 * Patch: Set the correct debugger working directory in the project generator
