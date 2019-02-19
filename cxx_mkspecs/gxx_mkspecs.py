@@ -456,8 +456,7 @@ def cxx_openwrt_gxx73_armv7(conf):
     conf.mkspec_gxx_configure(7, 3, 'arm-openwrt-linux')
     # Enable atomic support (without these flags, the linker might have
     # undefined references to atomic functions)
-    conf.env['LINKFLAGS'] += ['-march=armv7-a']
-    conf.env['STLIB'] += ['atomic']
+    conf.env['LINKFLAGS'] += ['-march=armv7-a', '-latomic']
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
@@ -471,7 +470,7 @@ def cxx_openwrt_gxx73_mips(conf):
     conf.mkspec_gxx_configure(7, 3, 'mips-openwrt-linux')
     # Enable atomic support (without these flags, the linker might have
     # undefined references to atomic functions)
-    conf.env['STLIB'] += ['atomic']
+    conf.env['LINKFLAGS'] += ['-latomic']
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env['LINKFLAGS'] += ['-static-libstdc++']
