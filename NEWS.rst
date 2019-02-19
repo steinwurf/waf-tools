@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.21.1
+------
+* Patch: Enabled libatomic support in cxx_openwrt_gxx73_armv7 and
+  cxx_openwrt_gxx73_mips.
+
 4.21.0
 ------
 * Minor: Added the cxx_openwrt_gxx73_armv7 and cxx_openwrt_gxx73_mips mkspecs.
