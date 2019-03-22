@@ -458,6 +458,24 @@ def cxx_clang60_x86(conf):
 
 
 @conf
+def cxx_clang70_x64(conf):
+    """
+    Detect and setup the clang 7.0 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(7, 0)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_clang70_x86(conf):
+    """
+    Detect and setup the clang 7.0 compiler for 32 bit
+    """
+    conf.mkspec_clang_configure(7, 0)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_ios70_apple_llvm_armv7(conf):
     """
     Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
