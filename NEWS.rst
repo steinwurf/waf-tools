@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.22.0
+------
+* Minor: Added mkspecs for clang 7.0: cxx_clang70_x86 and cxx_clang70_x64.
+
 4.21.1
 ------
 * Patch: Enabled libatomic support in cxx_openwrt_gxx73_armv7 and
