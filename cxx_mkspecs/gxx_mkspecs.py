@@ -347,6 +347,24 @@ def cxx_gxx82_x86(conf):
 
 
 @conf
+def cxx_gxx83_x64(conf):
+    """
+    Detect and setup the g++ 8.3 compiler for 64 bit
+    """
+    conf.mkspec_gxx_configure(8, 3)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_gxx83_x86(conf):
+    """
+    Detect and setup the g++ 8.3 compiler for 32 bit
+    """
+    conf.mkspec_gxx_configure(8, 3)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_gxx63_armv7(conf):
     """
     Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on ARMv7
