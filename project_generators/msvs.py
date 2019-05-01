@@ -725,6 +725,9 @@ class vsnode_target(vsnode_project):
         self.include_dirs = set()  # set of dirs for includes search path
         self.target_found = False
 
+        # Additonal directory to look for sources in
+        self.msvs_extend_sources = getattr(ctx, 'msvs_extend_sources', [])
+
     def get_build_params(self, props):
         """
         Override the default to add the target name
@@ -767,6 +770,10 @@ resolved_dependencies
 
         # Try to include all existing files in the project
         self.source = self.ctx.srcnode.ant_glob('**', excl=exclude_files)
+
+        for srcnode in self.msvs_extend_sources:
+            self.source += srcnode.ant_glob('**', excl=exclude_files)
+
         self.source.sort(key=lambda x: x.abspath())
 
     def collect_include_dirs(self, tg):
