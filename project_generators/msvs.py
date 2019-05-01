@@ -772,7 +772,6 @@ resolved_dependencies
         self.source = self.ctx.srcnode.ant_glob('**', excl=exclude_files)
 
         for srcnode in self.msvs_extend_sources:
-            print("Extend sources: {}".format(srcnode.ant_glob('**', excl=exclude_files)))
             self.source += srcnode.ant_glob('**', excl=exclude_files)
 
         self.source.sort(key=lambda x: x.abspath())
