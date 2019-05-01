@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.24.0
+------
 * Minor: Added msvs_extend_sources to allow Visual Studio project generator
   to include additional source files.
 
