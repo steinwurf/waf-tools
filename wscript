@@ -11,6 +11,7 @@ import wurf_project_generator
 import wurf_android_soname
 import wurf_copy_binary
 import wurf_limit_includes
+import wurf_default_dest_dir
 
 from waflib import Options
 from waflib.Configure import conf
@@ -63,6 +64,7 @@ def options(opt):
     opt.load('wurf_install_path')
     opt.load('wurf_cxx_mkspec')
     opt.load('wurf_runner')
+    opt.load('wurf_default_dest_dir')
 
 
 def configure(conf):
