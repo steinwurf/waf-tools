@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import os
+import waflib
 
 """
 As a default we would like binaries to be installed in the project folder.
@@ -13,7 +14,13 @@ developers that need easy access to the .so, .a and includes.
 def options(opt):
     group = opt.option_groups['Configuration options']
     group.remove_option('--destdir')
-    default_destdir = os.path.join(opt.srcnode.abspath(), 'build_output')
+
+    appname = getattr(waflib.Context.g_module, 'APPNAME')
+    version = getattr(waflib.Context.g_module, 'VERSION')
+
+    default_destdir = os.path.join(
+        opt.srcnode.abspath(), appname + '_' + version)
+
     group.add_option('--destdir',
                      help='installation root [default: %r]' % default_destdir,
                      default=default_destdir, dest='destdir')
