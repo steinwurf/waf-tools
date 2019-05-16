@@ -8,6 +8,11 @@ Latest
 ------
 * tbd
 
+4.25.0
+------
+* Minor: Changed the defaults for ``--destdir`` and ``--prefix`` to install
+  in a local project folder rather than system-wide.
+
 4.24.0
 ------
 * Minor: Added msvs_extend_sources to allow Visual Studio project generator
