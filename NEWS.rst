@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Major: Depend on options registry to access Git functionality during
+  options.
 
 4.25.0
 ------
