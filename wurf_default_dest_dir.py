@@ -31,19 +31,29 @@ def options(opt):
     #    b. Otherwise use the SHA1
     # 2. If not in a git repository we use the postfix "_install".
     #
+    # To do the above we require a recent version of our Waf build tool.
+    #
+    # If this is not available we fallback to option 2.
 
-    git = opt.registry.require('git')
+    registry = getattr(opt, 'registry', None)
 
-    if git.is_git_repository(cwd=project_dir):
+    if registry:
 
-        version = git.current_tag(cwd=project_dir)
+        git = opt.registry.require('git')
 
-        if not version:
-            # Take the current commit and limit it to the first X characters
-            version = git.current_commit(cwd=project_dir)[:8]
+        if git.is_git_repository(cwd=project_dir):
+
+            version = git.current_tag(cwd=project_dir)
+
+            if not version:
+                # Take the current commit and limit it to the first X characters
+                version = git.current_commit(cwd=project_dir)[:8]
+
+        else:
+            version = "install"
 
     else:
-        version = "_install"
+        version = "install"
 
     appname = getattr(waflib.Context.g_module, 'APPNAME')
 
