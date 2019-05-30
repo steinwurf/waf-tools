@@ -39,6 +39,7 @@ def options(opt):
         version = git.current_tag(cwd=project_dir)
 
         if not version:
+            # Take the current commit and limit it to the first X characters
             version = git.current_commit(cwd=project_dir)[:8]
 
     else:
