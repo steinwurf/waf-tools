@@ -8,9 +8,6 @@ Latest
 ------
 * Minor: Depend on options registry to access Git functionality during
   options.
-
-4.25.0
-------
 * Minor: Changed the defaults for ``--destdir`` and ``--prefix`` to install
   in a local project folder rather than system-wide.
 
