@@ -6,7 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Depend on options registry to access Git functionality during
+  options.
+* Minor: Changed the defaults for ``--destdir`` and ``--prefix`` to install
+  in a local project folder rather than system-wide.
 
 4.24.0
 ------
