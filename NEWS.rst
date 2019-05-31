@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.25.0
+------
 * Minor: Depend on options registry to access Git functionality during
   options.
 * Minor: Changed the defaults for ``--destdir`` and ``--prefix`` to install
