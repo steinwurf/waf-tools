@@ -8,7 +8,7 @@ Latest
 ------
 * tbd
 * Patch: Restore the original ``--destdir`` option, since overriding its
-  default value break our ``--install_path`` option and related functionality.
+  default value breaks our ``--install_path`` option and related functionality.
 
 4.25.0
 ------
