@@ -7,6 +7,9 @@ of every change, see the Git log.
 Latest
 ------
 * tbd
+
+4.25.1
+------
 * Patch: Restore the original ``--destdir`` option, since overriding its
   default value breaks our ``--install_path`` option and related functionality.
 
