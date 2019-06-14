@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.26.0
+------
+* Minor: Added mkspecs for g++ 7.4.
+
 4.25.1
 ------
 * Patch: Restore the original ``--destdir`` option, since overriding its
