@@ -311,6 +311,24 @@ def cxx_gxx73_x86(conf):
 
 
 @conf
+def cxx_gxx74_x64(conf):
+    """
+    Detect and setup the g++ 7.4 compiler for 64 bit
+    """
+    conf.mkspec_gxx_configure(7, 4)
+    conf.mkspec_add_common_flag('-m64')
+
+
+@conf
+def cxx_gxx74_x86(conf):
+    """
+    Detect and setup the g++ 7.4 compiler for 32 bit
+    """
+    conf.mkspec_gxx_configure(7, 4)
+    conf.mkspec_add_common_flag('-m32')
+
+
+@conf
 def cxx_gxx81_x64(conf):
     """
     Detect and setup the g++ 8.1 compiler for 64 bit
