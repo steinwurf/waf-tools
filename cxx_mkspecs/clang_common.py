@@ -132,11 +132,6 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
 
     optflag = '-O2'
 
-    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
-    # code on this platform
-    if conf.get_mkspec_platform() in ['ios', 'android']:
-        optflag = '-Os'
-
     if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
         conf.env['CFLAGS'] += [optflag]
 
@@ -144,7 +139,7 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
     conf.env['CFLAGS'] += [optflag, '-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
-        conf.env['CFLAGS'] += ['-g']
+        conf.env['CFLAGS'] += ['-g', '-fno-omit-frame-pointer']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
@@ -155,19 +150,14 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
 
     optflag = '-O2'
 
-    # Use -Os (optimize for size) flag on iOS, because -O2 produces unstable
-    # code on this platform
-    if conf.get_mkspec_platform() in ['ios', 'android']:
-        optflag = '-Os'
-
     if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
         conf.env['CXXFLAGS'] += [optflag]
 
     # Warning flags
-    conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
+    conf.env['CXXFLAGS'] += ['-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
-        conf.env['CXXFLAGS'] += ['-g']
+        conf.env['CXXFLAGS'] += ['-g', '-fno-omit-frame-pointer']
     elif not conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['LINKFLAGS'] += ['-s']
 
