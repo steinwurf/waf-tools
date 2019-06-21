@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.27.0
+------
+* Minor: Use the -O2 flag when compiling with clang for Android and iOS.
+
 4.26.0
 ------
 * Minor: Added mkspecs for g++ 7.4.
