@@ -132,8 +132,8 @@ def mkspec_set_gxx_cxxflags(conf):
     if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
         conf.env['CXXFLAGS'] += optflags
 
-    # Warning flags (pedantic ensures ISO C++ conformance)
-    conf.env['CXXFLAGS'] += ['-pedantic', '-Wextra', '-Wall']
+    # Warning flags
+    conf.env['CXXFLAGS'] += ['-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g', '-fno-omit-frame-pointer']
