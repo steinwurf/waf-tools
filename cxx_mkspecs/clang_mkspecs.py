@@ -38,6 +38,19 @@ def cxx_android_clang70_armv7(conf):
 
 
 @conf
+def cxx_android_clang80_armv7(conf):
+    """
+    Detect and setup the Android clang 8.0 compiler for ARMv7
+    """
+    conf.mkspec_clang_android_configure(8, 0, prefix='arm-linux-androideabi')
+    conf.env['DEST_CPU'] = 'arm'
+    # Note: libc++_shared.so is not available on the target platform, so
+    # we force the linker to select the static version of libstdc++ (which is
+    # actually libc++ in NDK r17+)
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
 def cxx_android5_clang38_armv7(conf):
     """
     Detects and setup the Android 5.0+ clang 3.8 compiler for ARMv7
@@ -73,6 +86,25 @@ def cxx_android5_clang70_armv7(conf):
     Detects and setup the Android 5.0+ clang 7.0 compiler for ARMv7
     """
     conf.cxx_android_clang70_armv7()
+    # Only position independent executables (PIE) are supported on Android 5
+    # and above. The oldest version that can run a PIE binary is Android 4.1,
+    # so the binary will segfault on all older platforms.
+    # The -fPIC flag is automatically enabled for Android, so we only have to
+    # add the -pie flag. This is only necessary when building programs.
+    conf.env['LINKFLAGS_cprogram'] = ['-pie']
+    conf.env['LINKFLAGS_cxxprogram'] = ['-pie']
+    # Note: libc++_shared.so is not available on the target platform, so
+    # we force the linker to select the static version of libstdc++ (which is
+    # actually libc++ in NDK r17+)
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
+def cxx_android5_clang80_armv7(conf):
+    """
+    Detects and setup the Android 5.0+ clang 8.0 compiler for ARMv7
+    """
+    conf.cxx_android_clang80_armv7()
     # Only position independent executables (PIE) are supported on Android 5
     # and above. The oldest version that can run a PIE binary is Android 4.1,
     # so the binary will segfault on all older platforms.
