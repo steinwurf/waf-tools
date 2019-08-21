@@ -463,6 +463,39 @@ def cxx_raspberry_gxx49_armv7(conf):
 
 
 @conf
+def cxx_musl_gxx91_armv7(conf):
+    """
+    Detect and setup the g++ 9.1 cross-compiler for MUSL Libc
+    running on ARMv7 compatible hardware (Raspberry Pi 3)
+
+    A toolchain can be downloaded from: https://musl.cc/
+    """
+    conf.mkspec_gxx_configure(9, 1, 'armv7l-linux-musleabihf')
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env['LINKFLAGS'] += ['-march=armv7-a']
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_musl_gxx91_x86_64(conf):
+    """
+    Detect and setup the g++ 9.1 compiler for MUSL Libc
+    running on x86-64
+
+    A toolchain can be downloaded from: https://musl.cc/
+    """
+    conf.mkspec_gxx_configure(9, 1, 'x86_64-linux-musl')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+
+
+@conf
 def cxx_openwrt_gxx53_arm(conf):
     """
     Detect and setup the g++ 5.3 cross-compiler for OpenWRT ARM

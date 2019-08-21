@@ -6,7 +6,11 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added the following  mkspecs:
+  cxx_android_clang80_armv7,
+  cxx_android5_clang80_armv7,
+  cxx_musl_gxx91_x86_64, and
+  cxx_musl_gxx91_armv7.
 
 4.27.0
 ------
