@@ -78,3 +78,8 @@ def configure(conf):
     conf.load('wurf_runner')
     conf.load('wurf_install_path')
     conf.load('wurf_project_generator')
+
+
+def build(bld):
+
+    bld.load('wurf_install_path')

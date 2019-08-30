@@ -13,6 +13,7 @@ structure when installing, e.g.:
 """
 
 import os
+from waflib import Options
 from waflib.TaskGen import feature, before_method, after_method
 
 
@@ -38,6 +39,16 @@ def options(opt):
         '--install_static_libs', default=None, dest='install_static_libs',
         action='store_true', help="Copy the compiled C/C++ static libraries "
                                   "(used with --install_path)")
+
+
+def build(bld):
+    # The install_path option only works correctly when the destdir value
+    # is an empty string. Otherwise the destdir value would be prepended to
+    # the install_path locations that are calculated in this file.
+    if bld.has_tool_option('install_path'):
+        # If the install_path option is used, then destdir must be empty
+        if Options.options.destdir:
+            Options.options.destdir = ''
 
 
 @feature('cshlib', 'cxxshlib')

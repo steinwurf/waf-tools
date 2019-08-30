@@ -6,6 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
+* Minor: Changed the default ``--prefix`` to an empty string to avoid
+  interference with the ``--destdir`` and ``--install_path`` options.
 * Minor: Added the following  mkspecs:
   cxx_android_clang80_armv7,
   cxx_android5_clang80_armv7,
