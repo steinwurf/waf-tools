@@ -5,48 +5,40 @@ import os
 import waflib
 
 """
-As a default we would like binaries to be installed in the project folder.
-Typically our libraries are not consumed by system package managers but just
-developers that need easy access to the .so, .a and includes.
+As a default, we would like binaries to be installed in the project folder.
+Typically our libraries are not consumed by system package managers, but just
+developers who need easy access to the compiled libraries and includes.
 """
 
 
 def options(opt):
 
-    # Determine the default prefix. We would like to avoid installing
-    # "incompatible" versions of the libraries into the same folders.
+    # By default, we install to the "{PROJECT_NAME}_install" folder in
+    # the local project folder.
     #
-    # To achieve this goal, we have choosen the following strategy:
+    # The user can change this using the --destdir option, e.g.:
     #
-    # 1. If we are in a git repository use the following:
-    #    a. If on a tag (released version) use the version number
-    #    b. Otherwise use the SHA1
-    # 2. If not in a git repository, we use the postfix "_install".
-    #
-    # To do the above we require a recent version of our Waf build tool.
-    # If this is not available we fallback to "_install".
-
-    version = "install"
-    project_dir = opt.srcnode.abspath()
-
-    # These operations might fail if our waf API changes in some way
-    try:
-        git = opt.registry.require('git')
-
-        if git.is_git_repository(cwd=project_dir):
-            version = git.current_tag(cwd=project_dir)
-
-            if not version:
-                # Use the first 8 characters of the current commit
-                version = git.current_commit(cwd=project_dir)[:8]
-
-    except Exception:
-        pass
-
-    appname = getattr(waflib.Context.g_module, 'APPNAME')
+    #    python waf install --destdir=/path/to/target/folder
 
     group = opt.option_groups['Configuration options']
+
+    # First, we override the default destdir value
+    project_dir = opt.srcnode.abspath()
+    appname = getattr(waflib.Context.g_module, 'APPNAME')
+    default_destdir = os.path.join(project_dir, appname + '_install')
+
+    group.remove_option('--destdir')
+    group.add_option('--destdir',
+                     help='installation root [default: %r]' % default_destdir,
+                     default=default_destdir, dest='destdir')
+
+    # Second, we set the default prefix value to ''
+    # Any non-empty prefix would interfere with the custom destdir, and
+    # the prefix value can only be changed during the waf configure step,
+    # since waf determines the installation path as follows:
+    #    target_path = Options.options.destdir + self.env.PREFIX + dest
+    # Therefore, it is best to use an empty prefix.
+    default_prefix = ''
     group.remove_option('--prefix')
-    default_prefix = os.path.join(os.sep, appname + '_' + version)
     group.add_option('--prefix', dest='prefix', default=default_prefix,
                      help='installation prefix [default: %r]' % default_prefix)
