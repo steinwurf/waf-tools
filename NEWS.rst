@@ -6,8 +6,14 @@ of every change, see the Git log.
 
 Latest
 ------
+
+4.28.0
+------
 * Minor: Changed the default ``--prefix`` to an empty string to avoid
   interference with the ``--destdir`` and ``--install_path`` options.
+* Minor: Changed the default value for ``--destdir`` to install files
+  into ``{project_name}_install`` in the local project folder.
+  This change essentially makes the ``--install_path`` option obsolete.
 * Minor: Added the following  mkspecs:
   cxx_android_clang80_armv7,
   cxx_android5_clang80_armv7,
