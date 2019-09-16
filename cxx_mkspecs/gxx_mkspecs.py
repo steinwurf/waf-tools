@@ -575,3 +575,16 @@ def cxx_poky_gxx63_armv7(conf):
 
     # Set the target CPU
     conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
+def cxx_bootlin_musl_gxx54_armv5(conf):
+    """
+    Detect and setup the g++ 5.4 cross bootlin cross compiler based on musl libc
+    """
+
+    conf.mkspec_gxx_configure(
+        major=5, minor=4, prefix='arm-linux')
+
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'

@@ -125,12 +125,6 @@ def configure(conf):
 
     conf.msg('Using the mkspec:', mkspec)
 
-    # Find and call the mkspec function on the conf object
-    if hasattr(conf, mkspec):
-        getattr(conf, mkspec)()
-    else:
-        conf.fatal("The mkspec is not available: {0}".format(mkspec))
-
     # Additional flags for C/C++ compiler and linker
     if conf.has_tool_option('cflags'):
         conf.env['CFLAGS'] += conf.get_tool_option('cflags').split(';')
@@ -144,3 +138,9 @@ def configure(conf):
         conf.env['CFLAGS'] += conf.get_tool_option('commonflags').split(';')
         conf.env['CXXFLAGS'] += conf.get_tool_option('commonflags').split(';')
         conf.env['LINKFLAGS'] += conf.get_tool_option('commonflags').split(';')
+
+    # Find and call the mkspec function on the conf object
+    if hasattr(conf, mkspec):
+        getattr(conf, mkspec)()
+    else:
+        conf.fatal("The mkspec is not available: {0}".format(mkspec))

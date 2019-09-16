@@ -143,5 +143,9 @@ def mkspec_set_gxx_cxxflags(conf):
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
+    # Disable dynamic linking if -static is passed
+    if '-static' in conf.env['LINKFLAGS']:
+        conf.env['SHLIB_MARKER'] = []
+
     # Use the C++14 language features
     conf.env['CXXFLAGS'] += ['-std=c++14']
