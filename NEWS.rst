@@ -6,6 +6,12 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.29.0
+------
+* Minor: Added cxx_bootlin_musl_gxx54_armv5 mspec
+* Minor: Support fully static linking when passing -static as linkflag
 
 4.28.0
 ------
