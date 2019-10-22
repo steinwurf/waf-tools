@@ -482,6 +482,23 @@ def cxx_musl_gxx91_armv7(conf):
 
 
 @conf
+def cxx_musl_gxx54_armv5(conf):
+    """
+    Detect and setup the g++ 5.4 cross-compiler for MUSL Libc
+    running on ARMv7 compatible hardware (Raspberry Pi 3)
+
+    A toolchain can be downloaded from: https://musl.cc/
+    """
+    conf.mkspec_gxx_configure(5, 4, 'arm-linux')
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env['LINKFLAGS'] += ['-static-libstdc++']
+    conf.env['CXXFLAGS'] += ['-std=c++14']
+    # Set the target CPU
+    conf.env['DEST_CPU'] = 'arm'
+
+
+@conf
 def cxx_musl_gxx91_x86_64(conf):
     """
     Detect and setup the g++ 9.1 compiler for MUSL Libc
@@ -572,19 +589,6 @@ def cxx_poky_gxx63_armv7(conf):
 
     conf.env['LINKFLAGS'] += flags
     conf.env['CXXFLAGS'] += flags
-
-    # Set the target CPU
-    conf.env['DEST_CPU'] = 'arm'
-
-
-@conf
-def cxx_bootlin_musl_gxx54_armv5(conf):
-    """
-    Detect and setup the g++ 5.4 cross bootlin cross compiler based on musl libc
-    """
-
-    conf.mkspec_gxx_configure(
-        major=5, minor=4, prefix='arm-linux')
 
     # Set the target CPU
     conf.env['DEST_CPU'] = 'arm'

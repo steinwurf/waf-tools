@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.30.0
+------
 * Minor: Allow multiple paths to be specified for ``copy_path`` option.
 
 4.29.0
