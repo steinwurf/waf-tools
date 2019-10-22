@@ -33,6 +33,15 @@ from waflib.TaskGen import after_method
 
 from waflib import Task, Errors, Node, Logs
 
+def to_base_path(ctx, copy_path):
+
+    if isinstance(copy_path, str):
+        return os.path.join(ctx.path.abspath(), copy_path)
+    elif isinstance(copy_path, Node.Node):
+        return copy_path.abspath()
+    else:
+        raise Errors.WafError(
+            '{}: copy_path must be an str or Node object.'.format(ctx.name))
 
 @feature('copy_binary')
 @after_method('apply_link')
@@ -43,25 +52,29 @@ def copy_binary(self):
         raise Errors.WafError(
             '{}: missing required "copy_path" option.'.format(self.name))
 
-    if isinstance(self.copy_path, str):
-        base_path = os.path.join(self.path.abspath(), self.copy_path)
-    elif isinstance(self.copy_path, Node.Node):
-        base_path = self.copy_path.abspath()
+    if isinstance(self.copy_path, list):
+        base_paths = []
+        for p in self.copy_path:
+            base_paths.append(to_base_path(self, p))
     else:
+        base_paths = [to_base_path(self, self.copy_path)]
+
+    if len(base_paths) == 0:
         raise Errors.WafError(
-            '{}: copy_path must be an str or Node object.'.format(self.name))
+            '{}: copy_path must be at least one path.'.format(self.name))
 
-    input_libraries = self.link_task.outputs
-    output_libraries = []
-    for input_library in input_libraries:
-        output_library = self.bld.root.make_node(
-            os.path.join(base_path, input_library.name))
-        output_libraries.append(output_library)
+    for base_path in base_paths:
+        input_libraries = self.link_task.outputs
+        output_libraries = []
+        for input_library in input_libraries:
+            output_library = self.bld.root.make_node(
+                os.path.join(base_path, input_library.name))
+            output_libraries.append(output_library)
 
-    copy_task = self.create_task('CopyFileTask')
-    copy_task.set_inputs(input_libraries)
-    copy_task.set_outputs(output_libraries)
-    copy_task.chmod = self.link_task.chmod
+        copy_task = self.create_task('CopyFileTask')
+        copy_task.set_inputs(input_libraries)
+        copy_task.set_outputs(output_libraries)
+        copy_task.chmod = self.link_task.chmod
 
 
 class CopyFileTask(Task.Task):
