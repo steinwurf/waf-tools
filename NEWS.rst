@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.31.0
+------
+* Minor: Added mkspecs for g++ 9.2.
+
 4.30.0
 ------
 * Minor: Allow multiple paths to be specified for ``copy_path`` option.
