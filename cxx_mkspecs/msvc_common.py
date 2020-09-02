@@ -96,9 +96,18 @@ def mkspec_set_msvc_flags(conf):
         conf.env['CXXFLAGS'] += ['/Z7']
 
         conf.env['LINKFLAGS'] += ['/DEBUG']
+
+        # Don't add any optimization flags
+        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
     else:
         # Use the multithread, release version of the run-time library
         conf.env['CXXFLAGS'] += ['/MT']
+
+    # Optimization flags
+    optflags = ['/O2']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CXXFLAGS'] += optflags
 
     # Add various defines to suppress deprecation warnings for common
     # functions like strcpy, sprintf and socket API calls
@@ -120,7 +129,7 @@ def mkspec_set_msvc_flags(conf):
     # - C4312 that warns about assigning a 32-bit value to a 64-bit pointer
     #   type which is commonly used in our unit tests.
     conf.env['CXXFLAGS'] += \
-        ['/O2', '/W2', '/wd4503', '/wd4312',
+        ['/W2', '/wd4503', '/wd4312',
          '/EHs', '/D_WIN32_WINNT=0x0501', '/bigobj']
 
     # Do not generate .manifest files (the /MANIFEST flag is added by waf)
