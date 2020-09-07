@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.32.0
+------
 * Minor: Remove optimization flags when using ``--cxx_debug``.
 
 4.31.0
