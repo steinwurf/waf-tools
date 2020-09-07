@@ -107,6 +107,12 @@ def mkspec_gxx_android_configure(conf, major, minor, prefix):
 @conf
 def mkspec_set_gcc_ccflags(conf):
 
+    if conf.has_tool_option('cxx_debug'):
+        conf.env['CFLAGS'] += ['-g', '-fno-omit-frame-pointer']
+
+        # Don't add any optimization flags
+        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+
     # Optimization flags
     optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
 
@@ -116,9 +122,6 @@ def mkspec_set_gcc_ccflags(conf):
     # Warning flags
     conf.env['CFLAGS'] += ['-Wextra', '-Wall']
 
-    if conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g', '-fno-omit-frame-pointer']
-
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
@@ -126,19 +129,23 @@ def mkspec_set_gcc_ccflags(conf):
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
-    # Optimization flags
-    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
-
-    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
-        conf.env['CXXFLAGS'] += optflags
-
     # Warning flags
     conf.env['CXXFLAGS'] += ['-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_debug'):
         conf.env['CXXFLAGS'] += ['-g', '-fno-omit-frame-pointer']
+
+        # Don't add any optimization flags
+        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
     elif not conf.get_mkspec_platform() in ['mac', 'ios']:
         conf.env['LINKFLAGS'] += ['-s']
+
+
+    # Optimization flags
+    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CXXFLAGS'] += optflags
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']

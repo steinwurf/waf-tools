@@ -70,24 +70,39 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False,
     conf.env.append_value('LINKFLAGS',['-Wl,--enable-auto-import'])
 
     # Add our own cxx flags
-    conf.env['CXXFLAGS'] += \
-        ['-O2', '-Wextra', '-Wall', '-Wno-warn-absolute-paths']
+    conf.env['CXXFLAGS'] += ['-Wextra', '-Wall', '-Wno-warn-absolute-paths']
 
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CXXFLAGS'] += ['-g']
         conf.env['LINKFLAGS'] += ['-s']
+
+        # Don't add any optimization flags
+        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+
+    cxxoptflags = ['-O2']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CXXFLAGS'] += cxxoptflags
+
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
 
     conf.env['CXXFLAGS'] += ['-std=c++11']
 
-    # Add our own cc flags
-    conf.env['CFLAGS'] += \
-        ['-O2', '-Wextra', '-Wall', '-Wno-warn-absolute-paths']
-
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CFLAGS'] += ['-g']
+        # Don't add any optimization flags
+        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+
+    coptflags = ['-O2']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CFLAGS'] += coptflags
+
+    # Add our own cc flags
+    conf.env['CFLAGS'] += ['-Wextra', '-Wall', '-Wno-warn-absolute-paths']
+
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']

@@ -130,16 +130,19 @@ def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu,
 @conf
 def mkspec_set_clang_ccflags(conf, force_debug=False):
 
-    optflag = '-O2'
-
-    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
-        conf.env['CFLAGS'] += [optflag]
-
-    # Warning flags
-    conf.env['CFLAGS'] += [optflag, '-Wextra', '-Wall']
-
     if conf.has_tool_option('cxx_debug') or force_debug:
         conf.env['CFLAGS'] += ['-g', '-fno-omit-frame-pointer']
+
+        # Don't add any optimization flags
+        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+
+    optflags = ['-O2']
+
+    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
+        conf.env['CFLAGS'] += optflags
+
+    # Warning flags
+    conf.env['CFLAGS'] += ['-Wextra', '-Wall']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']
@@ -148,18 +151,21 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
 @conf
 def mkspec_set_clang_cxxflags(conf, force_debug=False):
 
-    optflag = '-O2'
+    if conf.has_tool_option('cxx_debug') or force_debug:
+        conf.env['CXXFLAGS'] += ['-g', '-fno-omit-frame-pointer']
+
+        # Don't add any optimization flags
+        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+    elif not conf.get_mkspec_platform() in ['mac', 'ios']:
+        conf.env['LINKFLAGS'] += ['-s']
+
+    optflags = ['-O2']
 
     if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
-        conf.env['CXXFLAGS'] += [optflag]
+        conf.env['CXXFLAGS'] += optflags
 
     # Warning flags
     conf.env['CXXFLAGS'] += ['-Wextra', '-Wall']
-
-    if conf.has_tool_option('cxx_debug') or force_debug:
-        conf.env['CXXFLAGS'] += ['-g', '-fno-omit-frame-pointer']
-    elif not conf.get_mkspec_platform() in ['mac', 'ios']:
-        conf.env['LINKFLAGS'] += ['-s']
 
     if conf.has_tool_option('cxx_nodebug'):
         conf.env['DEFINES'] += ['NDEBUG']

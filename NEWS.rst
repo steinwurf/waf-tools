@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Remove optimization flags when using ``--cxx_debug``.
 
 4.31.0
 ------
