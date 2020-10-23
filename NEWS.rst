@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.33.0
+------
 * Minor: Added mkspecs for ARM64 g++ 7.5.
 
 4.32.0
