@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Change D_WIN32_WINNT from XP to Vista.
 
 4.33.0
 ------
