@@ -120,17 +120,10 @@ def mkspec_set_msvc_flags(conf):
 
     # The /EHs flag only allows standard C++ exceptions (which might also
     # originate from extern "C" functions).
-    # Set _WIN32_WINNT=0x0600 (i.e. Windows Vista target) to suppress warnings
-    # in Boost Asio.
-    # Disabled compiler warnings:
-    # - C4503 that complains about the length of decorated template names.
-    #   This occurs frequently as we compile heavily templated code, and
-    #   we also have to enable /bigobj to allow large object files.
-    # - C4312 that warns about assigning a 32-bit value to a 64-bit pointer
-    #   type which is commonly used in our unit tests.
+    # Warning level 3 is the standard setting
+    #_WIN32_WINNT=0x0600 means backwards compatibility with vista
     conf.env['CXXFLAGS'] += \
-        ['/W2', '/wd4503', '/wd4312',
-         '/EHs', '/D_WIN32_WINNT=0x0600', '/bigobj']
+        ['/W3', '/EHs', '/D_WIN32_WINNT=0x0600', '/bigobj']
 
     # Do not generate .manifest files (the /MANIFEST flag is added by waf)
     conf.env['LINKFLAGS'].remove('/MANIFEST')
