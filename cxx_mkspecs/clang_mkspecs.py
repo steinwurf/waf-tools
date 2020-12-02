@@ -512,6 +512,7 @@ def cxx_ios70_apple_llvm_armv7(conf):
     """
     Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
     """
+    conf.env['CXXFLAGS'] = '-fno-aligned-allocation'
     conf.mkspec_clang_ios_configure(6, 1, '7.0', 'armv7', minimum=True)
     conf.env['DEST_CPU'] = 'arm'
 
