@@ -93,9 +93,9 @@ def cxx_msvc15_x86(conf):
             conf.get_mkspec_platform()))
         
 @conf
-def cxx_msvc19_x64(conf):
+def cxx_msvc16_x64(conf):
     """
-    Configure the Visual Studio 2019 (version 19.x) compiler for 64-bit
+    Configure the Visual Studio 2019 (version 16.x) compiler for 64-bit
     """
     if conf.is_mkspec_platform('windows'):
         # The x64 native toolchain is preferred over the x86_amd64 toolchain
@@ -103,16 +103,16 @@ def cxx_msvc19_x64(conf):
         # Studio 2017 Express only provides x86_amd64, but other versions
         # provide both options)
         conf.env.MSVC_TARGETS = ['x64', 'x86_amd64']
-        version = conf.mkspec_find_installed_msvc_version(19)
+        version = conf.mkspec_find_installed_msvc_version(16)
         conf.mkspec_msvc_configure(version)
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
 
 @conf
-def cxx_msvc19_x86(conf):
+def cxx_msvc16_x86(conf):
     """
-    Configure the Visual Studio 2019 (version 19.x) compiler for 64-bit
+    Configure the Visual Studio 2019 (version 16.x) compiler for 64-bit
     """
     if conf.is_mkspec_platform('windows'):
         # The x64 native toolchain is preferred over the x86_amd64 toolchain
@@ -120,7 +120,7 @@ def cxx_msvc19_x86(conf):
         # Studio 2017 Express only provides x86_amd64, but other versions
         # provide both options)
         conf.env.MSVC_TARGETS = ['x86', 'amd64_x86']
-        version = conf.mkspec_find_installed_msvc_version(19)
+        version = conf.mkspec_find_installed_msvc_version(16)
         conf.mkspec_msvc_configure(version)
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
