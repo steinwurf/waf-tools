@@ -8,6 +8,7 @@ Latest
 ------
 * Patch: Fixed naming of cxx_msvc19_x86 and cxx_msvc19_x64 -> cxx_msvc16_x86 and
   cxx_msvc16_x64.
+* Minor: Added cxx_apple_llvm120_x64.
 
 4.35.0
 ------
