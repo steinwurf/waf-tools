@@ -362,6 +362,18 @@ def cxx_apple_llvm100_x64(conf):
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
 
+@conf
+def cxx_apple_llvm120_x64(conf):
+    """
+    Detect and setup the 64-bit Apple LLVM 12.0 compiler
+    """
+    if conf.is_mkspec_platform('mac'):
+        conf.mkspec_clang_configure(12, 0)
+        conf.mkspec_add_common_flag('-m64')
+    else:
+        conf.fatal("This mkspec is not supported on {0}.".format(
+            conf.get_mkspec_platform()))
+
 
 @conf
 def cxx_clang36_x64(conf):
