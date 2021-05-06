@@ -627,7 +627,13 @@ def cxx_clang39_address_sanitizer_x86(conf):
     Configure clang 3.9 (32-bit) using the address sanitizer
     """
     conf.mkspec_setup_clang_address_sanitizer(3, 9, '-m32')
-
+    
+@conf
+def cxx_clang10_address_sanitizer_x64(conf):
+    """
+    Configure clang 10.0 (64-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(10, 0, '-m64')
 
 @conf
 def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch,
@@ -697,7 +703,13 @@ def cxx_clang39_memory_sanitizer_x86(conf):
     """
     conf.mkspec_setup_clang_memory_sanitizer(3, 9, '-m32')
 
-
+@conf
+def cxx_clang10_memory_sanitizer_x64(conf):
+    """
+    Configure clang 10.0 (64-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(10, 0, '-m64')
+    
 @conf
 def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch,
                                         minimum=False):
@@ -757,3 +769,11 @@ def cxx_clang39_thread_sanitizer_x86(conf):
     Configure clang 3.9 (32-bit) using the thread sanitizer
     """
     conf.mkspec_setup_clang_thread_sanitizer(3, 9, '-m32')
+
+@conf
+def cxx_clang10_thread_sanitizer_x64(conf):
+    """
+    Configure clang 10.0 (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(10, 0, '-m64')
+
