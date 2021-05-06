@@ -6,7 +6,13 @@ of every change, see the Git log.
 
 Latest
 ------
-* Minor: Added cxx_clang10_address_sanitizer_x64, cxx_clang10_memory_sanitizer_x64 and cxx_clang10_thread_sanitizer_x64.
+* tbd
+
+4.37.0
+------
+* Minor: Added cxx_clang10_address_sanitizer_x64,
+  cxx_clang10_memory_sanitizer_x64, and cxx_clang10_thread_sanitizer_x64.
+
 4.36.0
 ------
 * Patch: Fixed naming of cxx_msvc19_x86 and cxx_msvc19_x64 -> cxx_msvc16_x86 and
