@@ -3,6 +3,7 @@
 
 import os
 import sys
+import regex
 
 from waflib.Utils import subprocess
 from waflib.Configure import conf
@@ -116,10 +117,9 @@ def check_emscripten_version(conf, emscripten_cc, major, minor, minimum):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         out = p.communicate()[0]
-        print(out)
-        cc_major, cc_minor, _ = [int(v) for v in out.split()[4].split('.')]
-        print(cc_major)
-        print(cc_minor)
+        version_string = regex.match(b".+(\d+\.\d+\.\d+)", out).groups()[0]
+        cc_major, cc_minor, _ = [int(v) for v in version_string.split(b'.')]
+        
     except Exception as e:
         conf.fatal('Could not determine the compiler version: {}'.format(e))
 
