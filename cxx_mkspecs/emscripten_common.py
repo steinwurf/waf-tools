@@ -3,7 +3,7 @@
 
 import os
 import sys
-import regex
+import re
 
 from waflib.Utils import subprocess
 from waflib.Configure import conf
@@ -117,7 +117,7 @@ def check_emscripten_version(conf, emscripten_cc, major, minor, minimum):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         out = p.communicate()[0]
-        version_string = regex.match(b".+(\d+\.\d+\.\d+)", out).groups()[0]
+        version_string = re.match(b".+(\d+\.\d+\.\d+)", out).groups()[0]
         cc_major, cc_minor, _ = [int(v) for v in version_string.split(b'.')]
         
     except Exception as e:
