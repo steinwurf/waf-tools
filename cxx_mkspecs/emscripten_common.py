@@ -118,7 +118,8 @@ def check_emscripten_version(conf, emscripten_cc, major, minor, minimum):
         out = p.communicate()[0]
         print(out)
         cc_major, cc_minor, _ = [int(v) for v in out.split()[4].split('.')]
-        print(cc_major, cc_minor)
+        print(cc_major)
+        print(cc_minor)
     except Exception as e:
         conf.fatal('Could not determine the compiler version: {}'.format(e))
 
