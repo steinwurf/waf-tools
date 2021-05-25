@@ -6,7 +6,8 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added cxx_emscripten20
+* Patch: Fixed getting the version of emscriptem. Now uses regular expression.
 
 4.38.0
 ------
