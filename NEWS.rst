@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Patch: Fixed Emscripten tool chain.
 
 4.38.0
 ------
