@@ -362,6 +362,7 @@ def cxx_apple_llvm100_x64(conf):
         conf.fatal("This mkspec is not supported on {0}.".format(
             conf.get_mkspec_platform()))
 
+
 @conf
 def cxx_apple_llvm120_x64(conf):
     """
@@ -369,6 +370,19 @@ def cxx_apple_llvm120_x64(conf):
     """
     if conf.is_mkspec_platform('mac'):
         conf.mkspec_clang_configure(12, 0)
+        conf.mkspec_add_common_flag('-m64')
+    else:
+        conf.fatal("This mkspec is not supported on {0}.".format(
+            conf.get_mkspec_platform()))
+
+
+@conf
+def cxx_apple_llvm130_x64(conf):
+    """
+    Detect and setup the 64-bit Apple LLVM 13.0 compiler
+    """
+    if conf.is_mkspec_platform('mac'):
+        conf.mkspec_clang_configure(13, 0)
         conf.mkspec_add_common_flag('-m64')
     else:
         conf.fatal("This mkspec is not supported on {0}.".format(
@@ -627,13 +641,15 @@ def cxx_clang39_address_sanitizer_x86(conf):
     Configure clang 3.9 (32-bit) using the address sanitizer
     """
     conf.mkspec_setup_clang_address_sanitizer(3, 9, '-m32')
-    
+
+
 @conf
 def cxx_clang10_address_sanitizer_x64(conf):
     """
     Configure clang 10.0 (64-bit) using the address sanitizer
     """
     conf.mkspec_setup_clang_address_sanitizer(10, 0, '-m64')
+
 
 @conf
 def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch,
@@ -703,13 +719,15 @@ def cxx_clang39_memory_sanitizer_x86(conf):
     """
     conf.mkspec_setup_clang_memory_sanitizer(3, 9, '-m32')
 
+
 @conf
 def cxx_clang10_memory_sanitizer_x64(conf):
     """
     Configure clang 10.0 (64-bit) using the memory sanitizer
     """
     conf.mkspec_setup_clang_memory_sanitizer(10, 0, '-m64')
-    
+
+
 @conf
 def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch,
                                         minimum=False):
@@ -770,10 +788,10 @@ def cxx_clang39_thread_sanitizer_x86(conf):
     """
     conf.mkspec_setup_clang_thread_sanitizer(3, 9, '-m32')
 
+
 @conf
 def cxx_clang10_thread_sanitizer_x64(conf):
     """
     Configure clang 10.0 (64-bit) using the thread sanitizer
     """
     conf.mkspec_setup_clang_thread_sanitizer(10, 0, '-m64')
-
