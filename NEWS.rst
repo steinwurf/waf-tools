@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+4.39.0
+------
+* Minor Added cxx_apple_llvm130_x64
+
 4.38.0
 ------
 * Minor: Added cxx_gxx64_x86 and cxx_gxx64_x64.
