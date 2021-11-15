@@ -550,7 +550,7 @@ def cxx_clang100_x64(conf):
 
 
 @conf
-def cxx_clang130_x86(conf):
+def cxx_clang130_x64(conf):
     """
     Detect and setup the clang 13.0 compiler for 64 bit
     """
