@@ -837,4 +837,4 @@ def cxx_clang13_thread_sanitizer_x64(conf):
     """
     Configure clang 13.0 (64-bit) using the thread sanitizer
     """
-    conf.mkspec_setup_clang_thread_sanitizer(10, 0, "-m64")
+    conf.mkspec_setup_clang_thread_sanitizer(13, 0, "-m64")
