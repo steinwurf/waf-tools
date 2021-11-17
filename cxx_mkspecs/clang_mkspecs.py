@@ -563,9 +563,8 @@ def cxx_clang130_armv8(conf):
     """
     Detect and setup the clang 13.0 compiler for armv8
     """
-    conf.mkspec_clang_configure(13, 0)
+    conf.mkspec_clang_arm_configure(13, 0, "armv8-linux-gnueabihf")
     conf.mkspec_add_common_flag("-m64")
-    conf.mkspec_add_common_flag("-target armv8-linux-gnueabihf")
 
 
 @conf
