@@ -565,7 +565,7 @@ def cxx_clang130_armv8(conf):
     """
     conf.mkspec_clang_configure(13, 0)
     conf.mkspec_add_common_flag("-m64")
-    conf.mkspec_add_common_flag("-target armv8-linux-gnu")
+    conf.env["DEST_CPU"] = "arm"
 
 
 @conf
