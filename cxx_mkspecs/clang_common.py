@@ -101,18 +101,6 @@ def mkspec_clang_configure(
 
 
 @conf
-def mkspec_clang_arm_configure(conf, major, minor, target, prefix=None):
-    conf.mkspec_clang_configure(major, minor, prefix)
-
-    # Specify the target architecture if required
-    if target:
-        target_flags = ["-target", target]
-        conf.env["CFLAGS"] += target_flags
-        conf.env["CXXFLAGS"] += target_flags
-        conf.env["LINKFLAGS"] += target_flags
-
-
-@conf
 def mkspec_clang_android_configure(conf, major, minor, prefix, target=None):
     conf.set_mkspec_platform("android")
     conf.mkspec_clang_configure(major, minor, prefix)
