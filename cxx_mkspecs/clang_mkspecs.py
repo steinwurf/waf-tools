@@ -559,6 +559,16 @@ def cxx_clang130_x64(conf):
 
 
 @conf
+def cxx_clang130_armv8(conf):
+    """
+    Detect and setup the clang 13.0 compiler for armv8
+    """
+    conf.mkspec_clang_configure(13, 0)
+    conf.mkspec_add_common_flag("-m64")
+    conf.mkspec_add_common_flag("-target armv8-linux-gnueabihf")
+
+
+@conf
 def cxx_ios70_apple_llvm_armv7(conf):
     """
     Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
