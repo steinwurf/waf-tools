@@ -559,12 +559,17 @@ def cxx_clang130_x64(conf):
 
 
 @conf
-def cxx_clang130_armv8(conf):
+def cxx_clang130_aarch64(conf):
     """
-    Detect and setup the clang 13.0 compiler for armv8
+    Detect and setup the clang 13 cross-compiler for ARM Linux running on AAarch64
+    CPU with a hardware FPU.
     """
     conf.mkspec_clang_configure(13, 0)
-    conf.mkspec_add_common_flag("-m64")
+    conf.env["LINKFLAGS"] += ["-march=aarch64"]
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env["LINKFLAGS"] += ["-static-libstdc++"]
+    # Set the target CPU
     conf.env["DEST_CPU"] = "arm"
 
 
