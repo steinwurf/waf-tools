@@ -401,7 +401,7 @@ def cxx_clang7_raspberry_pi_armv7(conf):
     """
     Detect and setup the ARMv7 clang 7.0 compiler
     """
-    conf.mkspec_clang_raspberrypi_armv7_configure(7, 0, target="arm-linux-gnueabihf")
+    conf.mkspec_clang_raspberrypi_armv7_configure(7, 0, "arm-linux-gnueabihf")
     conf.mkspec_add_common_flag("-m32")
     conf.env["LINKFLAGS"] += ["-static-libstdc++"]
     # Set the target CPU

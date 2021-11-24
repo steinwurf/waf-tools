@@ -134,6 +134,12 @@ def mkspec_clang_raspberrypi_armv7_configure(conf, major, minor, target=None):
         conf.env["CXXFLAGS"] += target_flags
         conf.env["LINKFLAGS"] += target_flags
 
+    conf.env["CXXFLAGS"] += [
+        "-stdlib=libstdc++",
+        "-stdlib++-isystem",
+        "/usr/arm-linux-gnueabihf/lib",
+    ]
+
 
 @conf
 def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu, minimum=False):
