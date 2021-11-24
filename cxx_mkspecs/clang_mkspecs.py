@@ -397,6 +397,15 @@ def cxx_apple_llvm130_x64(conf):
 
 
 @conf
+def cxx_clang7_raspberry_pi_armv7(conf):
+    """
+    Detect and setup the ARMv7 clang 7.0 compiler
+    """
+    conf.mkspec_clang_raspberrypi_armv7_configure(7, 0, target="arm-linux-gnueabihf")
+    conf.mkspec_add_common_flag("-m32")
+
+
+@conf
 def cxx_clang36_x64(conf):
     """
     Detect and setup the clang 3.6 compiler for 64 bit
