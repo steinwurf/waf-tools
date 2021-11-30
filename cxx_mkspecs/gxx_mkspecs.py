@@ -560,7 +560,7 @@ def cxx_raspberry_gxx83_armv7(conf):
     Detect and setup the g++ 8.3 cross-compiler for Raspberry Pi (Linux)
     running on ARMv7 compatible hardware (Raspberry Pi 2)
     """
-    conf.mkspec_gxx_configure(4, 9, "arm-linux-gnueabihf")
+    conf.mkspec_gxx_configure(8, 3, "arm-linux-gnueabihf")
     # atomic support that is required for std::threads (without this flag,
     # the threading code might call pure virtual methods)
     conf.env["LINKFLAGS"] += ["-march=armv7-a"]
