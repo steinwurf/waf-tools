@@ -6,7 +6,12 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added mkspecs for Clang 13.0: cxx_clang130_x64,
+         cxx_clang13_address_sanitizer_x64, cxx_clang13_memory_sanitizer_x64,
+         cxx_clang13_thread_sanitizer_x64
+* Minor: Added cxx_gxx93_x64, **_x86
+* Minor: Added cxx_gxx112_x64, **_x86
+* Minor: Added cxx_raspberry_gxx83_armv7
 
 4.39.0
 ------
