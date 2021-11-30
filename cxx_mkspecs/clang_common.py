@@ -123,25 +123,6 @@ def mkspec_clang_android_configure(conf, major, minor, prefix, target=None):
 
 
 @conf
-def mkspec_clang_raspberrypi_armv7_configure(conf, major, minor, target=None):
-    conf.set_mkspec_platform("linux")
-    conf.mkspec_clang_configure(major, minor)
-
-    # Specify the target architecture if required. Newer Raspberry Pi toolchains
-    if target:
-        target_flags = ["-target", target]
-        conf.env["CFLAGS"] += target_flags
-        conf.env["CXXFLAGS"] += target_flags
-        conf.env["LINKFLAGS"] += target_flags
-
-    conf.env["CXXFLAGS"] += [
-        "-stdlib=libstdc++",
-        "-stdlib++-isystem",
-        "/usr/arm-linux-gnueabihf/lib",
-    ]
-
-
-@conf
 def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu, minimum=False):
     conf.set_mkspec_platform("ios")
     conf.mkspec_clang_configure(major, minor, minimum=minimum)

@@ -397,18 +397,6 @@ def cxx_apple_llvm130_x64(conf):
 
 
 @conf
-def cxx_clang7_raspberry_pi_armv7(conf):
-    """
-    Detect and setup the ARMv7 clang 7.0 compiler
-    """
-    conf.mkspec_clang_raspberrypi_armv7_configure(7, 0, "arm-linux-gnueabihf")
-    conf.mkspec_add_common_flag("-m32")
-    conf.env["LINKFLAGS"] += ["-static-libstdc++"]
-    # Set the target CPU
-    conf.env["DEST_CPU"] = "arm"
-
-
-@conf
 def cxx_clang36_x64(conf):
     """
     Detect and setup the clang 3.6 compiler for 64 bit
@@ -568,21 +556,6 @@ def cxx_clang130_x64(conf):
     """
     conf.mkspec_clang_configure(13, 0)
     conf.mkspec_add_common_flag("-m64")
-
-
-@conf
-def cxx_clang130_aarch64(conf):
-    """
-    Detect and setup the clang 13 cross-compiler for ARM Linux running on AAarch64
-    CPU with a hardware FPU.
-    """
-    conf.mkspec_clang_configure(13, 0)
-    conf.env["LINKFLAGS"] += ["-march=aarch64"]
-    # Note: libstdc++ might not be available on the target platform
-    # Statically link with the C++ standard library
-    conf.env["LINKFLAGS"] += ["-static-libstdc++"]
-    # Set the target CPU
-    conf.env["DEST_CPU"] = "arm"
 
 
 @conf
