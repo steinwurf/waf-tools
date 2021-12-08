@@ -68,4 +68,3 @@ def cxx_emscripten20(conf):
     Detect and setup the em++ 2.0 compiler
     """
     conf.mkspec_emscripten_configure(2, 0)
-

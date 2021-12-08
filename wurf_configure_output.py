@@ -16,8 +16,9 @@ from waflib.extras.wurf.waf_configuration_context import WafConfigurationContext
 
 class WurfConfigureOutput(WafConfigurationContext):
 
-    '''configures the project'''
-    cmd = 'configure'
+    """configures the project"""
+
+    cmd = "configure"
 
     def init_dirs(self):
         # Waf calls this function to set the output directory.
@@ -29,19 +30,19 @@ class WurfConfigureOutput(WafConfigurationContext):
         # In order to not surprise anybody we will disallow the out variable
         # but allow our output dir to be overwritten by using the -o option
 
-        assert(getattr(Context.g_module, Context.OUT, None) is None)
+        assert getattr(Context.g_module, Context.OUT, None) is None
 
         if not Options.options.out:
 
-            if self.has_tool_option('cxx_mkspec'):
-                mkspec = self.get_tool_option('cxx_mkspec')
+            if self.has_tool_option("cxx_mkspec"):
+                mkspec = self.get_tool_option("cxx_mkspec")
                 self.out_dir = os.path.join("build", mkspec)
             else:
                 build_platform = Utils.unversioned_sys_platform()
                 self.out_dir = os.path.join("build", build_platform)
 
             # Use the _debug postfix for debug builds
-            if self.has_tool_option('cxx_debug'):
-                self.out_dir += '_debug'
+            if self.has_tool_option("cxx_debug"):
+                self.out_dir += "_debug"
 
         super(WurfConfigureOutput, self).init_dirs()

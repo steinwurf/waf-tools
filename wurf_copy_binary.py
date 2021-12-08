@@ -33,6 +33,7 @@ from waflib.TaskGen import after_method
 
 from waflib import Task, Errors, Node, Logs
 
+
 def to_base_path(ctx, copy_path):
 
     if isinstance(copy_path, str):
@@ -41,16 +42,19 @@ def to_base_path(ctx, copy_path):
         return copy_path.abspath()
     else:
         raise Errors.WafError(
-            '{}: copy_path must be an str or Node object.'.format(ctx.name))
+            "{}: copy_path must be an str or Node object.".format(ctx.name)
+        )
 
-@feature('copy_binary')
-@after_method('apply_link')
+
+@feature("copy_binary")
+@after_method("apply_link")
 def copy_binary(self):
     """Copy binary created by the link task to a given location."""
 
-    if not hasattr(self, 'copy_path'):
+    if not hasattr(self, "copy_path"):
         raise Errors.WafError(
-            '{}: missing required "copy_path" option.'.format(self.name))
+            '{}: missing required "copy_path" option.'.format(self.name)
+        )
 
     if isinstance(self.copy_path, list):
         base_paths = []
@@ -61,17 +65,19 @@ def copy_binary(self):
 
     if len(base_paths) == 0:
         raise Errors.WafError(
-            '{}: copy_path must be at least one path.'.format(self.name))
+            "{}: copy_path must be at least one path.".format(self.name)
+        )
 
     for base_path in base_paths:
         input_libraries = self.link_task.outputs
         output_libraries = []
         for input_library in input_libraries:
             output_library = self.bld.root.make_node(
-                os.path.join(base_path, input_library.name))
+                os.path.join(base_path, input_library.name)
+            )
             output_libraries.append(output_library)
 
-        copy_task = self.create_task('CopyFileTask')
+        copy_task = self.create_task("CopyFileTask")
         copy_task.set_inputs(input_libraries)
         copy_task.set_outputs(output_libraries)
         copy_task.chmod = self.link_task.chmod
@@ -80,7 +86,7 @@ def copy_binary(self):
 class CopyFileTask(Task.Task):
     """Perform the copying of generated files."""
 
-    color = 'PINK'
+    color = "PINK"
 
     def run(self):
         """Run the task."""
@@ -109,12 +115,15 @@ class CopyFileTask(Task.Task):
                 try:
                     os.stat(source)
                 except (OSError, IOError):
-                    Logs.error('File %r does not exist' % source)
-                raise Errors.WafError('Could not copy the file %r' % target)
+                    Logs.error("File %r does not exist" % source)
+                raise Errors.WafError("Could not copy the file %r" % target)
 
-            Logs.info("{n}{s}Copying {c}{source}{n} -> {c}{target}{n}".format(
-                c=Logs.colors(CopyFileTask.color),
-                s=' ' * 10,
-                source=source_node.name,
-                target=target_node.relpath(),
-                n=Logs.colors.NORMAL))
+            Logs.info(
+                "{n}{s}Copying {c}{source}{n} -> {c}{target}{n}".format(
+                    c=Logs.colors(CopyFileTask.color),
+                    s=" " * 10,
+                    source=source_node.name,
+                    target=target_node.relpath(),
+                    n=Logs.colors.NORMAL,
+                )
+            )

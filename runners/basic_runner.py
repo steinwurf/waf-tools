@@ -8,6 +8,7 @@ from waflib import Utils, Task, Logs
 
 testlock = Utils.threading.Lock()
 
+
 def nice_path(node):
     """
     Return the path seen from the launch directory.
@@ -21,38 +22,42 @@ class BasicRunner(Task.Task):
     """
     Execute a unit test
     """
-    color = 'BLUE'
-    after = ['vnum', 'inst']
-    run_type = ''
+
+    color = "BLUE"
+    after = ["vnum", "inst"]
+    run_type = ""
     vars = []
 
     def __str__(self):
         "string to display to the user"
 
-        src_str = ' '.join([nice_path(a) for a in self.inputs])
-        tgt_str = ' '.join([nice_path(a) for a in self.outputs])
-        tst_str = '\n\t'.join([nice_path(a) for a in self.test_inputs])
-        kobj_str = '\n\t'.join([nice_path(a) for a in self.kernel_objects])
+        src_str = " ".join([nice_path(a) for a in self.inputs])
+        tgt_str = " ".join([nice_path(a) for a in self.outputs])
+        tst_str = "\n\t".join([nice_path(a) for a in self.test_inputs])
+        kobj_str = "\n\t".join([nice_path(a) for a in self.kernel_objects])
 
         if self.outputs:
-            sep = ' -> '
+            sep = " -> "
         else:
-            sep = ''
+            sep = ""
 
         if self.test_inputs:
-            tst_str = '\ntest inputs:\n\t{}'.format(tst_str)
+            tst_str = "\ntest inputs:\n\t{}".format(tst_str)
 
         if self.kernel_objects:
-            kobj_str = '\nkernel objects:\n\t{}'.format(kobj_str)
+            kobj_str = "\nkernel objects:\n\t{}".format(kobj_str)
 
-        return "{name}: {source_str}{separator}{target_str}" \
+        return (
+            "{name}: {source_str}{separator}{target_str}"
             "{test_str}{kobj_str}\n".format(
-                name=self.__class__.__name__.replace('_task', ''),
+                name=self.__class__.__name__.replace("_task", ""),
                 source_str=self.format_command(src_str),
                 separator=sep,
                 target_str=tgt_str,
                 test_str=tst_str,
-                kobj_str=kobj_str)
+                kobj_str=kobj_str,
+            )
+        )
 
     def runnable_status(self):
         """
@@ -73,7 +78,7 @@ class BasicRunner(Task.Task):
         replace %s with the executable name and thus run the executable
         under valgrind
         """
-        cmd = ' '.join(self.format_command_list(executable))
+        cmd = " ".join(self.format_command_list(executable))
         return cmd
 
     def format_command_list(self, executable):
@@ -87,13 +92,13 @@ class BasicRunner(Task.Task):
         """
         executable = str(executable)
         bld = self.generator.bld
-        if bld.has_tool_option('run_cmd'):
-            testcmd = bld.get_tool_option('run_cmd')
+        if bld.has_tool_option("run_cmd"):
+            testcmd = bld.get_tool_option("run_cmd")
             # Split the arguments BEFORE substituting the executable path
-            args = testcmd.split(' ')
+            args = testcmd.split(" ")
             # Substitute the path to the relevant element
             for i in range(len(args)):
-                if '%s' in args[i]:
+                if "%s" in args[i]:
                     args[i] = args[i] % executable
                     break
 
@@ -116,18 +121,19 @@ class BasicRunner(Task.Task):
         cmd = self.format_command_list(binary)
         # If kernel objects are required, then run the test binary with sudo
         if self.kernel_objects:
-            cmd.insert(0, 'sudo')
+            cmd.insert(0, "sudo")
 
         # First check whether we require any test files
         for t in self.test_inputs:
 
             test_file_out = self.inputs[0].parent.get_bld().make_node([t.name])
 
-            Logs.debug("wr: test file {0} -> {1}".format(
-                t.abspath(), test_file_out.abspath()))
+            Logs.debug(
+                "wr: test file {0} -> {1}".format(t.abspath(), test_file_out.abspath())
+            )
 
-            test_file_out.write(t.read('rb'), 'wb')
-            if hasattr(self.generator, 'chmod'):
+            test_file_out.write(t.read("rb"), "wb")
+            if hasattr(self.generator, "chmod"):
                 os.chmod(test_file_out.abspath(), self.generator.chmod)
 
         results = []
@@ -135,7 +141,7 @@ class BasicRunner(Task.Task):
         # Load the required kernel objects with insmod (in the original order)
         for ko in self.kernel_objects:
             filename = ko.abspath()
-            result = self.run_cmd(['sudo', 'insmod', filename])
+            result = self.run_cmd(["sudo", "insmod", filename])
             results.append(result)
 
         # Run the test binary
@@ -144,18 +150,16 @@ class BasicRunner(Task.Task):
 
         # Unload the required kernel objects with rmmod (in reverse order)
         for ko in reversed(self.kernel_objects):
-            result = self.run_cmd(['sudo', 'rmmod', ko.name])
+            result = self.run_cmd(["sudo", "rmmod", ko.name])
             results.append(result)
 
         # Copy the result file to the result folder if needed
-        if bld.has_tool_option('result_file') and \
-           bld.has_tool_option('result_folder'):
+        if bld.has_tool_option("result_file") and bld.has_tool_option("result_folder"):
 
             result_file = bld.get_tool_option("result_file")
-            result_folder = bld.get_tool_option('result_folder')
+            result_folder = bld.get_tool_option("result_folder")
 
-            result_file = os.path.join(
-                self.inputs[0].parent.abspath(), result_file)
+            result_file = os.path.join(self.inputs[0].parent.abspath(), result_file)
 
             # Make sure that the result folder exists
             if not os.path.exists(result_folder):
@@ -180,21 +184,22 @@ class BasicRunner(Task.Task):
 
             if hasattr(cmd, "decode"):
                 # This is needed in Python 2 to allow unicode paths
-                cmd = cmd.decode('utf-8')
+                cmd = cmd.decode("utf-8")
 
-            combined_stdout += u'Running: {0}\n'.format(cmd)
+            combined_stdout += u"Running: {0}\n".format(cmd)
 
             if result["stdout"]:
                 combined_stdout += result["stdout"]
 
-            if result['return_code'] != 0:
+            if result["return_code"] != 0:
                 # Save the last non-zero return code
-                combined_return_code = result['return_code']
+                combined_return_code = result["return_code"]
 
         combined_result = (
             self.format_command(self.inputs[0]),
             combined_return_code,
-            combined_stdout)
+            combined_stdout,
+        )
 
         testlock.acquire()
         try:
@@ -212,7 +217,7 @@ class BasicRunner(Task.Task):
     def run_cmd(self, cmd):
 
         bld = self.generator.bld
-        run_silent = bld.has_tool_option('run_silent')
+        run_silent = bld.has_tool_option("run_silent")
 
         print("Running: {}\n".format(cmd))
 
@@ -223,7 +228,8 @@ class BasicRunner(Task.Task):
             stdin=Utils.subprocess.PIPE,
             stdout=Utils.subprocess.PIPE,
             # stderr should go into the same handle as stdout:
-            stderr=Utils.subprocess.STDOUT)
+            stderr=Utils.subprocess.STDOUT,
+        )
 
         all_stdout = []
         # iter() is used to read lines as soon as they are written to
@@ -244,9 +250,8 @@ class BasicRunner(Task.Task):
         stdout = "".join(all_stdout)
         if hasattr(stdout, "decode"):
             # This is needed in Python 2 to allow unicode output
-            stdout = stdout.decode('utf-8')
+            stdout = stdout.decode("utf-8")
 
-        result = {'cmd': cmd, 'return_code': return_code,
-                  'stdout': stdout}
+        result = {"cmd": cmd, "return_code": return_code, "stdout": stdout}
 
         return result

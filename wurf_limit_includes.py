@@ -29,8 +29,8 @@ from waflib import Errors
 from waflib.TaskGen import feature, before_method, after_method
 
 
-@feature('limit_includes')
-@before_method('process_use')
+@feature("limit_includes")
+@before_method("process_use")
 def store_default_includes(self):
     """
     Stores the default system includes in self.env.DEFAULT_INCLUDES before
@@ -40,9 +40,9 @@ def store_default_includes(self):
     self.env.DEFAULT_INCLUDES = self.env.INCLUDES
 
 
-@feature('limit_includes')
-@before_method('apply_incpaths')
-@after_method('process_use')
+@feature("limit_includes")
+@before_method("apply_incpaths")
+@after_method("process_use")
 def set_limited_includes(self):
     """
     Limits the available include paths based on the 'export_includes' list
@@ -54,11 +54,11 @@ def set_limited_includes(self):
     self.includes = []
     # Only add the includes that are explicitly exported by the top-level
     # task generators in the "use" list
-    for name in self.to_list(getattr(self, 'use', [])):
+    for name in self.to_list(getattr(self, "use", [])):
         try:
             y = self.bld.get_tgen_by_name(name)
         except Errors.WafError:
             continue
         else:
-            if getattr(y, 'export_includes', None):
+            if getattr(y, "export_includes", None):
                 self.includes.extend(y.to_incnodes(y.export_includes))
