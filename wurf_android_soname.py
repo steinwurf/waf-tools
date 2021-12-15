@@ -27,8 +27,8 @@ the type column saying (SONAME) and check its Name/Value column.
 from waflib.TaskGen import feature, after_method
 
 
-@feature('cshlib', 'cxxshlib')
-@after_method('apply_link')
+@feature("cshlib", "cxxshlib")
+@after_method("apply_link")
 def set_android_soname(self):
     """
     Task generator method, which will run after the apply_link method.
@@ -36,7 +36,7 @@ def set_android_soname(self):
     The apply_link method is the one creating the link_task.
     """
     # We only set the soname if this is an Android build.
-    if not self.bld.is_mkspec_platform('android'):
+    if not self.bld.is_mkspec_platform("android"):
         return
 
     # Fetch the library name
@@ -45,4 +45,4 @@ def set_android_soname(self):
     # Add the soname for the ld linker - to disable, unset env.SONAME_ST
     if self.env.SONAME_ST:
         linker_flag = self.env.SONAME_ST % node.name
-        self.env.append_value('LINKFLAGS', linker_flag)
+        self.env.append_value("LINKFLAGS", linker_flag)

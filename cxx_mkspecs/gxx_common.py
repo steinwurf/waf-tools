@@ -36,45 +36,43 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
     paths = conf.mkspec_get_toolchain_paths()
 
     # If the user-defined CXX variable is set, then use that compiler
-    if 'CXX' in os.environ:
-        cxx = waflib.Utils.to_list(os.environ['CXX'])
-        conf.to_log('Using user defined environment variable CXX=%r' % cxx)
+    if "CXX" in os.environ:
+        cxx = waflib.Utils.to_list(os.environ["CXX"])
+        conf.to_log("Using user defined environment variable CXX=%r" % cxx)
     else:
         # Find g++ first
-        gxx_names = conf.mkspec_get_compiler_binary_name(
-            'g++', major, minor, prefix)
+        gxx_names = conf.mkspec_get_compiler_binary_name("g++", major, minor, prefix)
         if minimum:
-            gxx_names = 'g++'
+            gxx_names = "g++"
         cxx = conf.find_program(gxx_names, path_list=paths)
         cxx = conf.cmd_to_list(cxx)
 
-    conf.env['CXX'] = cxx
-    conf.env['CXX_NAME'] = os.path.basename(conf.env.get_flat('CXX'))
+    conf.env["CXX"] = cxx
+    conf.env["CXX_NAME"] = os.path.basename(conf.env.get_flat("CXX"))
 
     conf.mkspec_check_gcc_version(cxx, major, minor, minimum)
 
     # If the user-defined CC variable is set, then use that compiler
-    if 'CC' in os.environ:
-        cc = waflib.Utils.to_list(os.environ['CC'])
-        conf.to_log('Using user defined environment variable CC=%r' % cc)
+    if "CC" in os.environ:
+        cc = waflib.Utils.to_list(os.environ["CC"])
+        conf.to_log("Using user defined environment variable CC=%r" % cc)
     else:
         # Also find gcc
-        gcc_names = conf.mkspec_get_compiler_binary_name(
-            'gcc', major, minor, prefix)
+        gcc_names = conf.mkspec_get_compiler_binary_name("gcc", major, minor, prefix)
         if minimum:
-            gcc_names = 'gcc'
+            gcc_names = "gcc"
         cc = conf.find_program(gcc_names, path_list=paths)
         cc = conf.cmd_to_list(cc)
 
-    conf.env['CC'] = cc
-    conf.env['CC_NAME'] = os.path.basename(conf.env.get_flat('CC'))
+    conf.env["CC"] = cc
+    conf.env["CC_NAME"] = os.path.basename(conf.env.get_flat("CC"))
 
     conf.mkspec_check_gcc_version(cc, major, minor, minimum)
 
     # Find the archiver
     ar = conf.mkspec_get_ar_binary_name(prefix)
-    conf.find_program(ar, path_list=paths, var='AR')
-    conf.env.ARFLAGS = 'rcs'
+    conf.find_program(ar, path_list=paths, var="AR")
+    conf.env.ARFLAGS = "rcs"
 
     # Set up C++ tools and flags
     conf.gxx_common_flags()
@@ -99,7 +97,7 @@ def mkspec_gxx_configure(conf, major, minor, prefix=None, minimum=False):
 
 @conf
 def mkspec_gxx_android_configure(conf, major, minor, prefix):
-    conf.set_mkspec_platform('android')
+    conf.set_mkspec_platform("android")
     conf.mkspec_gxx_configure(major, minor, prefix)
     conf.mkspec_set_android_options()
 
@@ -107,52 +105,51 @@ def mkspec_gxx_android_configure(conf, major, minor, prefix):
 @conf
 def mkspec_set_gcc_ccflags(conf):
 
-    if conf.has_tool_option('cxx_debug'):
-        conf.env['CFLAGS'] += ['-g', '-fno-omit-frame-pointer']
+    if conf.has_tool_option("cxx_debug"):
+        conf.env["CFLAGS"] += ["-g", "-fno-omit-frame-pointer"]
 
         # Don't add any optimization flags
-        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
+        conf.env["MKSPEC_DISABLE_OPTIMIZATION"] = True
 
     # Optimization flags
-    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
+    optflags = ["-O2", "-ftree-vectorize", "-finline-functions"]
 
-    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
-        conf.env['CFLAGS'] += optflags
+    if not conf.env["MKSPEC_DISABLE_OPTIMIZATION"]:
+        conf.env["CFLAGS"] += optflags
 
     # Warning flags
-    conf.env['CFLAGS'] += ['-Wextra', '-Wall']
+    conf.env["CFLAGS"] += ["-Wextra", "-Wall"]
 
-    if conf.has_tool_option('cxx_nodebug'):
-        conf.env['DEFINES'] += ['NDEBUG']
+    if conf.has_tool_option("cxx_nodebug"):
+        conf.env["DEFINES"] += ["NDEBUG"]
 
 
 @conf
 def mkspec_set_gxx_cxxflags(conf):
 
     # Warning flags
-    conf.env['CXXFLAGS'] += ['-Wextra', '-Wall']
+    conf.env["CXXFLAGS"] += ["-Wextra", "-Wall"]
 
-    if conf.has_tool_option('cxx_debug'):
-        conf.env['CXXFLAGS'] += ['-g', '-fno-omit-frame-pointer']
+    if conf.has_tool_option("cxx_debug"):
+        conf.env["CXXFLAGS"] += ["-g", "-fno-omit-frame-pointer"]
 
         # Don't add any optimization flags
-        conf.env['MKSPEC_DISABLE_OPTIMIZATION'] = True
-    elif not conf.get_mkspec_platform() in ['mac', 'ios']:
-        conf.env['LINKFLAGS'] += ['-s']
-
+        conf.env["MKSPEC_DISABLE_OPTIMIZATION"] = True
+    elif not conf.get_mkspec_platform() in ["mac", "ios"]:
+        conf.env["LINKFLAGS"] += ["-s"]
 
     # Optimization flags
-    optflags = ['-O2', '-ftree-vectorize', '-finline-functions']
+    optflags = ["-O2", "-ftree-vectorize", "-finline-functions"]
 
-    if not conf.env['MKSPEC_DISABLE_OPTIMIZATION']:
-        conf.env['CXXFLAGS'] += optflags
+    if not conf.env["MKSPEC_DISABLE_OPTIMIZATION"]:
+        conf.env["CXXFLAGS"] += optflags
 
-    if conf.has_tool_option('cxx_nodebug'):
-        conf.env['DEFINES'] += ['NDEBUG']
+    if conf.has_tool_option("cxx_nodebug"):
+        conf.env["DEFINES"] += ["NDEBUG"]
 
     # Disable dynamic linking if -static is passed
-    if '-static' in conf.env['LINKFLAGS']:
-        conf.env['SHLIB_MARKER'] = []
+    if "-static" in conf.env["LINKFLAGS"]:
+        conf.env["SHLIB_MARKER"] = []
 
     # Use the C++14 language features
-    conf.env['CXXFLAGS'] += ['-std=c++14']
+    conf.env["CXXFLAGS"] += ["-std=c++14"]
