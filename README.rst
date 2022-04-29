@@ -3,11 +3,11 @@ waf-tools
 
 |Black| |Flake8|
 
-.. |Flake8| image:: https://github.com/steinwurf/giit/actions/workflows/flake8.yml/badge.svg
-    :target: https://github.com/steinwurf/giit/actions/workflows/flake8.yml
+.. |Flake8| image:: https://github.com/steinwurf/waf-tools/actions/workflows/flake8.yml/badge.svg
+    :target: https://github.com/steinwurf/waf-tools/actions/workflows/flake8.yml
 
-.. |Black| image:: https://github.com/steinwurf/giit/actions/workflows/black.yml/badge.svg
-      :target: https://github.com/steinwurf/giit/actions/workflows/black.yml
+.. |Black| image:: https://github.com/steinwurf/waf-tools/actions/workflows/black.yml/badge.svg
+      :target: https://github.com/steinwurf/waf-tools/actions/workflows/black.yml
 
 Steinwurf uses `Waf`_ to build all the build system. This repository contains a
 set of Waf tools.
