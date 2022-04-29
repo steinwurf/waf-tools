@@ -3,7 +3,7 @@ waf-tools
 
 |Black| |Flake8|
 
-.. |Flake8| image:: https://github.com/steinwurf/waf-tools/actions/workflows/flake8.yml/badge.svg
+.. |Flake8| image:: https://github.com/steinwurf/waf-tools/actions/workflows/flake.yml/badge.svg
     :target: https://github.com/steinwurf/waf-tools/actions/workflows/flake.yml
 
 .. |Black| image:: https://github.com/steinwurf/waf-tools/actions/workflows/black.yml/badge.svg
