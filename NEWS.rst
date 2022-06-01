@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added mkspecs for MSVC 17.x 32-bit and 64-bit.
 
 4.40.0
 ------
