@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.42.0
+------
 * Minor: Added cxx_gxx103_armv7 mkspec for GCC 10.3 ARM cross compiler.
 * Minor: Added cxx_gxx103_aarch64 mkspec for GCC 10.3 ARM64 cross compiler.
 
