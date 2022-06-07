@@ -64,7 +64,7 @@ def cxx_android5_gxx49_arm64(conf):
     # shared libraries: https://github.com/android-ndk/ndk/issues/148
     # Force the use of the "gold" linker until it becomes the default
     conf.env["LINKFLAGS"] += ["-fuse-ld=gold"]
-    conf.env["DEST_CPU"] = "arm64"
+    conf.env["DEST_CPU"] = "aarch64"
 
 
 @conf
@@ -460,6 +460,39 @@ def cxx_gxx112_x86(conf):
 
 
 @conf
+def cxx_gxx103_armv7(conf):
+    """
+    Detect and setup the g++ 10.3 cross-compiler for ARM Linux running on ARMv7
+    CPU with a hardware FPU. The 'g++-arm-linux-gnueabihf' Ubuntu/Debian
+    package should provide a compatible toolchain.
+    """
+    conf.mkspec_gxx_configure(10, 3, "arm-linux-gnueabihf")
+    # Specify the ARMv7 architecture in the LINKFLAGS to link with the
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env["LINKFLAGS"] += ["-march=armv7-a"]
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env["LINKFLAGS"] += ["-static-libstdc++"]
+    # Set the target CPU
+    conf.env["DEST_CPU"] = "arm"
+
+
+@conf
+def cxx_gxx103_aarch64(conf):
+    """
+    Detect and setup the g++ 10.3 cross-compiler for AAarch64.
+    """
+    conf.mkspec_gxx_configure(10, 3, "aarch64-linux-gnu")
+    conf.env["LINKFLAGS"] += ["-march=aarch64"]
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env["LINKFLAGS"] += ["-static-libstdc++"]
+    # Set the target CPU
+    conf.env["DEST_CPU"] = "aarch64"
+
+
+@conf
 def cxx_gxx63_armv7(conf):
     """
     Detect and setup the g++ 6.3 cross-compiler for ARM Linux running on ARMv7
@@ -521,7 +554,7 @@ def cxx_gxx75_aarch64(conf):
     # Statically link with the C++ standard library
     conf.env["LINKFLAGS"] += ["-static-libstdc++"]
     # Set the target CPU
-    conf.env["DEST_CPU"] = "arm"
+    conf.env["DEST_CPU"] = "aarch64"
 
 
 @conf
