@@ -9,6 +9,10 @@ Latest
 * Minor: Added cxx_gxx103_armv7 mkspec for GCC 10.3 ARM cross compiler.
 * Minor: Added cxx_gxx103_aarch64 mkspec for GCC 10.3 ARM64 cross compiler.
 
+4.41.0
+------
+* Minor: Added mkspecs for MSVC 17.x 32-bit and 64-bit.
+
 4.40.0
 ------
 * Minor: Added mkspecs for Clang 13.0: cxx_clang130_x64,
