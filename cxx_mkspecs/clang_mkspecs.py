@@ -559,6 +559,15 @@ def cxx_clang130_x64(conf):
 
 
 @conf
+def cxx_clang140_x64(conf):
+    """
+    Detect and setup the clang 14.0 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(14, 0)
+    conf.mkspec_add_common_flag("-m64")
+
+
+@conf
 def cxx_ios70_apple_llvm_armv7(conf):
     """
     Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
@@ -683,6 +692,14 @@ def cxx_clang13_address_sanitizer_x64(conf):
 
 
 @conf
+def cxx_clang14_address_sanitizer_x64(conf):
+    """
+    Configure clang 14.0 (64-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(14, 0, "-m64")
+
+
+@conf
 def mkspec_setup_clang_memory_sanitizer(conf, major, minor, arch, minimum=False):
     """
     To get a reasonable performance add -O1 or higher. To get
@@ -766,6 +783,14 @@ def cxx_clang13_memory_sanitizer_x64(conf):
 
 
 @conf
+def cxx_clang14_memory_sanitizer_x64(conf):
+    """
+    Configure clang 14.0 (64-bit) using the memory sanitizer
+    """
+    conf.mkspec_setup_clang_memory_sanitizer(14, 0, "-m64")
+
+
+@conf
 def mkspec_setup_clang_thread_sanitizer(conf, major, minor, arch, minimum=False):
     """
     http://clang.llvm.org/docs/ThreadSanitizer.html
@@ -838,3 +863,11 @@ def cxx_clang13_thread_sanitizer_x64(conf):
     Configure clang 13.0 (64-bit) using the thread sanitizer
     """
     conf.mkspec_setup_clang_thread_sanitizer(13, 0, "-m64")
+
+
+@conf
+def cxx_clang14_thread_sanitizer_x64(conf):
+    """
+    Configure clang 14.0 (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(14, 0, "-m64")
