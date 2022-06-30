@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+4.43.0
+------
 * Minor: Added cxx_clang14_x64, cxx_clang14_address_sanitizer_x64,
          cxx_clang14_memory_sanitizer_x64 and cxx_clang14_thread_sanitizer_x64.
 
