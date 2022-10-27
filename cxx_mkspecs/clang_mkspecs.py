@@ -889,6 +889,7 @@ def cxx_clang14_thread_sanitizer_x64(conf):
     """
     conf.mkspec_setup_clang_thread_sanitizer(14, 0, "-m64")
 
+
 @conf
 def cxx_clang15_thread_sanitizer_x64(conf):
     """
