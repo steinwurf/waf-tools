@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added mkspecs for Clang 15 and GCC 12
 
 4.43.0
 ------

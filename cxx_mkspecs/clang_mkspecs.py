@@ -568,6 +568,15 @@ def cxx_clang140_x64(conf):
 
 
 @conf
+def cxx_clang150_x64(conf):
+    """
+    Detect and setup the clang 15.0 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(15, 0)
+    conf.mkspec_add_common_flag("-m64")
+
+
+@conf
 def cxx_ios70_apple_llvm_armv7(conf):
     """
     Detect and setup the Apple LLVM compiler for iOS 7.0 armv7
@@ -697,6 +706,14 @@ def cxx_clang14_address_sanitizer_x64(conf):
     Configure clang 14.0 (64-bit) using the address sanitizer
     """
     conf.mkspec_setup_clang_address_sanitizer(14, 0, "-m64")
+
+
+@conf
+def cxx_clang15_address_sanitizer_x64(conf):
+    """
+    Configure clang 15.0 (64-bit) using the address sanitizer
+    """
+    conf.mkspec_setup_clang_address_sanitizer(15, 0, "-m64")
 
 
 @conf
@@ -871,3 +888,11 @@ def cxx_clang14_thread_sanitizer_x64(conf):
     Configure clang 14.0 (64-bit) using the thread sanitizer
     """
     conf.mkspec_setup_clang_thread_sanitizer(14, 0, "-m64")
+
+
+@conf
+def cxx_clang15_thread_sanitizer_x64(conf):
+    """
+    Configure clang 15.0 (64-bit) using the thread sanitizer
+    """
+    conf.mkspec_setup_clang_thread_sanitizer(15, 0, "-m64")
