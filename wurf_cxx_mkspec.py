@@ -51,7 +51,6 @@ def is_mkspec_platform(conf, platform):
 
 
 def options(opt):
-
     opts = opt.add_option_group("Makespec options")
 
     opts.add_option(
@@ -158,7 +157,6 @@ def options(opt):
 
 
 def configure(conf):
-
     # Which mkspec should we use, by default, use the cxx_default
     # that simply fallbacks to use waf auto detect of compiler etc.
     mkspec = "cxx_default"
@@ -185,5 +183,7 @@ def configure(conf):
     # Find and call the mkspec function on the conf object
     if hasattr(conf, mkspec):
         getattr(conf, mkspec)()
+        # Check which versions of the C++ standard are supported by the compiler
+        conf.check_cxx_standard()
     else:
         conf.fatal("The mkspec is not available: {0}".format(mkspec))
