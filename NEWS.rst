@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+5.0.0
+-----
 * Major: Removed C++ Standard from mkspecs. The C++ Standard can now be
   specified with the ``conf.set_cxx_std`` method. If no C++ Standard is
   set explicitly, then the default is whatever the compiler uses by default.
