@@ -54,7 +54,7 @@ def configure(conf):
     ConfigurationContext.post_recurse = post_recurse
 
 
-def get_cxx_standard_flags(compiler, major, cxx_standard):
+def get_cxx_standard_flags(compiler, version, cxx_standard):
     if "clang" in compiler or "g++" in compiler:
         flags = [f"-std={cxx_standard}"]
         if cxx_standard in cxx_standard_aliases:
@@ -63,7 +63,7 @@ def get_cxx_standard_flags(compiler, major, cxx_standard):
     elif "msvc" in compiler or "CL.exe" in compiler or "cl.exe" in compiler:
         return [f"/std:{cxx_standard}"]
     else:
-        raise Errors.WafError("Unknown compiler: %s" % compiler)
+        raise Errors.WafError(f"Unknown compiler: {compiler} {version}")
 
 
 @conf
@@ -75,7 +75,7 @@ def check_cxx_standard(conf):
     for enabling them.
     """
     compiler = conf.env["CXX"][0]
-    major = int(conf.env["CC_VERSION"][0])
+    version = conf.env["CC_VERSION"]
 
     conf.env["CXX_SUPPORTED_STANDARDS"] = {}
 
@@ -95,7 +95,7 @@ def check_cxx_standard(conf):
     conf.end_msg = end_msg
 
     for cxx_standard in cxx_standards:
-        cxx_standard_flags = get_cxx_standard_flags(compiler, major, cxx_standard)
+        cxx_standard_flags = get_cxx_standard_flags(compiler, version, cxx_standard)
         for cxx_standard_flag in cxx_standard_flags:
             ret = conf.check_cxx(
                 cxxflags=cxx_standard_flag,
@@ -110,7 +110,9 @@ def check_cxx_standard(conf):
     conf.end_msg = old_end_msg
 
     if conf.env["CXX_SUPPORTED_STANDARDS"] == {}:
-        conf.fatal(f"Could not determine the C++ standards supported by {compiler}.")
+        conf.fatal(
+            f"Could not determine the C++ standards supported by {compiler} {version}."
+        )
 
 
 @conf
