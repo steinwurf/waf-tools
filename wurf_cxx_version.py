@@ -79,20 +79,20 @@ def check_cxx_standard(conf):
 
     conf.env["CXX_SUPPORTED_STANDARDS"] = {}
 
-    # monkey patch start_msg and end_msg to avoid printing
-    # the messages to the console
-    def start_msg(self, *k, **kw):
-        pass
+    # # monkey patch start_msg and end_msg to avoid printing
+    # # the messages to the console
+    # def start_msg(self, *k, **kw):
+    #     pass
 
-    def end_msg(self, *k, **kw):
-        pass
+    # def end_msg(self, *k, **kw):
+    #     pass
 
-    # cache the original start_msg and end_msg
-    old_start_msg = conf.start_msg
-    old_end_msg = conf.end_msg
+    # # cache the original start_msg and end_msg
+    # old_start_msg = conf.start_msg
+    # old_end_msg = conf.end_msg
 
-    conf.start_msg = start_msg
-    conf.end_msg = end_msg
+    # conf.start_msg = start_msg
+    # conf.end_msg = end_msg
 
     for cxx_standard in cxx_standards:
         cxx_standard_flags = get_cxx_standard_flags(compiler, version, cxx_standard)
@@ -105,9 +105,9 @@ def check_cxx_standard(conf):
                 conf.env["CXX_SUPPORTED_STANDARDS"][cxx_standard] = cxx_standard_flag
                 break
 
-    # restore the original start_msg and end_msg
-    conf.start_msg = old_start_msg
-    conf.end_msg = old_end_msg
+    # # restore the original start_msg and end_msg
+    # conf.start_msg = old_start_msg
+    # conf.end_msg = old_end_msg
 
     if conf.env["CXX_SUPPORTED_STANDARDS"] == {}:
         conf.fatal(
