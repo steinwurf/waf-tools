@@ -41,7 +41,7 @@ def configure(conf):
             # Check that the standard is supported by the compiler
             if cxx_standard not in self.env["CXX_SUPPORTED_STANDARDS"]:
                 self.fatal(
-                    f"The C++ standard {cxx_standard} is not supported by the {self.env['COMPILER_CXX']} compiler."
+                    f"The C++ standard {cxx_standard} is not supported by the {self.env['CXX']} compiler."
                 )
 
             else:
@@ -74,7 +74,7 @@ def check_cxx_standard(conf):
     with the list of supported C++ standards and their corresponding flags
     for enabling them.
     """
-    compiler = conf.env["COMPILER_CXX"]
+    compiler = conf.env["CXX"][0]
     major = int(conf.env["CC_VERSION"][0])
 
     conf.env["CXX_SUPPORTED_STANDARDS"] = {}
