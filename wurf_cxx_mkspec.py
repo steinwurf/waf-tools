@@ -183,7 +183,10 @@ def configure(conf):
     # Find and call the mkspec function on the conf object
     if hasattr(conf, mkspec):
         getattr(conf, mkspec)()
-        # Check which versions of the C++ standard are supported by the compiler
-        conf.check_cxx_standard()
     else:
-        conf.fatal("The mkspec is not available: {0}".format(mkspec))
+        # list of supported mkspecs
+        mkspecs = [a for a in dir(conf) if a.startswith("cxx_")]
+        conf.fatal(f"Unknown mkspec: {mkspec}, available mkspecs: {', '.join(mkspecs)}")
+
+    # Check which versions of the C++ standard are supported by the compiler
+    conf.check_cxx_std()
