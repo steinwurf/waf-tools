@@ -12,6 +12,7 @@ import wurf_android_soname
 import wurf_copy_binary
 import wurf_limit_includes
 import wurf_default_prefix
+import wurf_cxx_version
 
 from waflib import Options
 from waflib.Configure import conf
@@ -25,6 +26,7 @@ def load_external_waf_tool(ctx, name):
     :param ctx: the resolve, build or configuration context
     """
     import inspect
+
     this_file = inspect.getfile(inspect.currentframe())
     path = os.path.join(os.path.dirname(this_file))
     ctx.load([name], tooldir=[path])
@@ -43,7 +45,7 @@ def get_tool_option(conf, option):
     elif option in stored and stored[option] != None:
         return stored[option]
     else:
-        conf.fatal('Missing option: %s' % option)
+        conf.fatal("Missing option: %s" % option)
 
 
 @conf
@@ -60,26 +62,24 @@ def has_tool_option(conf, option):
 
 
 def options(opt):
-
-    opt.load('wurf_install_path')
-    opt.load('wurf_cxx_mkspec')
-    opt.load('wurf_runner')
-    opt.load('wurf_default_prefix')
+    opt.load("wurf_install_path")
+    opt.load("wurf_cxx_mkspec")
+    opt.load("wurf_runner")
+    opt.load("wurf_default_prefix")
 
 
 def configure(conf):
-
     # Store the options that are specified during the configure step
     conf.env["stored_options"] = Options.options.__dict__.copy()
 
-    if not conf.env['DISABLE_WURF_CXX_MKSPEC']:
-        conf.load('wurf_cxx_mkspec')
+    if not conf.env["DISABLE_WURF_CXX_MKSPEC"]:
+        conf.load("wurf_cxx_mkspec")
 
-    conf.load('wurf_runner')
-    conf.load('wurf_install_path')
-    conf.load('wurf_project_generator')
+    conf.load("wurf_runner")
+    conf.load("wurf_install_path")
+    conf.load("wurf_project_generator")
+    conf.load("wurf_cxx_version")
 
 
 def build(bld):
-
-    bld.load('wurf_install_path')
+    bld.load("wurf_install_path")
