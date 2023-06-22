@@ -131,7 +131,6 @@ def mkspec_clang_ios_configure(conf, major, minor, min_ios_version, cpu, minimum
 
 @conf
 def mkspec_set_clang_ccflags(conf, force_debug=False):
-
     if conf.has_tool_option("cxx_debug") or force_debug:
         conf.env["CFLAGS"] += ["-g", "-fno-omit-frame-pointer"]
 
@@ -152,7 +151,6 @@ def mkspec_set_clang_ccflags(conf, force_debug=False):
 
 @conf
 def mkspec_set_clang_cxxflags(conf, force_debug=False):
-
     if conf.has_tool_option("cxx_debug") or force_debug:
         conf.env["CXXFLAGS"] += ["-g", "-fno-omit-frame-pointer"]
 
@@ -171,9 +169,6 @@ def mkspec_set_clang_cxxflags(conf, force_debug=False):
 
     if conf.has_tool_option("cxx_nodebug"):
         conf.env["DEFINES"] += ["NDEBUG"]
-
-    # Use the C++14 language features
-    conf.env["CXXFLAGS"] += ["-std=c++14"]
 
     # Use clang's own C++ standard library on Mac OSX and iOS
     # Add other platforms when the library becomes stable there

@@ -644,7 +644,6 @@ def cxx_musl_gxx54_armv5(conf):
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env["LINKFLAGS"] += ["-static-libstdc++"]
-    conf.env["CXXFLAGS"] += ["-std=c++14"]
     # Set the target CPU
     conf.env["DEST_CPU"] = "arm"
 

@@ -104,7 +104,6 @@ def mkspec_gxx_android_configure(conf, major, minor, prefix):
 
 @conf
 def mkspec_set_gcc_ccflags(conf):
-
     if conf.has_tool_option("cxx_debug"):
         conf.env["CFLAGS"] += ["-g", "-fno-omit-frame-pointer"]
 
@@ -126,7 +125,6 @@ def mkspec_set_gcc_ccflags(conf):
 
 @conf
 def mkspec_set_gxx_cxxflags(conf):
-
     # Warning flags
     conf.env["CXXFLAGS"] += ["-Wextra", "-Wall"]
 
@@ -150,6 +148,3 @@ def mkspec_set_gxx_cxxflags(conf):
     # Disable dynamic linking if -static is passed
     if "-static" in conf.env["LINKFLAGS"]:
         conf.env["SHLIB_MARKER"] = []
-
-    # Use the C++14 language features
-    conf.env["CXXFLAGS"] += ["-std=c++14"]

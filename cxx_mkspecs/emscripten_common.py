@@ -86,8 +86,6 @@ def mkspec_emscripten_configure(conf, major, minor, minimum=False, force_debug=F
     if conf.has_tool_option("cxx_nodebug"):
         conf.env["DEFINES"] += ["NDEBUG"]
 
-    conf.env["CXXFLAGS"] += ["-std=c++11"]
-
     if conf.has_tool_option("cxx_debug") or force_debug:
         conf.env["CFLAGS"] += ["-g"]
         # Don't add any optimization flags
