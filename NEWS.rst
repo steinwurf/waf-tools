@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Re-enable warnings on MSVC and set warning level to 3.
 
 5.0.0
 -----
