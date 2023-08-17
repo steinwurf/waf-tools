@@ -614,15 +614,15 @@ def cxx_raspberry_gxx83_armv7(conf):
 
 
 @conf
-def cxx_raspberry_gxx103_aarch64(conf):
+def cxx_raspberry_gxx103_armv7(conf):
     """
     Detect and setup the g++ 10.3 cross-compiler for Raspberry Pi (Linux)
-    running on AArch64 compatible hardware (Raspberry Pi 3B+)
+    running on armv7 compatible hardware (Raspberry Pi 3B+)
     """
-    conf.mkspec_gxx_configure(10, 3, "aarch64-linux-gnueabihf")
+    conf.mkspec_gxx_configure(10, 3, "arm-linux-gnueabihf")
     # atomic support that is required for std::threads (without this flag,
     # the threading code might call pure virtual methods)
-    conf.env["LINKFLAGS"] += ["-march=aarch64"]
+    conf.env["LINKFLAGS"] += ["-march=armv7-a"]
     # Note: libstdc++ might not be available on the target platform
     # Statically link with the C++ standard library
     conf.env["LINKFLAGS"] += ["-static-libstdc++"]
