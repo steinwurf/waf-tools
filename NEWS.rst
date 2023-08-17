@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+5.2.2
+-----
 * Patch: Revert previous patch.
 
 5.2.1
