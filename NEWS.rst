@@ -6,6 +6,10 @@ of every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+5.2.0
+-----
 * Minor: Added raspberry_gxx103_armv7 mkspec for GCC 10.3 ARM cross compiler.
 
 5.1.0
