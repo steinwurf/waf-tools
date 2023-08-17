@@ -614,6 +614,23 @@ def cxx_raspberry_gxx83_armv7(conf):
 
 
 @conf
+def cxx_raspberry_gxx103_armv7(conf):
+    """
+    Detect and setup the g++ 10.3 cross-compiler for Raspberry Pi (Linux)
+    running on ARMv7 compatible hardware (Raspberry Pi 3B+)
+    """
+    conf.mkspec_gxx_configure(10, 3, "arm-linux-gnueabihf")
+    # atomic support that is required for std::threads (without this flag,
+    # the threading code might call pure virtual methods)
+    conf.env["LINKFLAGS"] += ["-march=armv7-a"]
+    # Note: libstdc++ might not be available on the target platform
+    # Statically link with the C++ standard library
+    conf.env["LINKFLAGS"] += ["-static-libstdc++"]
+    # Set the target CPU
+    conf.env["DEST_CPU"] = "arm"
+
+
+@conf
 def cxx_musl_gxx91_armv7(conf):
     """
     Detect and setup the g++ 9.1 cross-compiler for MUSL Libc
