@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Patch: Aarch64 instead of ARMv7 for raspberry_gxx103_armv7 mkspec.
 
 5.2.0
 -----
