@@ -8,6 +8,22 @@ Latest
 ------
 * Minor: Added mkspec for Clang 11
 
+5.2.2
+-----
+* Patch: Revert previous patch.
+
+5.2.1
+-----
+* Patch: Aarch64 instead of ARMv7 for raspberry_gxx103_armv7 mkspec.
+
+5.2.0
+-----
+* Minor: Added raspberry_gxx103_armv7 mkspec for GCC 10.3 ARM cross compiler.
+
+5.1.0
+-----
+* Minor: Re-enable warnings on MSVC and set warning level to 3.
+
 5.0.0
 -----
 * Major: Removed C++ Standard from mkspecs. The C++ Standard can now be

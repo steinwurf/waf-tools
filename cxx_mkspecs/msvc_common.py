@@ -69,7 +69,6 @@ def mkspec_find_installed_msvc_version(conf, major_version):
 
 @conf
 def mkspec_msvc_configure(conf, version):
-
     conf.env.MSVC_VERSIONS = ["msvc %s" % version]
 
     # Here we suppress all the "Checking for program CL"
@@ -90,7 +89,6 @@ def mkspec_msvc_configure(conf, version):
 
 @conf
 def mkspec_set_msvc_flags(conf):
-
     if conf.has_tool_option("cxx_debug"):
         # Use the multithread, debug version of the run-time library
         conf.env["CXXFLAGS"] += ["/MTd"]
@@ -98,6 +96,7 @@ def mkspec_set_msvc_flags(conf):
         # No .pdb files are produced to prevent warnings.
         conf.env["CXXFLAGS"] += ["/Z7"]
 
+        # Add the /DEBUG linker flag to generate a .pdb file
         conf.env["LINKFLAGS"] += ["/DEBUG"]
 
         # Don't add any optimization flags
@@ -125,21 +124,11 @@ def mkspec_set_msvc_flags(conf):
 
     # The /EHs flag only allows standard C++ exceptions (which might also
     # originate from extern "C" functions).
-    # Set _WIN32_WINNT=0x0600 (i.e. Windows Vista target) to suppress warnings
-    # in Boost Asio.
-    # Disabled compiler warnings:
-    # - C4503 that complains about the length of decorated template names.
-    #   This occurs frequently as we compile heavily templated code, and
-    #   we also have to enable /bigobj to allow large object files.
-    # - C4312 that warns about assigning a 32-bit value to a 64-bit pointer
-    #   type which is commonly used in our unit tests.
     conf.env["CXXFLAGS"] += [
-        "/W2",
-        "/wd4503",
-        "/wd4312",
-        "/EHs",
-        "/D_WIN32_WINNT=0x0600",
-        "/bigobj",
+        "/W3",  # warning level 3
+        "/EHs",  # standard C++ exceptions
+        "/D_WIN32_WINNT=0x0600",  # Windows Vista or later
+        "/bigobj",  # support for large object files
     ]
 
     # Do not generate .manifest files (the /MANIFEST flag is added by waf)
