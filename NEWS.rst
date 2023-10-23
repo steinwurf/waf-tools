@@ -6,7 +6,7 @@ of every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added mkspec for Clang 11
 
 5.0.0
 -----

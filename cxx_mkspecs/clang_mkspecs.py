@@ -541,6 +541,15 @@ def cxx_clang70_x86(conf):
 
 
 @conf
+def cxx_clang111_x64(conf):
+    """
+    Detect and setup the clang 11.1 compiler for 64 bit
+    """
+    conf.mkspec_clang_configure(11, 1)
+    conf.mkspec_add_common_flag("-m64")
+
+
+@conf
 def cxx_clang100_x64(conf):
     """
     Detect and setup the clang 10.0 compiler for 64 bit
