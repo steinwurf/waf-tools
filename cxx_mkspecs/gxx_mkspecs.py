@@ -467,6 +467,14 @@ def cxx_gxx122_x64(conf):
     conf.mkspec_gxx_configure(12, 2)
     conf.mkspec_add_common_flag("-m64")
 
+@conf
+def cxx_gxx123_x64(conf):
+    """
+    Detect and setup the g++ 12.3 compiler for 64 bit
+    """
+    conf.mkspec_gxx_configure(12, 3)
+    conf.mkspec_add_common_flag("-m64")
+
 
 @conf
 def cxx_gxx103_armv7(conf):
