@@ -261,7 +261,7 @@ class SSHRunner(BasicRunner):
 
         # Almost done. Look for the exit code in the output
         # and fail if non-zero
-        match = re.search("shellexit:(\d+)", result["stdout"])
+        match = re.search(r"shellexit:(\d+)", result["stdout"])
 
         if not match:
             error_msg = "Failed to find return code in output!\n"
